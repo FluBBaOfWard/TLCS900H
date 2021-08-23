@@ -1,0 +1,28 @@
+TLCS900H revision history
+-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+V0.4.1 - 2021-08-21 (FluBBa)
+	Tweaked cpu register usage.
+	Fixed MULA opcode.
+	Fixed cycle counting for a couple of instructions.
+	Rewrote register map to use offsets instead of absolute values.
+	Moved Bios code out of the cpu core.
+
+V0.4.0 - 2021-06-01 (FluBBa)
+	Converted to GCC and unified asm.
+	Made the core more objectified.
+
+V0.3.0 - 2008-10-01 (FluBBa)
+	Fixed MIRR opcode.
+	Fixed problems with DMA.
+
+V0.2.0 - 2008-09-04 (FluBBa)
+	Fixed a couple of CPU bugs affecting "Metal Slug 1" and other games.
+
+V0.1.0 - 2008-07-04 (FluBBa)
+	Initial release for GBA.
+
+V0.0.0 - 2008-04-02 (FluBBa)
+	Started Coding.
+
