@@ -693,12 +693,12 @@ noTimer3:
 ;@----------------------------------------------------------------------------
 DMA_update:					;@ r0 = channel
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r5,lr}
+	stmfd sp!,{r5,r6,lr}
 ;@	mov r11,r11
 	and r5,r0,#0x03
-	add r3,t9optbl,#tlcs_DmaS
-	ldr t9Mem,[r3,r5,lsl#2]!	;@ Source Adress
-	ldrb r1,[r3,#0x22]			;@ DMA M
+	add r6,t9optbl,#tlcs_DmaS
+	ldr t9Mem,[r6,r5,lsl#2]!	;@ Source Adress
+	ldrb r1,[r6,#0x22]			;@ DMA M
 	and r1,r1,#0x1F
 	ldr pc,[pc,r1,lsl#2]
 	.long 0
@@ -739,9 +739,9 @@ DMA_update:					;@ r0 = channel
 DMA_DSTInc_B:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	add r1,t9Mem,#1
-	str r1,[r3,#0x10]			;@ Destination Adress
+	str r1,[r6,#0x10]			;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreB_mem
@@ -749,9 +749,9 @@ DMA_DSTInc_B:
 DMA_DSTInc_W:
 ;@----------------------------------------------------------------------------
 	bl t9LoadW_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	add r1,t9Mem,#2
-	str r1,[r3,#0x10]			;@ Destination Adress
+	str r1,[r6,#0x10]			;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreW_mem
@@ -759,9 +759,9 @@ DMA_DSTInc_W:
 DMA_DSTInc_L:
 ;@----------------------------------------------------------------------------
 	bl t9LoadL_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	add r1,t9Mem,#4
-	str r1,[r3,#0x10]			;@ Destination Adress
+	str r1,[r6,#0x10]			;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 12
 	b t9StoreL_mem
@@ -769,9 +769,9 @@ DMA_DSTInc_L:
 DMA_DSTDec_B:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	sub r1,t9Mem,#1
-	str r1,[r3,#0x10]			;@ Destination Adress
+	str r1,[r6,#0x10]			;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreB_mem
@@ -779,9 +779,9 @@ DMA_DSTDec_B:
 DMA_DSTDec_W:
 ;@----------------------------------------------------------------------------
 	bl t9LoadW_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	sub r1,t9Mem,#2
-	str r1,[r3,#0x10]			;@ Destination Adress
+	str r1,[r6,#0x10]			;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreW_mem
@@ -789,9 +789,9 @@ DMA_DSTDec_W:
 DMA_DSTDec_L:
 ;@----------------------------------------------------------------------------
 	bl t9LoadL_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	sub r1,t9Mem,#4
-	str r1,[r3,#0x10]			;@ Destination Adress
+	str r1,[r6,#0x10]			;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 12
 	b t9StoreL_mem
@@ -799,9 +799,9 @@ DMA_DSTDec_L:
 DMA_SRCInc_B:
 ;@----------------------------------------------------------------------------
 	add r1,t9Mem,#1
-	str r1,[r3]					;@ Source Adress
+	str r1,[r6]					;@ Source Adress
 	bl t9LoadB_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreB_mem
@@ -809,9 +809,9 @@ DMA_SRCInc_B:
 DMA_SRCInc_W:
 ;@----------------------------------------------------------------------------
 	add r1,t9Mem,#2
-	str r1,[r3]					;@ Source Adress
+	str r1,[r6]					;@ Source Adress
 	bl t9LoadW_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreW_mem
@@ -819,9 +819,9 @@ DMA_SRCInc_W:
 DMA_SRCInc_L:
 ;@----------------------------------------------------------------------------
 	add r1,t9Mem,#4
-	str r1,[r3]					;@ Source Adress
+	str r1,[r6]					;@ Source Adress
 	bl t9LoadL_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 12
 	b t9StoreL_mem
@@ -829,9 +829,9 @@ DMA_SRCInc_L:
 DMA_SRCDec_B:
 ;@----------------------------------------------------------------------------
 	sub r1,t9Mem,#1
-	str r1,[r3]					;@ Source Adress
+	str r1,[r6]					;@ Source Adress
 	bl t9LoadB_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreB_mem
@@ -839,9 +839,9 @@ DMA_SRCDec_B:
 DMA_SRCDec_W:
 ;@----------------------------------------------------------------------------
 	sub r1,t9Mem,#2
-	str r1,[r3]					;@ Source Adress
+	str r1,[r6]					;@ Source Adress
 	bl t9LoadW_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreW_mem
@@ -849,9 +849,9 @@ DMA_SRCDec_W:
 DMA_SRCDec_L:
 ;@----------------------------------------------------------------------------
 	sub r1,t9Mem,#4
-	str r1,[r3]					;@ Source Adress
+	str r1,[r6]					;@ Source Adress
 	bl t9LoadL_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 12
 	b t9StoreL_mem
@@ -859,7 +859,7 @@ DMA_SRCDec_L:
 DMA_FixMode_B:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreB_mem
@@ -867,7 +867,7 @@ DMA_FixMode_B:
 DMA_FixMode_W:
 ;@----------------------------------------------------------------------------
 	bl t9LoadW_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 8
 	b t9StoreW_mem
@@ -875,7 +875,7 @@ DMA_FixMode_W:
 DMA_FixMode_L:
 ;@----------------------------------------------------------------------------
 	bl t9LoadL_mem
-	ldr t9Mem,[r3,#0x10]		;@ Destination Adress
+	ldr t9Mem,[r6,#0x10]		;@ Destination Adress
 	adr lr,DMA_Finnish
 	t9eatcycles 12
 	b t9StoreL_mem
@@ -883,7 +883,7 @@ DMA_FixMode_L:
 DMA_CountMode:
 ;@----------------------------------------------------------------------------
 	add t9Mem,t9Mem,#1
-	str t9Mem,[r3]				;@ Source Adress
+	str t9Mem,[r6]				;@ Source Adress
 	t9eatcycles 5
 	b DMA_Finnish
 ;@----------------------------------------------------------------------------
@@ -894,9 +894,9 @@ DMA_Bad:
 ;@----------------------------------------------------------------------------
 DMA_Finnish:
 ;@----------------------------------------------------------------------------
-	ldrh r0,[r3,#0x20]			;@ DMA C
+	ldrh r0,[r6,#0x20]			;@ DMA C
 	subs r0,r0,#1				;@ Check if we're done.
-	strh r0,[r3,#0x20]
+	strh r0,[r6,#0x20]
 	bne dmaEnd
 	add r0,r5,#0x1D
 	bl setInterrupt
@@ -904,7 +904,7 @@ DMA_Finnish:
 	mov r0,#0
 	bl t9StoreB
 dmaEnd:
-	ldmfd sp!,{r5,lr}
+	ldmfd sp!,{r5,r6,lr}
 	bx lr
 ;@----------------------------------------------------------------------------
 timer_read8:				;@ r0 = address, Bios reads from 0x20, 0x25 & 0x28 at least
