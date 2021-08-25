@@ -748,7 +748,7 @@ regSTCFiB:
 	bic r0,r0,r2,lsl r1
 	tst t9f,#PSR_C
 	orrne r0,r0,r2,lsl r1
-	strb r0,[t9gprBank,t9Reg]
+	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regSTCFiW:
@@ -888,7 +888,7 @@ regSTCFAB:
 	tst t9f,#PSR_C
 	biceq r0,r0,r2,lsl r1
 	orrne r0,r0,r2,lsl r1
-	strb r0,[t9gprBank,t9Reg]
+	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regSTCFAW:
