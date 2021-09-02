@@ -1,6 +1,5 @@
 #ifdef __arm__
 
-#include "TLCS900H.i"
 #include "TLCS900H_mac.h"
 
 	.global tlcs900HReset

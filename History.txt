@@ -2,6 +2,9 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.4.2 - 2021-09-02 (FluBBa)
+	Bug fixes.
+
 V0.4.1 - 2021-08-21 (FluBBa)
 	Tweaked cpu register usage.
 	Fixed MULA opcode.
