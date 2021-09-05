@@ -286,12 +286,12 @@ interruptEnd:
 TestIntHDMA_External:		;@ r0 = index
 	.type TestIntHDMA_External STT_FUNC
 ;@---------------------------------------------------------------------------
-	stmfd sp!,{t9f,t9gprBank,t9pc,t9optbl,lr}
+	stmfd sp!,{t9f,t9pc,t9optbl,t9gprBank,lr}
 	ldr t9optbl,=tlcs900HState
 	bl loadTLCS900
 	bl TestIntHDMA
 	bl storeTLCS900
-	ldmfd sp!,{t9f,t9gprBank,t9pc,t9optbl,lr}
+	ldmfd sp!,{t9f,t9pc,t9optbl,t9gprBank,lr}
 	bx lr
 ;@---------------------------------------------------------------------------
 setInterruptNoTest:			;@ r0 = index

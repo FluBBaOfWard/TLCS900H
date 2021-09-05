@@ -4,11 +4,11 @@
 
 
 extern u8 statusRFP;
-extern int8 registersOfsMap[4][256];
-extern uint8 *currentGprBank;
+extern s8 registersOfsMap[4][256];
+extern u8 *currentGprBank;
 
 #define rCodeB(r)	(*(currentGprBank+registersOfsMap[statusRFP][(r)]))
-#define rCodeW(r)	(*((uint16*)currentGprBank+registersOfsMap[statusRFP][(r) & ~1]))
-#define rCodeL(r)	(*((uint32*)currentGprBank+registersOfsMap[statusRFP][(r) & ~3]))
+#define rCodeW(r)	(*((u16*)currentGprBank+registersOfsMap[statusRFP][(r) & ~1]))
+#define rCodeL(r)	(*((u32*)currentGprBank+registersOfsMap[statusRFP][(r) & ~3]))
 
 #endif	// __TLCS900H_REGISTERS__
