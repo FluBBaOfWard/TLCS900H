@@ -42,7 +42,7 @@
 #ifdef NDS
 	.section .dtcm, "ax", %progbits		;@ For the NDS
 #elif GBA
-	.section .ewram, "ax", %progbits	;@ For the GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text						;@ For anything else
 #endif

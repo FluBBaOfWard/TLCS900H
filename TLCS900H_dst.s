@@ -15,12 +15,14 @@
 	.syntax unified
 	.arm
 
-;@----------------------------------------------------------------------------
-#ifdef GBA
-	.section .ewram, "ax"		;@ For the GBA
+#ifdef NDS
+	.section .itcm						;@ For the NDS ARM9
+#elif GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text				;@ For everything else
 #endif
+	.align 2
 ;@----------------------------------------------------------------------------
 dstExXRR:
 	and t9Reg,t9opCode,#0x07

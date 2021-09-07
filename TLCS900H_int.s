@@ -17,12 +17,12 @@
 	.global int_read8
 
 
-;@---------------------------------------------------------------------------
 #ifdef GBA
 	.section .ewram, "ax"		;@ For the GBA
 #else
 	.section .text				;@ For everything else
 #endif
+	.align 2
 ;@---------------------------------------------------------------------------
 resetDMA:
 ;@---------------------------------------------------------------------------
@@ -246,7 +246,14 @@ int_rd_7F:
 	bx lr
 
 ;@---------------------------------------------------------------------------
-	.section .ewram, "ax"
+#ifdef NDS
+	.section .itcm						;@ For the NDS ARM9
+#elif GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
+#else
+	.section .text				;@ For everything else
+#endif
+	.align 2
 ;@---------------------------------------------------------------------------
 interrupt:					;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------

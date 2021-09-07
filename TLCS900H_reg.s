@@ -14,10 +14,11 @@
 	.arm
 
 #ifdef GBA
-	.section .ewram, "ax"		;@ For the GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text				;@ For everything else
 #endif
+	.align 2
 ;@----------------------------------------------------------------------------
 ;@ 71 size checks.
 ;@----------------------------------------------------------------------------

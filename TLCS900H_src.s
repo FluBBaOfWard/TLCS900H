@@ -15,7 +15,14 @@
 	.syntax unified
 	.arm
 
-	.section .ewram, "ax"
+#ifdef NDS
+	.section .itcm						;@ For the NDS ARM9
+#elif GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
+#else
+	.section .text				;@ For everything else
+#endif
+	.align 2
 ;@----------------------------------------------------------------------------
 ;@ 49 size checks.
 ;@----------------------------------------------------------------------------
