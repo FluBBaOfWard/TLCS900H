@@ -940,6 +940,18 @@ tlcs900HSaveState:			;@ In r0=destination, r1=t9optbl. Out r0=size.
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,t9optbl,lr}
 
+	mov r4,r0
+	mov t9optbl,r1
+
+	mov r2,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
+	bl memcpy
+
+	;@ Convert copied PC to not offseted.
+	ldr r0,[r4,#tlcs_PcAsm]			;@ Offsetted tlcs_pc
+	ldr r2,[t9optbl,#tlcs_LastBank]
+	sub r0,r0,r2
+	str r0,[r4,#tlcs_PcAsm]			;@ Normal tlcs_pc
+
 	ldmfd sp!,{r4,t9optbl,lr}
 	mov r0,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
 	bx lr
@@ -948,6 +960,14 @@ tlcs900HLoadState:			;@ In r0=t9optbl, r1=source. Out r0=size.
 	.type   tlcs900HLoadState STT_FUNC
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{t9pc,t9optbl,lr}
+
+	mov t9optbl,r0
+	mov r2,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
+	bl memcpy
+
+	ldr t9pc,[t9optbl,#tlcs_PcAsm]	;@ Normal tlcs_pc
+	bl reencode_pc
+	str t9pc,[t9optbl,#tlcs_PcAsm]	;@ Rewrite offseted tlcs_pc
 
 	ldmfd sp!,{t9pc,t9optbl,lr}
 ;@----------------------------------------------------------------------------
@@ -973,7 +993,6 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 #endif
 ;@----------------------------------------------------------------------------
 tlcs900HState:
-errVal:
 	.long 0			;@ tlcs_ErrorVal
 gprBank:
 	.space 4*8*4	;@ tlcs_GprBank
