@@ -2,6 +2,9 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.4.3 - 2021-10-01 (FluBBa)
+	Fixed DAA opcode.
+
 V0.4.2 - 2021-09-02 (FluBBa)
 	Bug fixes.
 
