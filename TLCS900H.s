@@ -92,7 +92,10 @@ tlcsRestoreAndRunXCycles:				;@ r0 = cycles to add
 tlcsRunXCycles:							;@ r0 = cycles to add
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9optbl,#tlcs_cycShift]
-	adds t9cycles,t9cycles,r0,lsl r1
+	add t9cycles,t9cycles,r0,lsl r1
+	bl updateTimers				;@ updateTimers(int cycles)
+	cmp t9cycles,#0
+
 tlcs_loop:
 #ifdef DEBUG
 	ldr r12,[t9optbl,#tlcs_LastBank]
@@ -162,8 +165,6 @@ asmE:
 	ldr r0,=0xEEEEEEEE
 	b asmE
 tlcsEnd:
-	ldr r0,=T9_HINT_RATE
-	bl updateTimers				;@ UpdateTimers(int cycles)
 	bl storeTLCS900
 	b tlcs_return
 ;@----------------------------------------------------------------------------

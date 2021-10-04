@@ -514,27 +514,8 @@ updateTimers:				;@ r0 = cputicks (515)
 
 	mov r6,r0
 	mov r5,#0					;@ r5 = h_int / timer0 / timer1
-	ldr r3,=T9_HINT_RATE
-	ldr r0,[t9optbl,#tlcs_TimerHInt]
-	add r0,r0,r6
-	cmp r0,r3
-	subpl r0,r0,r3
-	str r0,[t9optbl,#tlcs_TimerHInt]
-	bmi noHInt
-
-	ldr geptr,=k2GE_0
-	bl GetHInt
-	mov r5,r0
-		;@ //Comms. Read interrupt
-		;@ if ((COMMStatus & 1) == 0 && system_comms_poll(&data))
-		;@ {
-		;@	t9StoreB(data, 0x50);
-		;@	TestIntHDMA(0x19);
-		;@ }
-noHInt:
 	ldrb r3,[t9optbl,#tlcs_TRun]
 	tst r3,#0x01
-	moveq r5,#0					;@ timer0 = FALSE
 	beq noTimer0
 ;@----------------------------------------------------------------------------
 								;@ TIMER0
@@ -545,8 +526,18 @@ noHInt:
 	ands r1,r1,#0x03
 	bne t0c2
 t0c0:							;@ TIMER0 case 0
-		cmp r5,#0				;@ HInt
-		mov r5,#0
+		ldr r1,=T9_HINT_RATE
+		ldr r0,[t9optbl,#tlcs_TimerHInt]
+		add r0,r0,r6
+		cmp r0,r1
+		subpl r0,r0,r1
+		str r0,[t9optbl,#tlcs_TimerHInt]
+		bmi timer0End
+		stmfd sp!,{geptr}
+		ldr geptr,=k2GE_0
+		bl GetHInt
+		ldmfd sp!,{geptr}
+		cmp r0,#0				;@ HInt
 		addne r2,r2,#1
 		movne r12,#0
 		b timer0End
@@ -623,12 +614,7 @@ noTimer1:
 	add r12,r12,r6				;@ r6 = cputicks
 	ldrb r1,[t9optbl,#tlcs_T23Mod]
 	ands r1,r1,#0x03
-;@	bne t2c2
 	beq timer2End				;@ TIMER2 case 0, nothing
-;@t2c0:
-;@		cmp r5,#0
-;@		addne r2,r2,#1
-;@		movne r12,#0
 
 t2c2:
 	cmp r1,#0x02

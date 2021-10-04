@@ -488,17 +488,16 @@ regDAA:						;@ Decimal Adjust Accumulator
 	tstcc t9f,t9f,lsr#2			;@ PSR_C to carry.
 	biccc r0,r0,#0x60000000
 
-	tst t9f,t9f,lsr#2			;@ PSR_C to carry.
-	ands t9f,t9f,#PSR_n			;@ Check if last instruction was add or sub.
-	orrcs t9f,t9f,#PSR_C		;@ The ands doesn't change carry as long as it doesn't have to shift the imidiate value.
+	and t9f,t9f,#PSR_n|PSR_C	;@ Mask out flags.
+	tst t9f,#PSR_n				;@ Check if last instruction was add or sub.
 
-	beq notSub
+	beq itWasAdd
 	subs r2,r2,r0
-	orrcc t9f,t9f,#PSR_C		;@ Weird.
+	orrcc t9f,t9f,#PSR_C
 	b carryDone
-notSub:
-	addseq r2,r2,r0
-	orrcs t9f,t9f,#PSR_C		;@ Weird.
+itWasAdd:
+	adds r2,r2,r0
+	orrcs t9f,t9f,#PSR_C
 carryDone:
 	add r0,t9optbl,#tlcs_pzst
 	ldrb r0,[r0,r2,lsr#24]		;@ Get PZS
