@@ -519,9 +519,7 @@ updateTimers:				;@ r0 = cputicks (515)
 	beq noTimer0
 ;@----------------------------------------------------------------------------
 								;@ TIMER0
-	ldr r12,[t9optbl,#tlcs_TimerClock]
 	ldrb r2,[t9optbl,#tlcs_Timer]
-	add r12,r12,r6				;@ r6 = cputicks
 	ldrb r1,[t9optbl,#tlcs_T01Mod]
 	ands r1,r1,#0x03
 	bne t0c2
@@ -533,13 +531,10 @@ t0c0:							;@ TIMER0 case 0
 		subpl r0,r0,r1
 		str r0,[t9optbl,#tlcs_TimerHInt]
 		bmi timer0End
-		stmfd sp!,{geptr}
 		ldr geptr,=k2GE_0
 		bl GetHInt
-		ldmfd sp!,{geptr}
 		cmp r0,#0				;@ HInt
 		addne r2,r2,#1
-		movne r12,#0
 		b timer0End
 
 t0c2:
@@ -547,19 +542,20 @@ t0c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER0 case 1
 	ldreq r0,=TIMER_T4_RATE		;@ TIMER0 case 2
 	ldrhi r0,=TIMER_T16_RATE	;@ TIMER0 case 3
+	ldr r12,[t9optbl,#tlcs_TimerClock]
+	add r12,r12,r6				;@ r6 = cputicks
 t0c2Loop:
 		cmp r12,r0
 		subpl r12,r12,r0
 		addpl r2,r2,#1
 		bpl t0c2Loop
+		str r12,[t9optbl,#tlcs_TimerClock]
 
 timer0End:
-	mov r5,#0					;@ Timer0 = False
-	str r12,[t9optbl,#tlcs_TimerClock]
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold]
 	cmp r0,#1
 	cmppl r2,r0
-	movpl r2,#0
+	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer]
 	movpl r5,#1					;@ Timer0 = TRUE
 	movpl r0,#0x10
@@ -570,9 +566,7 @@ noTimer0:
 	beq noTimer1
 ;@----------------------------------------------------------------------------
 								;@ TIMER1
-	ldr r12,[t9optbl,#tlcs_TimerClock+4]
 	ldrb r2,[t9optbl,#tlcs_Timer+1]
-	add r12,r12,r6				;@ r6 = cputicks
 	ldrb r1,[t9optbl,#tlcs_T01Mod]
 	ands r1,r1,#0x0C
 	bne t1c2
@@ -587,18 +581,20 @@ t1c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER1 case 1
 	ldreq r0,=TIMER_T16_RATE	;@ TIMER1 case 2
 	ldrhi r0,=TIMER_T256_RATE	;@ TIMER1 case 3
+	ldr r12,[t9optbl,#tlcs_TimerClock+4]
+	add r12,r12,r6				;@ r6 = cputicks
 t1c2Loop:
 		cmp r12,r0
 		subpl r12,r12,r0
 		addpl r2,r2,#1
 		bpl t1c2Loop
+		str r12,[t9optbl,#tlcs_TimerClock+4]
 
 timer1End:
-	str r12,[t9optbl,#tlcs_TimerClock+4]
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold+1]
 	cmp r0,#1
 	cmppl r2,r0
-	movpl r2,#0
+	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+1]
 	movpl r0,#0x11
 	blpl TestIntHDMA
@@ -609,9 +605,7 @@ noTimer1:
 	beq noTimer2
 ;@----------------------------------------------------------------------------
 								;@ TIMER2
-	ldr r12,[t9optbl,#tlcs_TimerClock+8]
 	ldrb r2,[t9optbl,#tlcs_Timer+2]
-	add r12,r12,r6				;@ r6 = cputicks
 	ldrb r1,[t9optbl,#tlcs_T23Mod]
 	ands r1,r1,#0x03
 	beq timer2End				;@ TIMER2 case 0, nothing
@@ -621,18 +615,20 @@ t2c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER2 case 1
 	ldreq r0,=TIMER_T4_RATE		;@ TIMER2 case 2
 	ldrhi r0,=TIMER_T16_RATE	;@ TIMER2 case 3
+	ldr r12,[t9optbl,#tlcs_TimerClock+8]
+	add r12,r12,r6				;@ r6 = cputicks
 t2c2Loop:
 		cmp r12,r0
 		subpl r12,r12,r0
 		addpl r2,r2,#1
 		bpl t2c2Loop
+		str r12,[t9optbl,#tlcs_TimerClock+8]
 
 timer2End:
-	str r12,[t9optbl,#tlcs_TimerClock+8]
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold+2]
 	cmp r0,#1
 	cmppl r2,r0
-	movpl r2,#0
+	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+2]
 	movpl r5,#1					;@ Timer2 = TRUE
 	movpl r0,#0x12
@@ -643,16 +639,13 @@ noTimer2:
 	beq noTimer3
 ;@----------------------------------------------------------------------------
 								;@ TIMER3
-	ldr r12,[t9optbl,#tlcs_TimerClock+12]
 	ldrb r2,[t9optbl,#tlcs_Timer+3]
-	add r12,r12,r6				;@ r6 = cputicks
 	ldrb r1,[t9optbl,#tlcs_T23Mod]
 	ands r1,r1,#0x0C
 	bne t3c2
 t3c0:							;@ TIMER3 case 0
 		cmp r5,#0				;@ Timer2 chain
 		addne r2,r2,#1
-		movne r12,#0
 		b timer3End
 
 t3c2:
@@ -660,18 +653,20 @@ t3c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER3 case 1
 	ldreq r0,=TIMER_T16_RATE	;@ TIMER3 case 2
 	ldrhi r0,=TIMER_T256_RATE	;@ TIMER3 case 3
+	ldr r12,[t9optbl,#tlcs_TimerClock+12]
+	add r12,r12,r6				;@ r6 = cputicks
 t3c2Loop:
 		cmp r12,r0
 		subpl r12,r12,r0
 		addpl r2,r2,#1
 		bpl t3c2Loop
+		str r12,[t9optbl,#tlcs_TimerClock+12]
 
 timer3End:
-	str r12,[t9optbl,#tlcs_TimerClock+12]
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold+3]
 	cmp r0,#1
 	cmppl r2,r0
-	movpl r2,#0
+	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+3]
 	bmi noTimer3
 	mov r0,#1
