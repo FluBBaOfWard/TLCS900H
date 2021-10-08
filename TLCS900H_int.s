@@ -5,7 +5,7 @@
 
 	.global intCheckPending
 	.global updateTimers
-	.global setInterruptNoTest
+	.global setInterrupt
 	.global TestIntHDMA
 	.global TestIntHDMA_External
 	.global resetDMA
@@ -257,11 +257,33 @@ int_rd_7F:
 ;@---------------------------------------------------------------------------
 interrupt:					;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------
-	stmfd sp!,{r0,r1,lr}
-
-	mov r1,#0
+	mov r3,#0
 	add r2,t9optbl,#tlcs_ipending
-	strb r1,[r2,r0]
+	strb r3,[r2,r0]
+;@---------------------------------------------------------------------------
+;@TestIntHDMA:				;@ r0 = index
+;@---------------------------------------------------------------------------
+	ldr r2,[t9optbl,#tlcs_DMAStartVector]
+	and r3,r2,#0xFF
+	cmp r3,r0
+	moveq r0,#0
+	beq DMA_update
+
+	and r3,r2,#0xFF00
+	cmp r3,r0,lsl#8
+	moveq r0,#1
+	beq DMA_update
+
+	and r3,r2,#0xFF0000
+	cmp r3,r0,lsl#16
+	moveq r0,#2
+	beq DMA_update
+
+	cmp r0,r2,lsr#24
+	moveq r0,#3
+	beq DMA_update
+;@---------------------------------------------------------------------------
+	stmfd sp!,{r0,r1,lr}
 
 	ldrb r1,[t9pc]
 	cmp r1,#0x05				;@ Halt?
@@ -272,12 +294,6 @@ interrupt:					;@ r0 = index, r1 = int level
 	bl push32
 	bl pushSR
 
-	ldmfd sp!,{r0}				;@ Int level
-	add r0,r0,#0x01
-	cmp r0,#0x07
-	movhi r0,#0x07
-	bl setStatusIFF
-
 	;@ INTNEST should be updated too.
 
 	;@ Access the interrupt vector table to find the jump destination
@@ -286,6 +302,12 @@ interrupt:					;@ r0 = index, r1 = int level
 	add r0,r1,r0,lsl#2
 	bl t9LoadL
 	bl encode_r0_pc
+
+	ldmfd sp!,{r0}				;@ Int level
+	add r0,r0,#0x01
+	cmp r0,#0x07
+	movhi r0,#0x07
+	bl setStatusIFF
 
 interruptEnd:
 	ldmfd sp!,{lr}
@@ -303,7 +325,7 @@ TestIntHDMA_External:		;@ r0 = index
 	ldmfd sp!,{t9f,t9pc,t9optbl,t9gprBank,lr}
 	bx lr
 ;@---------------------------------------------------------------------------
-setInterruptNoTest:			;@ r0 = index
+setInterrupt:				;@ r0 = index
 ;@---------------------------------------------------------------------------
 	mov r1,#0x07
 	add r2,t9optbl,#tlcs_ipending
@@ -312,28 +334,8 @@ setInterruptNoTest:			;@ r0 = index
 ;@---------------------------------------------------------------------------
 TestIntHDMA:				;@ r0 = index
 ;@---------------------------------------------------------------------------
-	ldr r2,[t9optbl,#tlcs_DMAStartVector]
-	and r1,r2,#0xFF
-	cmp r1,r0
-	moveq r0,#0
-	beq DMA_update
-
-	and r1,r2,#0xFF00
-	cmp r1,r0,lsl#8
-	moveq r0,#1
-	beq DMA_update
-
-	and r1,r2,#0xFF0000
-	cmp r1,r0,lsl#16
-	moveq r0,#2
-	beq DMA_update
-
-	cmp r0,r2,lsr#24
-	moveq r0,#3
-	beq DMA_update
-
 ;@---------------------------------------------------------------------------
-setInterrupt:					;@ r0 = index
+setAndTestInterrupt:					;@ r0 = index
 ;@---------------------------------------------------------------------------
 	mov r1,#0x07
 	add r2,t9optbl,#tlcs_ipending
@@ -343,7 +345,7 @@ intCheckPending:
 ;@---------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	bl statusIFF
-	adr lr,intCheckEnd
+	ldmfd sp!,{lr}
 	add r2,t9optbl,#tlcs_ipending
 	add r3,t9optbl,#tlcs_IntPrio
 
@@ -506,8 +508,6 @@ intDontCheck_0x0A:
 	movne r0,#0x09
 	bne interrupt
 
-intCheckEnd:
-	ldmfd sp!,{lr}
 	bx lr
 ;@----------------------------------------------------------------------------
 updateTimers:				;@ r0 = cputicks (515)
@@ -561,7 +561,7 @@ timer0End:
 	strb r2,[t9optbl,#tlcs_Timer]
 	movpl r5,#1					;@ Timer0 = TRUE
 	movpl r0,#0x10
-	blpl TestIntHDMA
+	blpl setInterrupt
 
 noTimer0:
 	tst r4,#0x02
@@ -598,7 +598,7 @@ timer1End:
 	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+1]
 	movpl r0,#0x11
-	blpl TestIntHDMA
+	blpl setInterrupt
 
 noTimer1:
 	mov r5,#0					;@ Timer2 = FALSE
@@ -633,7 +633,7 @@ timer2End:
 	strb r2,[t9optbl,#tlcs_Timer+2]
 	movpl r5,#1					;@ Timer2 = TRUE
 	movpl r0,#0x12
-	blpl TestIntHDMA
+	blpl setInterrupt
 
 noTimer2:
 	tst r4,#0x08
@@ -673,9 +673,10 @@ timer3End:
 	mov r0,#1
 	bl cpu1SetIRQ
 	mov r0,#0x13
-	bl TestIntHDMA
+	bl setInterrupt
 
 noTimer3:
+	bl intCheckPending
 	ldmfd sp!,{r4-r6,lr}
 	bx lr
 ;@----------------------------------------------------------------------------
