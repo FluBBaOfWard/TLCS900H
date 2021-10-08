@@ -3,11 +3,10 @@ TLCS900H To do
 
 	Optimise DAA.
 	B/W/L tables for reg opcodes.
-	Rewrite interrupts to set pins instead of directly causing interrups.
 	Better loading/saving of register state
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Move memory area 0x00-0xFF from io.s to cpu core.
 
-	Checkout the interrupts.
+	Sort interrupts according to priority before executing them?
 	SLL should insert 1 into bit#0 like on Z80?
 	PUSH and POP are used from BIOS and interrupts!!!

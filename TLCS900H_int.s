@@ -6,7 +6,7 @@
 	.global intCheckPending
 	.global updateTimers
 	.global setInterrupt
-	.global TestIntHDMA_External
+	.global setInterruptExternal
 	.global resetDMA
 	.global resetTimers
 	.global resetInterrupts
@@ -313,15 +313,13 @@ interruptEnd:
 	bx lr
 
 ;@---------------------------------------------------------------------------
-TestIntHDMA_External:		;@ r0 = index
-	.type TestIntHDMA_External STT_FUNC
+setInterruptExternal:		;@ r0 = index
+	.type setInterruptExternal STT_FUNC
 ;@---------------------------------------------------------------------------
-	stmfd sp!,{t9f,t9pc,t9optbl,t9gprBank,lr}
+	stmfd sp!,{t9optbl,lr}
 	ldr t9optbl,=tlcs900HState
-	bl loadTLCS900
-	bl setAndTestInterrupt
-	bl storeTLCS900
-	ldmfd sp!,{t9f,t9pc,t9optbl,t9gprBank,lr}
+	bl setInterrupt
+	ldmfd sp!,{t9optbl,lr}
 	bx lr
 ;@---------------------------------------------------------------------------
 setInterrupt:				;@ r0 = index
@@ -330,12 +328,6 @@ setInterrupt:				;@ r0 = index
 	add r2,t9optbl,#tlcs_ipending
 	strb r1,[r2,r0]
 	bx lr
-;@---------------------------------------------------------------------------
-setAndTestInterrupt:		;@ r0 = index
-;@---------------------------------------------------------------------------
-	mov r1,#0x07
-	add r2,t9optbl,#tlcs_ipending
-	strb r1,[r2,r0]
 ;@---------------------------------------------------------------------------
 intCheckPending:
 ;@---------------------------------------------------------------------------
