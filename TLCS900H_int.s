@@ -57,10 +57,10 @@ resetInterrupts:
 int_write8:					;@ r0 = value, r1 = address
 ;@---------------------------------------------------------------------------
 	mov r1,r1,lsl#28
-	and r2,r0,#0x77
+	and r2,r0,#0x70
 	cmp r2,#0x70
-	bicpl r0,r0,#0x70
-	and r2,r2,#0x07
+	biceq r0,r0,#0x70
+	and r2,r0,#0x07
 	cmp r2,#0x07
 	biceq r0,r0,#0x07
 	add r2,t9optbl,#tlcs_IntPrio
@@ -259,17 +259,24 @@ interrupt:					;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------
 	stmfd sp!,{r0,r1,lr}
 
+	mov r1,#0
+	add r2,t9optbl,#tlcs_ipending
+	strb r1,[r2,r0]
+
 	ldrb r1,[t9pc]
 	cmp r1,#0x05				;@ Halt?
 	addeq t9pc,t9pc,#1
 
-	mov r1,#0
-	add r2,t9optbl,#tlcs_ipending
-	strb r1,[r2,r0]
 	ldr r0,[t9optbl,#tlcs_LastBank]
 	sub r0,t9pc,r0
 	bl push32
 	bl pushSR
+
+	ldmfd sp!,{r0}				;@ Int level
+	add r0,r0,#0x01
+	cmp r0,#0x07
+	movhi r0,#0x07
+	bl setStatusIFF
 
 	;@ INTNEST should be updated too.
 
@@ -279,11 +286,6 @@ interrupt:					;@ r0 = index, r1 = int level
 	add r0,r1,r0,lsl#2
 	bl t9LoadL
 	bl encode_r0_pc
-
-	ldmfd sp!,{r0}				;@ Int level
-	add r0,r0,#0x01
-	ands r0,r0,#0x07
-	blne setStatusIFF
 
 interruptEnd:
 	ldmfd sp!,{lr}
@@ -510,12 +512,12 @@ intCheckEnd:
 ;@----------------------------------------------------------------------------
 updateTimers:				;@ r0 = cputicks (515)
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r5-r6,lr}
+	stmfd sp!,{r4-r6,lr}
 
 	mov r6,r0
 	mov r5,#0					;@ r5 = h_int / timer0 / timer1
-	ldrb r3,[t9optbl,#tlcs_TRun]
-	tst r3,#0x01
+	ldrb r4,[t9optbl,#tlcs_TRun]
+	tst r4,#0x01
 	beq noTimer0
 ;@----------------------------------------------------------------------------
 								;@ TIMER0
@@ -524,13 +526,13 @@ updateTimers:				;@ r0 = cputicks (515)
 	ands r1,r1,#0x03
 	bne t0c2
 t0c0:							;@ TIMER0 case 0
-		ldr r1,=T9_HINT_RATE
-		ldr r0,[t9optbl,#tlcs_TimerHInt]
-		add r0,r0,r6
-		cmp r0,r1
-		subpl r0,r0,r1
-		str r0,[t9optbl,#tlcs_TimerHInt]
-		bmi timer0End
+		ldr r0,=T9_HINT_RATE
+		ldr r12,[t9optbl,#tlcs_TimerHInt]
+		add r12,r12,r6
+		cmp r12,r0
+		subpl r12,r12,r0
+		str r12,[t9optbl,#tlcs_TimerHInt]
+		bmi noTimer0
 		ldr geptr,=k2GE_0
 		bl GetHInt
 		cmp r0,#0				;@ HInt
@@ -562,7 +564,7 @@ timer0End:
 	blpl TestIntHDMA
 
 noTimer0:
-	tst r3,#0x02
+	tst r4,#0x02
 	beq noTimer1
 ;@----------------------------------------------------------------------------
 								;@ TIMER1
@@ -573,7 +575,6 @@ noTimer0:
 t1c0:							;@ TIMER1 case 0
 		cmp r5,#0				;@ Timer0 chain
 		addne r2,r2,#1
-		movne r12,#0
 		b timer1End
 
 t1c2:
@@ -601,14 +602,14 @@ timer1End:
 
 noTimer1:
 	mov r5,#0					;@ Timer2 = FALSE
-	tst r3,#0x04
+	tst r4,#0x04
 	beq noTimer2
 ;@----------------------------------------------------------------------------
 								;@ TIMER2
 	ldrb r2,[t9optbl,#tlcs_Timer+2]
 	ldrb r1,[t9optbl,#tlcs_T23Mod]
 	ands r1,r1,#0x03
-	beq timer2End				;@ TIMER2 case 0, nothing
+	beq noTimer2				;@ TIMER2 case 0, nothing
 
 t2c2:
 	cmp r1,#0x02
@@ -635,7 +636,7 @@ timer2End:
 	blpl TestIntHDMA
 
 noTimer2:
-	tst r3,#0x08
+	tst r4,#0x08
 	beq noTimer3
 ;@----------------------------------------------------------------------------
 								;@ TIMER3
@@ -675,7 +676,7 @@ timer3End:
 	bl TestIntHDMA
 
 noTimer3:
-	ldmfd sp!,{r5-r6,lr}
+	ldmfd sp!,{r4-r6,lr}
 	bx lr
 ;@----------------------------------------------------------------------------
 DMA_update:					;@ r0 = channel
@@ -887,7 +888,7 @@ DMA_Finnish:
 	bne dmaEnd
 	add r0,r5,#0x1D
 	bl setInterrupt
-	add r1,r5,#0x7C
+	add r1,r5,#0x7C				;@ Clear old vector.
 	mov r0,#0
 	bl t9StoreB
 dmaEnd:
@@ -898,6 +899,12 @@ timer_read8:				;@ r0 = address, Bios reads from 0x20, 0x25 & 0x28 at least
 ;@----------------------------------------------------------------------------
 	cmp r0,#0x20
 	ldreqb r0,[t9optbl,#tlcs_TRun]
+	bxeq lr
+	cmp r0,#0x24
+	ldreqb r0,[t9optbl,#tlcs_T01Mod]
+	bxeq lr
+	cmp r0,#0x25
+	ldreqb r0,[t9optbl,#tlcs_tffcr]
 	bxeq lr
 	cmp r0,#0x28
 	ldreqb r0,[t9optbl,#tlcs_T23Mod]
