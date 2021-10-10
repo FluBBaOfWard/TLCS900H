@@ -522,9 +522,8 @@ t0c0:							;@ TIMER0 case 0
 		str r12,[t9optbl,#tlcs_TimerHInt]
 		bmi noTimer0
 		ldr geptr,=k2GE_0
-		bl GetHInt
-		cmp r0,#0				;@ HInt
-		addne r2,r2,#1
+		bl GetHInt				;@ HInt, this should only return 0 or 1.
+		add r2,r2,r0
 		b timer0End
 
 t0c2:
@@ -536,15 +535,16 @@ t0c2:
 	add r12,r12,r6				;@ r6 = cputicks
 t0c2Loop:
 		cmp r12,r0
-		subpl r12,r12,r0
 		addpl r2,r2,#1
+		subpl r12,r12,r0
 		bpl t0c2Loop
 		str r12,[t9optbl,#tlcs_TimerClock]
 
 timer0End:
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold]
-	cmp r0,#1
-	cmppl r2,r0
+	cmp r0,#0
+	moveq r0,#0x100
+	cmp r2,r0
 	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer]
 	movpl r5,#1					;@ Timer0 = TRUE
@@ -561,8 +561,7 @@ noTimer0:
 	ands r1,r1,#0x0C
 	bne t1c2
 t1c0:							;@ TIMER1 case 0
-		cmp r5,#0				;@ Timer0 chain
-		addne r2,r2,#1
+		add r2,r2,r5			;@ Timer0 chain
 		b timer1End
 
 t1c2:
@@ -574,15 +573,16 @@ t1c2:
 	add r12,r12,r6				;@ r6 = cputicks
 t1c2Loop:
 		cmp r12,r0
-		subpl r12,r12,r0
 		addpl r2,r2,#1
+		subpl r12,r12,r0
 		bpl t1c2Loop
 		str r12,[t9optbl,#tlcs_TimerClock+4]
 
 timer1End:
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold+1]
-	cmp r0,#1
-	cmppl r2,r0
+	cmp r0,#0
+	moveq r0,#0x100
+	cmp r2,r0
 	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+1]
 	movpl r0,#0x11
@@ -594,10 +594,10 @@ noTimer1:
 	beq noTimer2
 ;@----------------------------------------------------------------------------
 								;@ TIMER2
-	ldrb r2,[t9optbl,#tlcs_Timer+2]
 	ldrb r1,[t9optbl,#tlcs_T23Mod]
 	ands r1,r1,#0x03
 	beq noTimer2				;@ TIMER2 case 0, nothing
+	ldrb r2,[t9optbl,#tlcs_Timer+2]
 
 t2c2:
 	cmp r1,#0x02
@@ -608,15 +608,16 @@ t2c2:
 	add r12,r12,r6				;@ r6 = cputicks
 t2c2Loop:
 		cmp r12,r0
-		subpl r12,r12,r0
 		addpl r2,r2,#1
+		subpl r12,r12,r0
 		bpl t2c2Loop
 		str r12,[t9optbl,#tlcs_TimerClock+8]
 
 timer2End:
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold+2]
-	cmp r0,#1
-	cmppl r2,r0
+	cmp r0,#0
+	moveq r0,#0x100
+	cmp r2,r0
 	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+2]
 	movpl r5,#1					;@ Timer2 = TRUE
@@ -633,8 +634,7 @@ noTimer2:
 	ands r1,r1,#0x0C
 	bne t3c2
 t3c0:							;@ TIMER3 case 0
-		cmp r5,#0				;@ Timer2 chain
-		addne r2,r2,#1
+		add r2,r2,r5			;@ Timer2 chain
 		b timer3End
 
 t3c2:
@@ -646,15 +646,16 @@ t3c2:
 	add r12,r12,r6				;@ r6 = cputicks
 t3c2Loop:
 		cmp r12,r0
-		subpl r12,r12,r0
 		addpl r2,r2,#1
+		subpl r12,r12,r0
 		bpl t3c2Loop
 		str r12,[t9optbl,#tlcs_TimerClock+12]
 
 timer3End:
 	ldrb r0,[t9optbl,#tlcs_TimerThreshold+3]
-	cmp r0,#1
-	cmppl r2,r0
+	cmp r0,#0
+	moveq r0,#0x100
+	cmp r2,r0
 	subpl r2,r2,r0
 	strb r2,[t9optbl,#tlcs_Timer+3]
 	bmi noTimer3
