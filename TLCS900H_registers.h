@@ -1,3 +1,10 @@
+//
+//  TLCS900H_registers.h
+//  TLCS900H
+//
+//  Created by Fredrik Ahlström on 2008-04-02.
+//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//
 
 #ifndef __TLCS900H_REGISTERS__
 #define __TLCS900H_REGISTERS__

@@ -1,3 +1,11 @@
+//
+//  TLCS900H.h
+//  TLCS900H
+//
+//  Created by Fredrik Ahlström on 2008-04-02.
+//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//
+
 #ifndef TLCS900H_HEADER
 #define TLCS900H_HEADER
 

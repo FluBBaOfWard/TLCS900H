@@ -1,3 +1,10 @@
+//
+//  TLCS900H.i
+//  TLCS900H
+//
+//  Created by Fredrik Ahlström on 2008-04-02.
+//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//
 
 				;@ r0,r1,r2&r3=temp regs
 t9Mem			.req r4	;@ Used by src and dst opcodes

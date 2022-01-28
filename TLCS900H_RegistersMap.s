@@ -1,7 +1,12 @@
-#ifdef __arm__
+//
+//  TLCS900H_RegistersMap.s
+//  TLCS900H
+//
+//  Created by Fredrik Ahlström on 2008-04-02.
+//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//
 
-/*
-*/
+#ifdef __arm__
 
 	.equ BANK0C0,  0x00
 	.equ BANK1C0,  0x20
