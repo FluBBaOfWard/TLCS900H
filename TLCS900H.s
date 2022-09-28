@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -11,14 +11,13 @@
 #include "TLCS900H_mac.h"
 
 	.global tlcs900HReset
-	.global tlcs900HSetIRQPin
-	.global tlcs900HSetNMIPin
-	.global tlcs900HSetResetPin
+	.global tlcsRestoreAndRunXCycles
+	.global tlcsRunXCycles
 	.global tlcs900HSaveState
 	.global tlcs900HLoadState
 	.global tlcs900HGetStateSize
 	.global tlcs900HRedirectOpcode
-	.global tlcs900HState
+	.global tlcsLoop
 	.global push8
 	.global push16
 	.global push32
@@ -67,18 +66,9 @@
 	.global storeTLCS900
 	.global loadTLCS900
 
-	.global tlcsRestoreAndRunXCycles
-	.global tlcsRunXCycles
-	.global tlcs_loop
-	.global gprBank
+	.global tlcs900HState
 	.global statusRFP
 	.global currentGprBank
-
-	.global timer_threshold
-	.global T01MOD
-	.global T23MOD
-	.global TRDC
-	.global TFFCR
 
 ;@----------------------------------------------------------------------------
 	.syntax unified
@@ -95,18 +85,19 @@
 ;@----------------------------------------------------------------------------
 tlcsRestoreAndRunXCycles:				;@ r0 = cycles to add
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	bl loadTLCS900
 ;@----------------------------------------------------------------------------
 tlcsRunXCycles:							;@ r0 = cycles to add
 ;@----------------------------------------------------------------------------
-	ldrb r1,[t9optbl,#tlcs_cycShift]
+	ldrb r1,[t9optbl,#tlcsCycShift]
 	add t9cycles,t9cycles,r0,lsl r1
 	bl updateTimers				;@ updateTimers(int cycles)
 	cmp t9cycles,#0
 
-tlcs_loop:
+tlcsLoop:
 #ifdef DEBUG
-	ldr r12,[t9optbl,#tlcs_LastBank]
+	ldr r12,[t9optbl,#tlcsLastBank]
 	sub r12,t9pc,r12
 	mov r12,r12
 	b debugContinue
@@ -173,22 +164,21 @@ asmE:
 	ldr r0,=0xEEEEEEEE
 	b asmE
 tlcsEnd:
-	bl storeTLCS900
-	b tlcs_return
-;@----------------------------------------------------------------------------
-loadTLCS900:
-;@----------------------------------------------------------------------------
-	ldrb t9f,[t9optbl,#tlcs_f]
-	ldr t9cycles,[t9optbl,#tlcs_Cycles]
-	ldr t9pc,[t9optbl,#tlcs_PcAsm]
-	ldr t9gprBank,[t9optbl,#tlcs_CurrentGprBank]
-	bx lr
+	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
 storeTLCS900:
 ;@----------------------------------------------------------------------------
-	strb t9f,[t9optbl,#tlcs_f]
-	str t9pc,[t9optbl,#tlcs_PcAsm]
-	str t9cycles,[t9optbl,#tlcs_Cycles]
+	strb t9f,[t9optbl,#tlcsF]
+	str t9pc,[t9optbl,#tlcsPcAsm]
+	str t9cycles,[t9optbl,#tlcsCycles]
+	bx lr
+;@----------------------------------------------------------------------------
+loadTLCS900:
+;@----------------------------------------------------------------------------
+	ldrb t9f,[t9optbl,#tlcsF]
+	ldr t9cycles,[t9optbl,#tlcsCycles]
+	ldr t9pc,[t9optbl,#tlcsPcAsm]
+	ldr t9gprBank,[t9optbl,#tlcsCurrentGprBank]
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -210,7 +200,7 @@ pushSR:
 	and r1,t9f,#PSR_n
 	adc r0,r0,r1,lsr#6			;@ NF & CF
 
-	ldrb r1,[t9optbl,#tlcs_sr_b]
+	ldrb r1,[t9optbl,#tlcsSrB]
 	orr r1,r1,#0x88				;@ System and Maximum always set.
 	orr r0,r0,r1,lsl#8
 ;@----------------------------------------------------------------------------
@@ -260,7 +250,7 @@ ExR32:
 	cmp r0,#0x13
 	beq exr32_13
 
-	ldr r2,[t9optbl,#tlcs_CurrentMapBank]
+	ldr r2,[t9optbl,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
 	bic t9Reg,t9Reg,#3
 	ldr t9Mem,[t9gprBank,t9Reg]
@@ -277,7 +267,7 @@ exr32End:
 
 exr32_03:
 	ldrb r0,[t9pc],#1
-	ldr r2,[t9optbl,#tlcs_CurrentMapBank]
+	ldr r2,[t9optbl,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
 	bic t9Reg,t9Reg,#3
 	ldr t9Mem,[t9gprBank,t9Reg]
@@ -291,7 +281,7 @@ exr32_03:
 
 exr32_07:
 	ldrb r0,[t9pc],#1
-	ldr r2,[t9optbl,#tlcs_CurrentMapBank]
+	ldr r2,[t9optbl,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
 	bic t9Reg,t9Reg,#3
 	ldr t9Mem,[t9gprBank,t9Reg]
@@ -308,7 +298,7 @@ exr32_13:			;@ Used by LDAR
 	ldrb t9Mem,[t9pc],#1
 	ldrsb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
-	ldr r0,[t9optbl,#tlcs_LastBank]
+	ldr r0,[t9optbl,#tlcsLastBank]
 	sub r0,t9pc,r0
 	add t9Mem,t9Mem,r0
 	t9eatcycles 8				;@ Unconfirmed... doesn't make much difference
@@ -317,7 +307,7 @@ exr32_13:			;@ Used by LDAR
 ExDec:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldr r2,[t9optbl,#tlcs_CurrentMapBank]
+	ldr r2,[t9optbl,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
 	bic t9Reg,t9Reg,#3
 	ldr t9Mem,[t9gprBank,t9Reg]
@@ -335,7 +325,7 @@ ExDec:
 ExInc:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldr r2,[t9optbl,#tlcs_CurrentMapBank]
+	ldr r2,[t9optbl,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
 	bic t9Reg,t9Reg,#3
 	ldr t9Mem,[t9gprBank,t9Reg]
@@ -488,7 +478,7 @@ generic_DIV_W:				;@ r0= u32 val, r1= u16 div
 generic_AND_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	and r0,r0,r1
-	add r1,t9optbl,#tlcs_pzst
+	add r1,t9optbl,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orr t9f,t9f,#PSR_H
 
@@ -499,7 +489,7 @@ generic_AND_W:				;@ r0=dst, r1=src
 	and r0,r0,r1
 	movs r1,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcs_pzst
+	add r2,t9optbl,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	orr t9f,t9f,#PSR_H+PSR_S+PSR_Z
 	bicpl t9f,t9f,#PSR_S
@@ -512,7 +502,7 @@ generic_AND_L:				;@ r0=dst, r1=src
 	ands r0,r0,r1
 	eor r1,r0,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcs_pzst
+	add r2,t9optbl,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	orr t9f,t9f,#PSR_H+PSR_S+PSR_Z
 	bicpl t9f,t9f,#PSR_S
@@ -523,7 +513,7 @@ generic_AND_L:				;@ r0=dst, r1=src
 generic_OR_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	orr r0,r0,r1
-	add r1,t9optbl,#tlcs_pzst
+	add r1,t9optbl,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 
 	bx lr
@@ -533,7 +523,7 @@ generic_OR_W:				;@ r0=dst, r1=src
 	orr r0,r0,r1
 	movs r1,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcs_pzst
+	add r2,t9optbl,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -546,7 +536,7 @@ generic_OR_L:				;@ r0=dst, r1=src
 	orrs r0,r0,r1
 	eor r1,r0,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcs_pzst
+	add r2,t9optbl,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -557,7 +547,7 @@ generic_OR_L:				;@ r0=dst, r1=src
 generic_XOR_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	eor r0,r0,r1
-	add r1,t9optbl,#tlcs_pzst
+	add r1,t9optbl,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 
 	bx lr
@@ -567,7 +557,7 @@ generic_XOR_W:				;@ r0=dst, r1=src
 	eor r0,r0,r1
 	movs r1,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcs_pzst
+	add r2,t9optbl,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -580,7 +570,7 @@ generic_XOR_L:				;@ r0=dst, r1=src
 	eors r0,r0,r1
 	eor r1,r0,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcs_pzst
+	add r2,t9optbl,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -831,7 +821,7 @@ generic_SBC_L:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 statusIFF:					;@ r0 out = current IFF
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcs_sr_b]
+	ldrb r0,[t9optbl,#tlcsSrB]
 	mov r0,r0,lsr#4
 	and r0,r0,#0x7
 ;@	cmp r0,#1
@@ -841,43 +831,43 @@ statusIFF:					;@ r0 out = current IFF
 setStatusIFF:				;@ r0 = new IFF
 ;@----------------------------------------------------------------------------
 	and r1,r0,#0x07
-	ldrb r0,[t9optbl,#tlcs_sr_b]
+	ldrb r0,[t9optbl,#tlcsSrB]
 	bic r0,r0,#0x70
 	orr r0,r0,r1,lsl#4
-	strb r0,[t9optbl,#tlcs_sr_b]
+	strb r0,[t9optbl,#tlcsSrB]
 	bx lr
 ;@----------------------------------------------------------------------------
 setStatusRFP:				;@ r0 = new Register File Pointer
 ;@----------------------------------------------------------------------------
 	and r1,r0,#0x07
-	ldrb r0,[t9optbl,#tlcs_sr_b]
+	ldrb r0,[t9optbl,#tlcsSrB]
 	bic r0,r0,#0x07
 	orr r0,r0,r1
-	strb r0,[t9optbl,#tlcs_sr_b]
+	strb r0,[t9optbl,#tlcsSrB]
 ;@----------------------------------------------------------------------------
 changedSR:
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcs_sr_b]
-	ldrb r1,[t9optbl,#tlcs_StatusRFP]
+	ldrb r0,[t9optbl,#tlcsSrB]
+	ldrb r1,[t9optbl,#tlcsStatusRFP]
 	and r0,r0,#0x03
 	cmp r0,r1
 	bxeq lr
-	strb r0,[t9optbl,#tlcs_StatusRFP]
+	strb r0,[t9optbl,#tlcsStatusRFP]
 
 	ldr r1,=registersOfsMap
 	add r1,r1,r0,lsl#8					;@ x256
-	str r1,[t9optbl,#tlcs_CurrentMapBank]
+	str r1,[t9optbl,#tlcsCurrentMapBank]
 
 	stmfd sp!,{r1-r4}
 	add t9gprBank,t9gprBank,#4*4
 	ldmia t9gprBank,{r1-r4}				;@ Move IX, IY, IZ & SP to new location.
-	add t9gprBank,t9optbl,#tlcs_GprBank
+	add t9gprBank,t9optbl,#tlcsGprBanks
 	add t9gprBank,t9gprBank,r0,lsl#5	;@ gprBank size = 4*8
 	add r0,t9gprBank,#4*4
 	stmia r0,{r1-r4}
 	ldmfd sp!,{r1-r4}
 
-	str t9gprBank,[t9optbl,#tlcs_CurrentGprBank]
+	str t9gprBank,[t9optbl,#tlcsCurrentGprBank]
 	bx lr
 ;@----------------------------------------------------------------------------
 encode_r0_pc:
@@ -890,14 +880,14 @@ reencode_pc:
 	stmfd sp!,{lr}
 	bl t9LoadB					;@ Returns value in r0 & translated address in r1.
 	sub t9pc,r1,t9pc			;@ Get offset
-	str t9pc,[t9optbl,#tlcs_LastBank]
+	str t9pc,[t9optbl,#tlcsLastBank]
 	mov t9pc,r1
 	ldmfd sp!,{lr}
 	bx lr
 ;@----------------------------------------------------------------------------
 decode_pc_r0:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9optbl,#tlcs_LastBank]
+	ldr r0,[t9optbl,#tlcsLastBank]
 	sub r0,t9pc,r0
 	bx lr
 
@@ -908,39 +898,40 @@ decode_pc_r0:
 	.section .text						;@ For anything else
 #endif
 ;@----------------------------------------------------------------------------
-tlcs900HReset:
+tlcs900HReset:				;@ r0=t9optbl
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{t9pc,t9gprBank,lr}
+	stmfd sp!,{r4-r11,lr}
+	mov t9optbl,r0
 
 	bl resetInterrupts
 	bl resetTimers
 	bl resetDMA
 
 	// Reset registers
-	add r0,t9optbl,#tlcs_GprBank
+	add r0,t9optbl,#tlcsGprBanks
 	mov r1,#8*4
 	bl memclr_
 
-	add t9gprBank,t9optbl,#tlcs_GprBank
-	str t9gprBank,[t9optbl,#tlcs_CurrentGprBank]
+	add t9gprBank,t9optbl,#tlcsGprBanks
+	str t9gprBank,[t9optbl,#tlcsCurrentGprBank]
 	ldr r0,=registersOfsMap
-	str r0,[t9optbl,#tlcs_CurrentMapBank]
+	str r0,[t9optbl,#tlcsCurrentMapBank]
 	mov r0,#0
-	strb r0,[t9optbl,#tlcs_f_dash]
-	strb r0,[t9optbl,#tlcs_StatusRFP]
+	strb r0,[t9optbl,#tlcsFDash]
+	strb r0,[t9optbl,#tlcsStatusRFP]
 	mov r0,#0x100
 	str r0,[t9gprBank,#0x1C]	;@ XSP
 	mov r0,#0xF8
-	strb r0,[t9optbl,#tlcs_sr_b]
+	strb r0,[t9optbl,#tlcsSrB]
 	mov r0,#T9CYC_SHIFT
-	strb r0,[t9optbl,#tlcs_cycShift]
+	strb r0,[t9optbl,#tlcsCycShift]
 
 	ldr r0,=0xFFFF00				;@ 0xFFFF00 vector->startPC
 	bl t9LoadL
 	bl encode_r0_pc
-	str t9pc,[t9optbl,#tlcs_PcAsm]
+	str t9pc,[t9optbl,#tlcsPcAsm]
 
-	ldmfd sp!,{t9pc,t9gprBank,lr}
+	ldmfd sp!,{r4-r11,lr}
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -956,10 +947,10 @@ tlcs900HSaveState:			;@ In r0=destination, r1=t9optbl. Out r0=size.
 	bl memcpy
 
 	;@ Convert copied PC to not offseted.
-	ldr r0,[r4,#tlcs_PcAsm]			;@ Offsetted tlcs_pc
-	ldr r2,[t9optbl,#tlcs_LastBank]
+	ldr r0,[r4,#tlcsPcAsm]			;@ Offsetted tlcsPc
+	ldr r2,[t9optbl,#tlcsLastBank]
 	sub r0,r0,r2
-	str r0,[r4,#tlcs_PcAsm]			;@ Normal tlcs_pc
+	str r0,[r4,#tlcsPcAsm]			;@ Normal tlcsPc
 
 	ldmfd sp!,{r4,t9optbl,lr}
 	mov r0,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
@@ -974,9 +965,9 @@ tlcs900HLoadState:			;@ In r0=t9optbl, r1=source. Out r0=size.
 	mov r2,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
 	bl memcpy
 
-	ldr t9pc,[t9optbl,#tlcs_PcAsm]	;@ Normal tlcs_pc
+	ldr t9pc,[t9optbl,#tlcsPcAsm]	;@ Normal tlcsPc
 	bl reencode_pc
-	str t9pc,[t9optbl,#tlcs_PcAsm]	;@ Rewrite offseted tlcs_pc
+	str t9pc,[t9optbl,#tlcsPcAsm]	;@ Rewrite offseted tlcsPc
 
 	ldmfd sp!,{t9pc,t9optbl,lr}
 ;@----------------------------------------------------------------------------
@@ -1002,49 +993,48 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 #endif
 ;@----------------------------------------------------------------------------
 tlcs900HState:
-	.long 0			;@ tlcs_ErrorVal
-gprBank:
-	.space 4*8*4	;@ tlcs_GprBank
-	.long 0			;@ tlcs_LastBank
+;@gprBanks:
+	.space 4*8*4	;@ tlcsGprBanks
+	.long 0			;@ tlcsLastBank
 ;@sr:
-	.short	0		;@ tlcs_f, tlcs_sr
-	.byte 0			;@ tlcs_f_dash
+	.short	0		;@ tlcsF, tlcsSrB
+	.byte 0			;@ tlcsFDash
 statusRFP:
-	.byte 0			;@ tlcs_StatusRFP
-;@c_cycles
-	.long 0			;@ tlcs_Cycles
-;@tlcs_pc
-	.long 0			;@ tlcs_PcAsm
+	.byte 0			;@ tlcsStatusRFP
+;@cCycles
+	.long 0			;@ tlcsCycles
+;@tlcsPC
+	.long 0			;@ tlcsPcAsm
 currentGprBank:
-	.long 0			;@ tlcs_CurrentGprBank
-	.long 0			;@ tlcs_CurrentMapBank
+	.long 0			;@ tlcsCurrentGprBank
+	.long 0			;@ tlcsCurrentMapBank
 ;@HDMAStartVector:
-	.long 0			;@ tlcs_DMAStartVector
-	.space 4*4		;@ tlcs_DmaS
-	.space 4*4		;@ tlcs_DmaD
-	.space 4*4		;@ tlcs_DmaC/DmaM
-;@ipending:
-	.space 64		;@ tlcs_ipending
+	.long 0			;@ tlcsDMAStartVector
+	.space 4*4		;@ tlcsDmaS
+	.space 4*4		;@ tlcsDmaD
+	.space 4*4		;@ tlcsDmaC/DmaM
+;@iPending:
+	.space 64		;@ tlcsIPending
 ;@IntPrio:
-	.space 16		;@ tlcs_IntPrio
-;@timer_clock:
-	.space 4*4		;@ tlcs_TimerClock
+	.space 16		;@ tlcsIntPrio
+;@timerClock:
+	.space 4*4		;@ tlcsTimerClock
 ;@timer:
-	.space 4		;@ tlcs_Timer
-timer_threshold:
-	.space 4		;@ tlcs_TimerThreshold
-	.long 0			;@ tlcs_TimerHInt
-;@TRUN:
-	.byte 0			;@ tlcs_TRun
-T01MOD:
-	.byte 0			;@ tlcs_T01Mod
-T23MOD:
-	.byte 0			;@ tlcs_T23Mod
-TRDC:
-	.byte 0			;@ tlcs_trdc
-TFFCR:
-	.byte 0			;@ tlcs_tffcr
-	.byte 0			;@ tlcs_cycShift
+	.space 4		;@ tlcsTimer
+;@timerThreshold:
+	.space 4		;@ tlcsTimerThreshold
+	.long 0			;@ tlcsTimerHInt
+;@TRun:
+	.byte 0			;@ tlcsTRun
+;@T01MOD:
+	.byte 0			;@ tlcsT01Mod
+;@T23MOD:
+	.byte 0			;@ tlcsT23Mod
+;@TRDC:
+	.byte 0			;@ tlcsTrdc
+;@TFFCR:
+	.byte 0			;@ tlcsTffcr
+	.byte 0			;@ tlcsCycShift
 	.space 2
 tlcs900HStateEnd:
 	.long 0			;@ romBaseLo

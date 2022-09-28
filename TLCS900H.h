@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
 //
 
 #ifndef TLCS900H_HEADER
@@ -14,42 +14,41 @@ extern "C" {
 #endif
 
 typedef struct {
-	u32 tlcs_ErrorVal;
-	u32 tlcs_GprBank[4][8];
-	u32 tlcs_LastBank;
-//	tlcs_sr_w:
-	u8 tlcs_f;				// sr & f needs to be together and aligned at halfword.
-	u8 tlcs_sr_b;
-	u8 tlcs_f_dash;
-	u8 tlcs_StatusRFP;		// Register File Pointer
-	u32 tlcs_Cycles;
-	u32 tlcs_PcAsm;
-	u32 tlcs_CurrentGprBank;
-	u32 tlcs_CurrentMapBank;
-	u32 tlcs_DMAStartVector;
-	u32 tlcs_DmaS[4];
-	u32 tlcs_DmaD[4];
-	u16 tlcs_DmaC;
-	u8 tlcs_DmaM[4*3+2];
-	u8 tlcs_ipending[64];
-	u8 tlcs_IntPrio[16];
-	u32 tlcs_TimerClock[4];
-	u8 tlcs_Timer[4];
-	u8 tlcs_TimerThreshold[4];
-	u32 tlcs_TimerHInt;
-	u8 tlcs_TRun;
-	u8 tlcs_T01Mod;
-	u8 tlcs_T23Mod;
-	u8 tlcs_trdc;
-	u8 tlcs_tffcr;
-	u8 tlcs_cycShift;
-	u8 tlcs_padding0[2];	// align
+	u32 tlcsGprBanks[4][8];
+	u32 tlcsLastBank;
+//	tlcsSrW:
+	u8 tlcsF;				// sr & f needs to be together and aligned at halfword.
+	u8 tlcsSrB;
+	u8 tlcsFDash;
+	u8 tlcsStatusRFP;		// Register File Pointer
+	u32 tlcsCycles;
+	u32 tlcsPcAsm;
+	u32 tlcsCurrentGprBank;
+	u32 tlcsCurrentMapBank;
+	u32 tlcsDMAStartVector;
+	u32 tlcsDmaS[4];
+	u32 tlcsDmaD[4];
+	u16 tlcsDmaC;
+	u8 tlcsDmaM[4*3+2];
+	u8 tlcsIPending[64];
+	u8 tlcsIntPrio[16];
+	u32 tlcsTimerClock[4];
+	u8 tlcsTimer[4];
+	u8 tlcsTimerThreshold[4];
+	u32 tlcsTimerHInt;
+	u8 tlcsTRun;
+	u8 tlcsT01Mod;
+	u8 tlcsT23Mod;
+	u8 tlcsTrdc;
+	u8 tlcsTffcr;
+	u8 tlcsCycShift;
+	u8 tlcsPadding0[2];		// align
 	void *romBaseLo;
 	void *romBaseHi;
 	void *biosBase;
 	void *readRomPtrLo;
 	void *readRomPtrHi;
-	u8 tlcs_pzst[256];
+	u8 tlcsPzst[256];		// PZSTable
 
 } TLCS900HCore;
 
@@ -86,11 +85,8 @@ int tlcs900HGetStateSize(void);
  */
 void tlcs900HRedirectOpcode(int opcode, void *function);
 
-void tlcs900HSetIRQPin(bool set);
-void tlcs900HSetNMIPin(bool set);
 void tlcs900HRestoreAndRunXCycles(int cycles);
 void tlcs900HRunXCycles(int cycles);
-void tlcs900HCheckIRQs(void);
 
 #ifdef __cplusplus
 }

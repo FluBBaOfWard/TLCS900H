@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -18,10 +18,10 @@
 	.global resetDMA
 	.global resetTimers
 	.global resetInterrupts
-	.global timer_read8
-	.global timer_write8
-	.global int_write8
-	.global int_read8
+	.global timerRead8
+	.global timerWrite8
+	.global intWrite8
+	.global intRead8
 
 
 #ifdef GBA
@@ -33,14 +33,14 @@
 ;@---------------------------------------------------------------------------
 resetDMA:
 ;@---------------------------------------------------------------------------
-	add r0,t9optbl,#tlcs_DmaS
+	add r0,t9optbl,#tlcsDmaS
 	mov r1,#0
 	mov r2,#12					;@ 12*4
 	b memset_					;@ Clear DMA regs
 ;@---------------------------------------------------------------------------
 resetTimers:
 ;@---------------------------------------------------------------------------
-	add r0,t9optbl,#tlcs_TimerClock
+	add r0,t9optbl,#tlcsTimerClock
 	mov r1,#0
 	mov r2,#6					;@ 6*4
 	b memset_					;@ Clear Timer regs
@@ -48,20 +48,20 @@ resetTimers:
 resetInterrupts:
 ;@---------------------------------------------------------------------------
 	mov r0,#0
-	strb r0,[t9optbl,#tlcs_TRun]
-	strb r0,[t9optbl,#tlcs_T01Mod]
-	strb r0,[t9optbl,#tlcs_T23Mod]
-	strb r0,[t9optbl,#tlcs_trdc]
-	strb r0,[t9optbl,#tlcs_tffcr]
-	str r0,[t9optbl,#tlcs_DMAStartVector]
+	strb r0,[t9optbl,#tlcsTRun]
+	strb r0,[t9optbl,#tlcsT01Mod]
+	strb r0,[t9optbl,#tlcsT23Mod]
+	strb r0,[t9optbl,#tlcsTrdc]
+	strb r0,[t9optbl,#tlcsTffcr]
+	str r0,[t9optbl,#tlcsDMAStartVector]
 
-	add r0,t9optbl,#tlcs_ipending
+	add r0,t9optbl,#tlcsIPending
 	mov r1,#0
 	mov r2,#16					;@ 16*4
 	b memset_					;@ Clear INT regs
 
 ;@---------------------------------------------------------------------------
-int_write8:					;@ r0 = value, r1 = address
+intWrite8:					;@ r0 = value, r1 = address
 ;@---------------------------------------------------------------------------
 	mov r1,r1,lsl#28
 	and r2,r0,#0x70
@@ -70,185 +70,185 @@ int_write8:					;@ r0 = value, r1 = address
 	and r2,r0,#0x07
 	cmp r2,#0x07
 	biceq r0,r0,#0x07
-	add r2,t9optbl,#tlcs_IntPrio
+	add r2,t9optbl,#tlcsIntPrio
 	strb r0,[r2,r1,lsr#28]
 	ldr pc,[pc,r1,lsr#26]
 	.long 0
-	.long int_wr_70
-	.long int_wr_71
-	.long int_wr_72
-	.long int_wr_73
-	.long int_wr_74
-	.long int_wr_75
-	.long int_wr_76
-	.long int_wr_77
-	.long int_wr_78
-	.long int_wr_79
-	.long int_wr_7A
-	.long int_wr_7B
-	.long int_wr_7C
-	.long int_wr_7D
-	.long int_wr_7E
-	.long int_wr_7F
-int_wr_70:
+	.long intWr70
+	.long intWr71
+	.long intWr72
+	.long intWr73
+	.long intWr74
+	.long intWr75
+	.long intWr76
+	.long intWr77
+	.long intWr78
+	.long intWr79
+	.long intWr7A
+	.long intWr7B
+	.long intWr7C
+	.long intWr7D
+	.long intWr7E
+	.long intWr7F
+intWr70:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x0A]
+	streqb r1,[t9optbl,#tlcsIPending+0x0A]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x1C]
+	streqb r1,[t9optbl,#tlcsIPending+0x1C]
 	b intCheckPending
-int_wr_71:
+intWr71:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x0B]
+	streqb r1,[t9optbl,#tlcsIPending+0x0B]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x0C]
+	streqb r1,[t9optbl,#tlcsIPending+0x0C]
 	b intCheckPending
-int_wr_72:
+intWr72:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x0D]
+	streqb r1,[t9optbl,#tlcsIPending+0x0D]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x0E]
+	streqb r1,[t9optbl,#tlcsIPending+0x0E]
 	b intCheckPending
-int_wr_73:
+intWr73:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x10]
+	streqb r1,[t9optbl,#tlcsIPending+0x10]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x11]
+	streqb r1,[t9optbl,#tlcsIPending+0x11]
 	b intCheckPending
-int_wr_74:
+intWr74:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x12]
+	streqb r1,[t9optbl,#tlcsIPending+0x12]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x13]
-int_wr_75:
-int_wr_76:
+	streqb r1,[t9optbl,#tlcsIPending+0x13]
+intWr75:
+intWr76:
 	b intCheckPending
-int_wr_77:
+intWr77:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x18]
+	streqb r1,[t9optbl,#tlcsIPending+0x18]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x19]
-int_wr_78:
+	streqb r1,[t9optbl,#tlcsIPending+0x19]
+intWr78:
 	b intCheckPending
-int_wr_79:
+intWr79:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x1D]
+	streqb r1,[t9optbl,#tlcsIPending+0x1D]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x1E]
+	streqb r1,[t9optbl,#tlcsIPending+0x1E]
 	b intCheckPending
-int_wr_7A:
+intWr7A:
 	tst r0,#0x08
-	streqb r1,[t9optbl,#tlcs_ipending+0x1F]
+	streqb r1,[t9optbl,#tlcsIPending+0x1F]
 	tst r0,#0x80
-	streqb r1,[t9optbl,#tlcs_ipending+0x20]
-int_wr_7B:
+	streqb r1,[t9optbl,#tlcsIPending+0x20]
+intWr7B:
 	b intCheckPending
 
-int_wr_7C:
-int_wr_7D:
-int_wr_7E:
-int_wr_7F:
+intWr7C:
+intWr7D:
+intWr7E:
+intWr7F:
 	and r0,r0,#0x3F
 	and r1,r1,#0x30000000
-	add r2,t9optbl,#tlcs_DMAStartVector
+	add r2,t9optbl,#tlcsDMAStartVector
 	strb r0,[r2,r1,lsr#28]
 	bx lr
 ;@---------------------------------------------------------------------------
-int_read8:					;@ r0 = address
+intRead8:					;@ r0 = address
 ;@---------------------------------------------------------------------------
 	and r1,r0,#0x0F
 	mov r0,#0
 	ldr pc,[pc,r1,lsl#2]
 	.long 0
-	.long int_rd_70
-	.long int_rd_71
-	.long int_rd_72
-	.long int_rd_73
-	.long int_rd_74
-	.long int_rd_75
-	.long int_rd_76
-	.long int_rd_77
-	.long int_rd_78
-	.long int_rd_79
-	.long int_rd_7A
-	.long int_rd_7B
-	.long int_rd_7C
-	.long int_rd_7D
-	.long int_rd_7E
-	.long int_rd_7F
-int_rd_70:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x0A]
+	.long intRd70
+	.long intRd71
+	.long intRd72
+	.long intRd73
+	.long intRd74
+	.long intRd75
+	.long intRd76
+	.long intRd77
+	.long intRd78
+	.long intRd79
+	.long intRd7A
+	.long intRd7B
+	.long intRd7C
+	.long intRd7D
+	.long intRd7E
+	.long intRd7F
+intRd70:
+	ldrb r1,[t9optbl,#tlcsIPending+0x0A]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x1C]
+	ldrb r1,[t9optbl,#tlcsIPending+0x1C]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
-int_rd_71:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x0B]
+intRd71:
+	ldrb r1,[t9optbl,#tlcsIPending+0x0B]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x0C]
+	ldrb r1,[t9optbl,#tlcsIPending+0x0C]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
-int_rd_72:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x0D]
+intRd72:
+	ldrb r1,[t9optbl,#tlcsIPending+0x0D]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x0E]
+	ldrb r1,[t9optbl,#tlcsIPending+0x0E]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
-int_rd_73:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x10]
+intRd73:
+	ldrb r1,[t9optbl,#tlcsIPending+0x10]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x11]
+	ldrb r1,[t9optbl,#tlcsIPending+0x11]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
-int_rd_74:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x12]
+intRd74:
+	ldrb r1,[t9optbl,#tlcsIPending+0x12]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x13]
+	ldrb r1,[t9optbl,#tlcsIPending+0x13]
 	cmp r1,#0
 	orrne r0,r0,#0x80
-int_rd_75:
-int_rd_76:
+intRd75:
+intRd76:
 	bx lr
-int_rd_77:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x18]
+intRd77:
+	ldrb r1,[t9optbl,#tlcsIPending+0x18]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x19]
+	ldrb r1,[t9optbl,#tlcsIPending+0x19]
 	cmp r1,#0
 	orrne r0,r0,#0x80
-int_rd_78:
+intRd78:
 	bx lr
-int_rd_79:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x1D]
+intRd79:
+	ldrb r1,[t9optbl,#tlcsIPending+0x1D]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x1E]
+	ldrb r1,[t9optbl,#tlcsIPending+0x1E]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
-int_rd_7A:
-	ldrb r1,[t9optbl,#tlcs_ipending+0x1F]
+intRd7A:
+	ldrb r1,[t9optbl,#tlcsIPending+0x1F]
 	cmp r1,#0
 	orrne r0,r0,#0x08
-	ldrb r1,[t9optbl,#tlcs_ipending+0x20]
+	ldrb r1,[t9optbl,#tlcsIPending+0x20]
 	cmp r1,#0
 	orrne r0,r0,#0x80
-int_rd_7B:
+intRd7B:
 	bx lr
-int_rd_7C:
-int_rd_7D:
-int_rd_7E:
-int_rd_7F:
+intRd7C:
+intRd7D:
+intRd7E:
+intRd7F:
 	and r1,r1,#0x03
-	add r0,t9optbl,#tlcs_DMAStartVector
+	add r0,t9optbl,#tlcsDMAStartVector
 	ldrb r0,[r0,r1]
 	bx lr
 
@@ -265,12 +265,12 @@ int_rd_7F:
 interrupt:					;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------
 	mov r3,#0
-	add r2,t9optbl,#tlcs_ipending
+	add r2,t9optbl,#tlcsIPending
 	strb r3,[r2,r0]
 ;@---------------------------------------------------------------------------
 ;@TestMicroDMA:				;@ r0 = index
 ;@---------------------------------------------------------------------------
-	ldr r2,[t9optbl,#tlcs_DMAStartVector]
+	ldr r2,[t9optbl,#tlcsDMAStartVector]
 	and r3,r2,#0xFF
 	cmp r3,r0
 	moveq r0,#0
@@ -296,12 +296,12 @@ interrupt:					;@ r0 = index, r1 = int level
 	cmp r1,#0x05				;@ Halt?
 	addeq t9pc,t9pc,#1
 
-	ldr r0,[t9optbl,#tlcs_LastBank]
+	ldr r0,[t9optbl,#tlcsLastBank]
 	sub r0,t9pc,r0
 	bl push32
 	bl pushSR
 
-	;@ INTNEST should be updated too.
+	;@ INTNEST should be updated too!
 
 	;@ Access the interrupt vector table to find the jump destination
 	ldmfd sp!,{r0}				;@ Index
@@ -333,7 +333,7 @@ setInterruptExternal:		;@ r0 = index
 setInterrupt:				;@ r0 = index
 ;@---------------------------------------------------------------------------
 	mov r1,#0x07
-	add r2,t9optbl,#tlcs_ipending
+	add r2,t9optbl,#tlcsIPending
 	strb r1,[r2,r0]
 	bx lr
 ;@---------------------------------------------------------------------------
@@ -342,155 +342,155 @@ intCheckPending:
 	stmfd sp!,{lr}
 	bl statusIFF
 	ldmfd sp!,{lr}
-	add r2,t9optbl,#tlcs_ipending
-	add r3,t9optbl,#tlcs_IntPrio
+	add r2,t9optbl,#tlcsIPending
+	add r3,t9optbl,#tlcsIntPrio
 
 	ldrb r1,[r2,#0x0B]			;@ VBlank
 	cmp r1,#0
-	beq intDontCheck_0x0B
+	beq intDontCheck0x0B
 	ldrb r1,[r3,#0x1]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x0B
 	ble interrupt
-intDontCheck_0x0B:
+intDontCheck0x0B:
 
 	ldrb r1,[r2,#0x0C]			;@ Z80
 	cmp r1,#0
-	beq intDontCheck_0x0C
+	beq intDontCheck0x0C
 	ldrb r1,[r3,#0x1]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x0C
 	ble interrupt
-intDontCheck_0x0C:
+intDontCheck0x0C:
 
 	ldrb r1,[r2,#0x10]			;@ Timer0
 	cmp r1,#0
-	beq intDontCheck_0x10
+	beq intDontCheck0x10
 	ldrb r1,[r3,#0x3]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x10
 	ble interrupt
-intDontCheck_0x10:
+intDontCheck0x10:
 
 	ldrb r1,[r2,#0x11]			;@ Timer1
 	cmp r1,#0
-	beq intDontCheck_0x11
+	beq intDontCheck0x11
 	ldrb r1,[r3,#0x3]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x11
 	ble interrupt
-intDontCheck_0x11:
+intDontCheck0x11:
 
 	ldrb r1,[r2,#0x12]			;@ Timer2
 	cmp r1,#0
-	beq intDontCheck_0x12
+	beq intDontCheck0x12
 	ldrb r1,[r3,#0x4]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x12
 	ble interrupt
-intDontCheck_0x12:
+intDontCheck0x12:
 
 	ldrb r1,[r2,#0x13]			;@ Timer3
 	cmp r1,#0
-	beq intDontCheck_0x13
+	beq intDontCheck0x13
 	ldrb r1,[r3,#0x4]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x13
 	ble interrupt
-intDontCheck_0x13:
+intDontCheck0x13:
 
 	ldrb r1,[r2,#0x18]			;@ Serial TX 0
 	cmp r1,#0
-	beq intDontCheck_0x18
+	beq intDontCheck0x18
 	ldrb r1,[r3,#0x7]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x18
 	ble interrupt
-intDontCheck_0x18:
+intDontCheck0x18:
 
 	ldrb r1,[r2,#0x19]			;@ Serial RX 0
 	cmp r1,#0
-	beq intDontCheck_0x19
+	beq intDontCheck0x19
 	ldrb r1,[r3,#0x7]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x19
 	ble interrupt
-intDontCheck_0x19:
+intDontCheck0x19:
 
 	ldrb r1,[r2,#0x1C]			;@ D/A conversion finnished
 	cmp r1,#0
-	beq intDontCheck_0x1C
+	beq intDontCheck0x1C
 	ldrb r1,[r3,#0x0]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x1C
 	ble interrupt
-intDontCheck_0x1C:
+intDontCheck0x1C:
 
 	ldrb r1,[r2,#0x1D]			;@ DMA0 END
 	cmp r1,#0
-	beq intDontCheck_0x1D
+	beq intDontCheck0x1D
 	ldrb r1,[r3,#0x9]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x1D
 	ble interrupt
-intDontCheck_0x1D:
+intDontCheck0x1D:
 
 	ldrb r1,[r2,#0x1E]			;@ DMA1 END
 	cmp r1,#0
-	beq intDontCheck_0x1E
+	beq intDontCheck0x1E
 	ldrb r1,[r3,#0x9]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x1E
 	ble interrupt
-intDontCheck_0x1E:
+intDontCheck0x1E:
 
 	ldrb r1,[r2,#0x1F]			;@ DMA2 END
 	cmp r1,#0
-	beq intDontCheck_0x1F
+	beq intDontCheck0x1F
 	ldrb r1,[r3,#0xA]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x1F
 	ble interrupt
-intDontCheck_0x1F:
+intDontCheck0x1F:
 
 	ldrb r1,[r2,#0x20]			;@ DMA3 END
 	cmp r1,#0
-	beq intDontCheck_0x20
+	beq intDontCheck0x20
 	ldrb r1,[r3,#0xA]
 	mov r1,r1,lsr#4
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x20
 	ble interrupt
-intDontCheck_0x20:
+intDontCheck0x20:
 
 	ldrb r1,[r2,#0x0A]			;@ RTC Alarm IRQ
 	cmp r1,#0
-	beq intDontCheck_0x0A
+	beq intDontCheck0x0A
 	ldrb r1,[r3,#0x0]
 	and r1,r1,#0x07
 	cmp r0,r1
 	movle r0,#0x0A
 	ble interrupt
-intDontCheck_0x0A:
+intDontCheck0x0A:
 
 	ldrb r1,[r2,#0x08]			;@ Power button, NMI?
 	cmp r1,#0
@@ -512,22 +512,22 @@ updateTimers:				;@ r0 = cputicks (515)
 
 	mov r6,r0
 	mov r5,#0					;@ r5 = h_int / timer0 / timer1
-	ldrb r4,[t9optbl,#tlcs_TRun]
+	ldrb r4,[t9optbl,#tlcsTRun]
 	tst r4,#0x01
 	beq noTimer0
 ;@----------------------------------------------------------------------------
 								;@ TIMER0
-	ldrb r2,[t9optbl,#tlcs_Timer]
-	ldrb r1,[t9optbl,#tlcs_T01Mod]
+	ldrb r2,[t9optbl,#tlcsTimer]
+	ldrb r1,[t9optbl,#tlcsT01Mod]
 	ands r1,r1,#0x03
 	bne t0c2
 t0c0:							;@ TIMER0 case 0
 		ldr r0,=T9_HINT_RATE
-		ldr r12,[t9optbl,#tlcs_TimerHInt]
+		ldr r12,[t9optbl,#tlcsTimerHInt]
 		add r12,r12,r6
 		cmp r12,r0
 		subpl r12,r12,r0
-		str r12,[t9optbl,#tlcs_TimerHInt]
+		str r12,[t9optbl,#tlcsTimerHInt]
 		bmi noTimer0
 		ldr geptr,=k2GE_0
 		bl GetHInt				;@ HInt, this should only return 0 or 1.
@@ -539,22 +539,22 @@ t0c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER0 case 1
 	ldreq r0,=TIMER_T4_RATE		;@ TIMER0 case 2
 	ldrhi r0,=TIMER_T16_RATE	;@ TIMER0 case 3
-	ldr r12,[t9optbl,#tlcs_TimerClock]
+	ldr r12,[t9optbl,#tlcsTimerClock]
 	add r12,r12,r6				;@ r6 = cputicks
 t0c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
 		subpl r12,r12,r0
 		bpl t0c2Loop
-		str r12,[t9optbl,#tlcs_TimerClock]
+		str r12,[t9optbl,#tlcsTimerClock]
 
 timer0End:
-	ldrb r0,[t9optbl,#tlcs_TimerThreshold]
+	ldrb r0,[t9optbl,#tlcsTimerThreshold]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcs_Timer]
+	strb r2,[t9optbl,#tlcsTimer]
 	movpl r5,#1					;@ Timer0 = TRUE
 	movpl r0,#0x10
 	blpl setInterrupt
@@ -564,8 +564,8 @@ noTimer0:
 	beq noTimer1
 ;@----------------------------------------------------------------------------
 								;@ TIMER1
-	ldrb r2,[t9optbl,#tlcs_Timer+1]
-	ldrb r1,[t9optbl,#tlcs_T01Mod]
+	ldrb r2,[t9optbl,#tlcsTimer+1]
+	ldrb r1,[t9optbl,#tlcsT01Mod]
 	ands r1,r1,#0x0C
 	bne t1c2
 t1c0:							;@ TIMER1 case 0
@@ -577,22 +577,22 @@ t1c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER1 case 1
 	ldreq r0,=TIMER_T16_RATE	;@ TIMER1 case 2
 	ldrhi r0,=TIMER_T256_RATE	;@ TIMER1 case 3
-	ldr r12,[t9optbl,#tlcs_TimerClock+4]
+	ldr r12,[t9optbl,#tlcsTimerClock+4]
 	add r12,r12,r6				;@ r6 = cputicks
 t1c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
 		subpl r12,r12,r0
 		bpl t1c2Loop
-		str r12,[t9optbl,#tlcs_TimerClock+4]
+		str r12,[t9optbl,#tlcsTimerClock+4]
 
 timer1End:
-	ldrb r0,[t9optbl,#tlcs_TimerThreshold+1]
+	ldrb r0,[t9optbl,#tlcsTimerThreshold+1]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcs_Timer+1]
+	strb r2,[t9optbl,#tlcsTimer+1]
 	movpl r0,#0x11
 	blpl setInterrupt
 
@@ -602,32 +602,32 @@ noTimer1:
 	beq noTimer2
 ;@----------------------------------------------------------------------------
 								;@ TIMER2
-	ldrb r1,[t9optbl,#tlcs_T23Mod]
+	ldrb r1,[t9optbl,#tlcsT23Mod]
 	ands r1,r1,#0x03
 	beq noTimer2				;@ TIMER2 case 0, nothing
-	ldrb r2,[t9optbl,#tlcs_Timer+2]
+	ldrb r2,[t9optbl,#tlcsTimer+2]
 
 t2c2:
 	cmp r1,#0x02
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER2 case 1
 	ldreq r0,=TIMER_T4_RATE		;@ TIMER2 case 2
 	ldrhi r0,=TIMER_T16_RATE	;@ TIMER2 case 3
-	ldr r12,[t9optbl,#tlcs_TimerClock+8]
+	ldr r12,[t9optbl,#tlcsTimerClock+8]
 	add r12,r12,r6				;@ r6 = cputicks
 t2c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
 		subpl r12,r12,r0
 		bpl t2c2Loop
-		str r12,[t9optbl,#tlcs_TimerClock+8]
+		str r12,[t9optbl,#tlcsTimerClock+8]
 
 timer2End:
-	ldrb r0,[t9optbl,#tlcs_TimerThreshold+2]
+	ldrb r0,[t9optbl,#tlcsTimerThreshold+2]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcs_Timer+2]
+	strb r2,[t9optbl,#tlcsTimer+2]
 	movpl r5,#1					;@ Timer2 = TRUE
 	movpl r0,#0x12
 	blpl setInterrupt
@@ -637,8 +637,8 @@ noTimer2:
 	beq noTimer3
 ;@----------------------------------------------------------------------------
 								;@ TIMER3
-	ldrb r2,[t9optbl,#tlcs_Timer+3]
-	ldrb r1,[t9optbl,#tlcs_T23Mod]
+	ldrb r2,[t9optbl,#tlcsTimer+3]
+	ldrb r1,[t9optbl,#tlcsT23Mod]
 	ands r1,r1,#0x0C
 	bne t3c2
 t3c0:							;@ TIMER3 case 0
@@ -650,22 +650,22 @@ t3c2:
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER3 case 1
 	ldreq r0,=TIMER_T16_RATE	;@ TIMER3 case 2
 	ldrhi r0,=TIMER_T256_RATE	;@ TIMER3 case 3
-	ldr r12,[t9optbl,#tlcs_TimerClock+12]
+	ldr r12,[t9optbl,#tlcsTimerClock+12]
 	add r12,r12,r6				;@ r6 = cputicks
 t3c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
 		subpl r12,r12,r0
 		bpl t3c2Loop
-		str r12,[t9optbl,#tlcs_TimerClock+12]
+		str r12,[t9optbl,#tlcsTimerClock+12]
 
 timer3End:
-	ldrb r0,[t9optbl,#tlcs_TimerThreshold+3]
+	ldrb r0,[t9optbl,#tlcsTimerThreshold+3]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcs_Timer+3]
+	strb r2,[t9optbl,#tlcsTimer+3]
 	bmi noTimer3
 	mov r0,#1
 	bl cpu1SetIRQ
@@ -682,7 +682,7 @@ DMA_update:					;@ r0 = channel
 	stmfd sp!,{r5,r6,lr}
 ;@	mov r11,r11
 	and r5,r0,#0x03
-	add r6,t9optbl,#tlcs_DmaS
+	add r6,t9optbl,#tlcsDmaS
 	ldr t9Mem,[r6,r5,lsl#2]!	;@ Source Adress
 	ldrb r1,[r6,#0x22]			;@ DMA M
 	and r1,r1,#0x1F
@@ -893,46 +893,35 @@ dmaEnd:
 	ldmfd sp!,{r5,r6,lr}
 	bx lr
 ;@----------------------------------------------------------------------------
-timer_read8:				;@ r0 = address, Bios reads from 0x20, 0x25 & 0x28 at least
+timerRead8:					;@ r0 = address, Bios reads from 0x20, 0x25 & 0x28 at least
 ;@----------------------------------------------------------------------------
-	cmp r0,#0x20
-	ldreqb r0,[t9optbl,#tlcs_TRun]
-	bxeq lr
-	cmp r0,#0x24
-	ldreqb r0,[t9optbl,#tlcs_T01Mod]
-	bxeq lr
-	cmp r0,#0x25
-	ldreqb r0,[t9optbl,#tlcs_tffcr]
-	bxeq lr
-	cmp r0,#0x28
-	ldreqb r0,[t9optbl,#tlcs_T23Mod]
-	bxeq lr
-	cmp r0,#0x29
-	ldreqb r0,[t9optbl,#tlcs_trdc]
-	bxeq lr
-	mov r0,#4					;@ Cool Boarders reads from 0x28 & 0x22 and wants 4...?
+	adr r2,timerTable
+	ldr r2,[r2,r0,lsl#2]
+	cmp r2,#0
+	ldrneb r0,[t9optbl,r2]
+	moveq r0,#4					;@ Cool Boarders reads from 0x28 & 0x22 and wants 4...?
 	bx lr
 ;@----------------------------------------------------------------------------
-timer_write8:				;@ r0 = value, r1 = address
+timerWrite8:				;@ r0 = value, r1 = address
 ;@----------------------------------------------------------------------------
 	ands r1,r1,#0x0F
-	beq TRUN_W
+	beq tRunW
 	adr r2,timerTable
 	ldr r2,[r2,r1,lsl#2]
 	cmp r2,#0
-	strneb r0,[r2]
+	strneb r0,[t9optbl,r2]
 	bx lr
 timerTable:
+	.long tlcsTRun
 	.long 0
-	.long 0
-	.long timer_threshold
-	.long timer_threshold+1
-	.long T01MOD
-	.long TFFCR
-	.long timer_threshold+2
-	.long timer_threshold+3
-	.long T23MOD
-	.long TRDC
+	.long tlcsTimerThreshold
+	.long tlcsTimerThreshold+1
+	.long tlcsT01Mod
+	.long tlcsTffcr
+	.long tlcsTimerThreshold+2
+	.long tlcsTimerThreshold+3
+	.long tlcsT23Mod
+	.long tlcsTrdc
 	.long 0
 	.long 0
 	.long 0
@@ -940,10 +929,10 @@ timerTable:
 	.long 0
 	.long 0
 ;@----------------------------------------------------------------------------
-TRUN_W:
+tRunW:
 ;@----------------------------------------------------------------------------
-	strb r0,[t9optbl,#tlcs_TRun]
-	ldr r2,[t9optbl,#tlcs_Timer]
+	strb r0,[t9optbl,#tlcsTRun]
+	ldr r2,[t9optbl,#tlcsTimer]
 	tst r0,#0x01
 	biceq r2,r2,#0x000000FF
 	tst r0,#0x02
@@ -952,7 +941,7 @@ TRUN_W:
 	biceq r2,r2,#0x00FF0000
 	tst r0,#0x08
 	biceq r2,r2,#0xFF000000
-	str r2,[t9optbl,#tlcs_Timer]		;@ str ?
+	str r2,[t9optbl,#tlcsTimer]	;@ str ?
 	bx lr
 
 ;@----------------------------------------------------------------------------

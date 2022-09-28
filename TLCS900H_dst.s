@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2021 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -400,7 +400,7 @@ dstCALL:
 ;@----------------------------------------------------------------------------
 dstCL:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9optbl,#tlcs_LastBank]
+	ldr r0,[t9optbl,#tlcsLastBank]
 	sub r0,t9pc,r0
 	bl push32
 	bic t9pc,t9Mem,#0xFF000000
