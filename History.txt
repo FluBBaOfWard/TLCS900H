@@ -2,7 +2,7 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.4 - 2022-09-28 (FluBBa)
+V0.4.4 - 2022-10-12 (FluBBa)
 	Fixed calling of the cpu.
 	Cleaned up source code.
 	Broke save state compatibility.
