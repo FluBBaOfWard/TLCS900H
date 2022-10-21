@@ -943,7 +943,7 @@ tlcs900HSaveState:			;@ In r0=destination, r1=t9optbl. Out r0=size.
 	mov r4,r0
 	mov t9optbl,r1
 
-	mov r2,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
+	mov r2,#tlcsStateEnd-tlcsStateStart	;@ Right now ?
 	bl memcpy
 
 	;@ Convert copied PC to not offseted.
@@ -953,7 +953,7 @@ tlcs900HSaveState:			;@ In r0=destination, r1=t9optbl. Out r0=size.
 	str r0,[r4,#tlcsPcAsm]			;@ Normal tlcsPc
 
 	ldmfd sp!,{r4,t9optbl,lr}
-	mov r0,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
+	mov r0,#tlcsStateEnd-tlcsStateStart	;@ Right now ?
 	bx lr
 ;@----------------------------------------------------------------------------
 tlcs900HLoadState:			;@ In r0=t9optbl, r1=source. Out r0=size.
@@ -962,7 +962,7 @@ tlcs900HLoadState:			;@ In r0=t9optbl, r1=source. Out r0=size.
 	stmfd sp!,{t9pc,t9optbl,lr}
 
 	mov t9optbl,r0
-	mov r2,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
+	mov r2,#tlcsStateEnd-tlcsStateStart	;@ Right now ?
 	bl memcpy
 
 	ldr t9pc,[t9optbl,#tlcsPcAsm]	;@ Normal tlcsPc
@@ -974,7 +974,7 @@ tlcs900HLoadState:			;@ In r0=t9optbl, r1=source. Out r0=size.
 tlcs900HGetStateSize:		;@ Out r0=state size.
 	.type   tlcs900HGetStateSize STT_FUNC
 ;@----------------------------------------------------------------------------
-	mov r0,#tlcs900HStateEnd-tlcs900HState	;@ Right now ?
+	mov r0,#tlcsStateEnd-tlcsStateStart	;@ Right now ?
 	bx lr
 ;@----------------------------------------------------------------------------
 tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
@@ -993,46 +993,31 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 #endif
 ;@----------------------------------------------------------------------------
 tlcs900HState:
-;@gprBanks:
 	.space 4*8*4	;@ tlcsGprBanks
 	.long 0			;@ tlcsLastBank
-;@sr:
 	.short	0		;@ tlcsF, tlcsSrB
 	.byte 0			;@ tlcsFDash
 statusRFP:
 	.byte 0			;@ tlcsStatusRFP
-;@cCycles
 	.long 0			;@ tlcsCycles
-;@tlcsPC
 	.long 0			;@ tlcsPcAsm
 currentGprBank:
 	.long 0			;@ tlcsCurrentGprBank
 	.long 0			;@ tlcsCurrentMapBank
-;@HDMAStartVector:
 	.long 0			;@ tlcsDMAStartVector
 	.space 4*4		;@ tlcsDmaS
 	.space 4*4		;@ tlcsDmaD
 	.space 4*4		;@ tlcsDmaC/DmaM
-;@iPending:
 	.space 64		;@ tlcsIPending
-;@IntPrio:
 	.space 16		;@ tlcsIntPrio
-;@timerClock:
 	.space 4*4		;@ tlcsTimerClock
-;@timer:
 	.space 4		;@ tlcsTimer
-;@timerThreshold:
 	.space 4		;@ tlcsTimerThreshold
 	.long 0			;@ tlcsTimerHInt
-;@TRun:
 	.byte 0			;@ tlcsTRun
-;@T01MOD:
 	.byte 0			;@ tlcsT01Mod
-;@T23MOD:
 	.byte 0			;@ tlcsT23Mod
-;@TRDC:
 	.byte 0			;@ tlcsTrdc
-;@TFFCR:
 	.byte 0			;@ tlcsTffcr
 	.byte 0			;@ tlcsCycShift
 	.space 2

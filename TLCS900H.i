@@ -23,6 +23,7 @@ t9gprBank		.req r11
 
 	.struct 0		;@ Changes section so make sure it's set before real code.
 
+tlcsStateStart:
 tlcsGprBanks:		.space 4*8*4
 tlcsLastBank:		.long 0
 tlcsSrW:
@@ -53,6 +54,7 @@ tlcsTffcr:			.byte 0
 tlcsCycShift:		.byte 0
 tlcsPadding0:		.space 2	;@ align
 tlcsStateSize:
+tlcsStateEnd:
 
 romBaseLo:			.long 0
 romBaseHi:			.long 0

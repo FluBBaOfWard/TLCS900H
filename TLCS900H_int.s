@@ -14,7 +14,6 @@
 	.global intCheckPending
 	.global updateTimers
 	.global setInterrupt
-	.global setInterruptExternal
 	.global resetDMA
 	.global resetTimers
 	.global resetInterrupts
@@ -320,15 +319,6 @@ interruptEnd:
 	ldmfd sp!,{lr}
 	bx lr
 
-;@---------------------------------------------------------------------------
-setInterruptExternal:		;@ r0 = index
-	.type setInterruptExternal STT_FUNC
-;@---------------------------------------------------------------------------
-	stmfd sp!,{t9optbl,lr}
-	ldr t9optbl,=tlcs900HState
-	bl setInterrupt
-	ldmfd sp!,{t9optbl,lr}
-	bx lr
 ;@---------------------------------------------------------------------------
 setInterrupt:				;@ r0 = index
 ;@---------------------------------------------------------------------------
