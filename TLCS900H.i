@@ -49,13 +49,15 @@ tlcsTimerHInt:		.long 0
 tlcsTRun:			.byte 0
 tlcsT01Mod:			.byte 0
 tlcsT23Mod:			.byte 0
-tlcsTrdc:			.byte 0
-tlcsTffcr:			.byte 0
+tlcsTrdc:			.byte 0		;@ Timer Register Double Buffer Control
+tlcsTFFCR:			.byte 0		;@ Timer Flip Flop Control Register
+tlcsTFF1:			.byte 0		;@ Timer Flip Flop 1 output
+tlcsTFF3:			.byte 0		;@ Timer Flip Flop 3 output
 tlcsCycShift:		.byte 0
-tlcsPadding0:		.space 2	;@ align
 tlcsStateSize:
 tlcsStateEnd:
 
+tff3Function:		.long 0
 romBaseLo:			.long 0
 romBaseHi:			.long 0
 biosBase:			.long 0
@@ -67,7 +69,7 @@ tlcsSize:
 ;@----------------------------------------------------------------------------
 ;@ TLCS900h EQUs
 ;@----------------------------------------------------------------------------
-	.equ TIMER_BASE_RATE,	32		;@ 1	// Ticks
+	.equ TIMER_BASE_RATE,	16		;@ 1	// Ticks
 
 	.equ TIMER_T1_RATE,		(8 * TIMER_BASE_RATE)
 	.equ TIMER_T4_RATE,		(32 * TIMER_BASE_RATE)

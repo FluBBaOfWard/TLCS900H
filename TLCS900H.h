@@ -40,9 +40,11 @@ typedef struct {
 	u8 tlcsT01Mod;
 	u8 tlcsT23Mod;
 	u8 tlcsTrdc;
-	u8 tlcsTffcr;
+	u8 tlcsTFFCR;
+	u8 tlcsTFF1;
+	u8 tlcsTFF3;
 	u8 tlcsCycShift;
-	u8 tlcsPadding0[2];		// align
+	void *tff3Function;
 	void *romBaseLo;
 	void *romBaseHi;
 	void *biosBase;

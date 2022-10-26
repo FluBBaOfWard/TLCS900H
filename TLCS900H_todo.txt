@@ -1,6 +1,7 @@
 TLCS900H To do
 --------------
 
+	Timers; 16bit, PWM and more are not supported.
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Add another jump table for reg opcodes?
 	B/W/L tables for reg opcodes.
@@ -8,7 +9,6 @@ TLCS900H To do
 	Move memory area 0x00-0xFF from io.s to cpu core.
 	Push instructions might write to 32bit address.
 	Optimize dst opcodes, "and r12,r0,#0x07" in fetch.
-	Timers; 16bit, flip/flop, PWM and more are not supported.
 	Timers? http://forum.fobby.net/index.php?t=msg&th=796&start=0&
 	Optimise DAA.
 

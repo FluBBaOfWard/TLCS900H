@@ -898,10 +898,11 @@ decode_pc_r0:
 	.section .text						;@ For anything else
 #endif
 ;@----------------------------------------------------------------------------
-tlcs900HReset:				;@ r0=t9optbl
+tlcs900HReset:				;@ r0=t9optbl, r1=tff3Function
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r11,lr}
 	mov t9optbl,r0
+	str r1,[t9optbl,#tff3Function]
 
 	bl resetInterrupts
 	bl resetTimers
@@ -1018,10 +1019,12 @@ currentGprBank:
 	.byte 0			;@ tlcsT01Mod
 	.byte 0			;@ tlcsT23Mod
 	.byte 0			;@ tlcsTrdc
-	.byte 0			;@ tlcsTffcr
+	.byte 0			;@ tlcsTFFCR
+	.byte 0			;@ tlcsTFF1
+	.byte 0			;@ tlcsTFF3
 	.byte 0			;@ tlcsCycShift
-	.space 2
 tlcs900HStateEnd:
+	.long 0			;@ tff3Function
 	.long 0			;@ romBaseLo
 	.long 0			;@ romBaseHi
 	.long 0			;@ biosBase
