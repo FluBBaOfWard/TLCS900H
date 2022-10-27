@@ -13,7 +13,9 @@
 
 	.global intCheckPending
 	.global updateTimers
+	.global clockTimer0
 	.global setInterrupt
+	.global setVBlankInterrupt
 	.global resetDMA
 	.global resetTimers
 	.global resetInterrupts
@@ -320,6 +322,12 @@ interruptEnd:
 	bx lr
 
 ;@---------------------------------------------------------------------------
+setVBlankInterrupt:
+;@---------------------------------------------------------------------------
+	mov r0,#0x07
+	strb r0,[t9optbl,#tlcsIPending+0x0B]
+	bx lr
+;@---------------------------------------------------------------------------
 setInterrupt:				;@ r0 = index
 ;@---------------------------------------------------------------------------
 	mov r1,#0x07
@@ -495,14 +503,23 @@ intDontCheck0x0A:
 	bne interrupt
 
 	bx lr
+
+;@----------------------------------------------------------------------------
+clockTimer0:
+;@----------------------------------------------------------------------------
+	mov r0,#1
+	strb r0,[t9optbl,#tlcsTimerHInt]
+	bx lr
 ;@----------------------------------------------------------------------------
 updateTimers:				;@ r0 = cputicks (515)
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r6,lr}
 
+	ldrb r4,[t9optbl,#tlcsTRun]
+	tst r4,#0x80
+	beq noTimers
 	mov r6,r0
 	mov r5,#0					;@ r5 = h_int / timer0 / timer1
-	ldrb r4,[t9optbl,#tlcsTRun]
 	tst r4,#0x01
 	beq noTimer0
 ;@----------------------------------------------------------------------------
@@ -512,16 +529,10 @@ updateTimers:				;@ r0 = cputicks (515)
 	ands r1,r1,#0x03
 	bne t0c2
 t0c0:							;@ TIMER0 case 0
-		ldr r0,=T9_HINT_RATE
-		ldr r12,[t9optbl,#tlcsTimerHInt]
-		add r12,r12,r6
-		cmp r12,r0
-		subpl r12,r12,r0
-		str r12,[t9optbl,#tlcsTimerHInt]
-		bmi noTimer0
-		ldr geptr,=k2GE_0
-		bl GetHInt				;@ HInt, this should only return 0 or 1.
+		ldrb r0,[t9optbl,#tlcsTimerHInt]
 		add r2,r2,r0
+		mov r0,#0
+		strb r0,[t9optbl,#tlcsTimerHInt]
 		b timer0End
 
 t0c2:
@@ -662,6 +673,7 @@ timer3End:
 	bl setInterrupt
 
 noTimer3:
+noTimers:
 	bl intCheckPending
 	ldmfd sp!,{r4-r6,lr}
 	bx lr

@@ -35,7 +35,7 @@ typedef struct {
 	u32 tlcsTimerClock[4];
 	u8 tlcsTimer[4];
 	u8 tlcsTimerThreshold[4];
-	u32 tlcsTimerHInt;
+	u8 tlcsTimerHInt;
 	u8 tlcsTRun;
 	u8 tlcsT01Mod;
 	u8 tlcsT23Mod;
@@ -44,6 +44,7 @@ typedef struct {
 	u8 tlcsTFF1;
 	u8 tlcsTFF3;
 	u8 tlcsCycShift;
+	u8 tlcsPadding0[3];
 	void *tff3Function;
 	void *romBaseLo;
 	void *romBaseHi;
