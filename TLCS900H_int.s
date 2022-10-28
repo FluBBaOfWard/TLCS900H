@@ -24,6 +24,8 @@
 	.global intWrite8
 	.global intRead8
 
+	.syntax unified
+	.arm
 
 #ifdef GBA
 	.section .ewram, "ax"		;@ For the GBA
@@ -317,7 +319,6 @@ interrupt:					;@ r0 = index, r1 = int level
 	movhi r0,#0x07
 	bl setStatusIFF
 
-interruptEnd:
 	ldmfd sp!,{lr}
 	bx lr
 
@@ -507,8 +508,12 @@ intDontCheck0x0A:
 ;@----------------------------------------------------------------------------
 clockTimer0:
 ;@----------------------------------------------------------------------------
-	mov r0,#1
-	strb r0,[t9optbl,#tlcsTimerHInt]
+	ldrb r0,[t9optbl,#tlcsT01Mod]
+	tst r0,#0x03
+	bxne lr
+	ldrb r0,[t9optbl,#tlcsTRun]
+	ands r0,r0,#0x01
+	strbne r0,[t9optbl,#tlcsTimerHInt]
 	bx lr
 ;@----------------------------------------------------------------------------
 updateTimers:				;@ r0 = cputicks (515)

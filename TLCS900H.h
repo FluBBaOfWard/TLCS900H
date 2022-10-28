@@ -57,7 +57,12 @@ typedef struct {
 
 extern TLCS900HCore tlcs900HState;
 
-void tlcs900HReset(int type);
+/**
+ * Reset the specified cpu core.
+ * @param  *cpu: The TLCS900HCore cpu to reset.
+ * @param  *ff3Func: Pointer to new FlipFlop 3 function .
+ */
+void tlcs900HReset(TLCS900HCore *cpu, void *ff3Func);
 
 /**
  * Saves the state of the cpu to the destination.
