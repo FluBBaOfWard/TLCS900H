@@ -43,8 +43,8 @@ tlcsDmaM:			.space 4*3+2
 tlcsIPending:		.space 64
 tlcsIntPrio:		.space 16
 tlcsTimerClock:		.space 4*4
-tlcsTimer:			.long 0
-tlcsTimerThreshold:	.long 0
+tlcsUpCounter:		.long 0
+tlcsTimerCompare:	.long 0
 tlcsTimerHInt:		.byte 0
 tlcsTRun:			.byte 0
 tlcsT01Mod:			.byte 0
@@ -55,7 +55,6 @@ tlcsTFF1:			.byte 0		;@ Timer Flip Flop 1 output
 tlcsTFF3:			.byte 0		;@ Timer Flip Flop 3 output
 tlcsCycShift:		.byte 0
 tlcsPadding0:		.space 3
-tlcsStateSize:
 tlcsStateEnd:
 
 tff3Function:		.long 0

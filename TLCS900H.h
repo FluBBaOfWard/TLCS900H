@@ -33,8 +33,8 @@ typedef struct {
 	u8 tlcsIPending[64];
 	u8 tlcsIntPrio[16];
 	u32 tlcsTimerClock[4];
-	u8 tlcsTimer[4];
-	u8 tlcsTimerThreshold[4];
+	u8 tlcsUpCounter[4];
+	u8 tlcsTimerCompare[4];
 	u8 tlcsTimerHInt;
 	u8 tlcsTRun;
 	u8 tlcsT01Mod;

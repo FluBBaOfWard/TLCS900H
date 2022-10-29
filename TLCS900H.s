@@ -1012,8 +1012,8 @@ currentGprBank:
 	.space 64		;@ tlcsIPending
 	.space 16		;@ tlcsIntPrio
 	.space 4*4		;@ tlcsTimerClock
-	.space 4		;@ tlcsTimer
-	.space 4		;@ tlcsTimerThreshold
+	.space 4		;@ tlcsUpCounter
+	.space 4		;@ tlcsTimerCompare
 	.byte 0			;@ tlcsTimerHInt
 	.byte 0			;@ tlcsTRun
 	.byte 0			;@ tlcsT01Mod
@@ -1024,14 +1024,14 @@ currentGprBank:
 	.byte 0			;@ tlcsTFF3
 	.byte 0			;@ tlcsCycShift
 	.space 3		;@ tlcsPadding0
-tlcs900HStateEnd:
+// tlcs900HStateEnd:
 	.long 0			;@ tff3Function
 	.long 0			;@ romBaseLo
 	.long 0			;@ romBaseHi
 	.long 0			;@ biosBase
 	.long 0			;@ readRomPtrLo
 	.long 0			;@ readRomPtrHi
-//PZSTable:
+// PZSTable:
 	.byte PSR_Z|PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
 	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
 	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0

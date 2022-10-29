@@ -520,16 +520,16 @@ updateTimers:				;@ r0 = cputicks (515)
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r6,lr}
 
-	ldrb r4,[t9optbl,#tlcsTRun]
-	tst r4,#0x80
-	beq noTimers
 	mov r6,r0
 	mov r5,#0					;@ r5 = h_int / timer0 / timer1
+	ldrb r4,[t9optbl,#tlcsTRun]
+	tst r4,#0x80
+	moveq r6,#0					;@ Clear clocks if master not enabled
 	tst r4,#0x01
 	beq noTimer0
 ;@----------------------------------------------------------------------------
 								;@ TIMER0
-	ldrb r2,[t9optbl,#tlcsTimer]
+	ldrb r2,[t9optbl,#tlcsUpCounter]
 	ldrb r1,[t9optbl,#tlcsT01Mod]
 	ands r1,r1,#0x03
 	bne t0c2
@@ -550,17 +550,17 @@ t0c2:
 t0c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
-		subpl r12,r12,r0
+		subspl r12,r12,r0
 		bpl t0c2Loop
 		str r12,[t9optbl,#tlcsTimerClock]
 
 timer0End:
-	ldrb r0,[t9optbl,#tlcsTimerThreshold]
+	ldrb r0,[t9optbl,#tlcsTimerCompare]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcsTimer]
+	strb r2,[t9optbl,#tlcsUpCounter]
 	movpl r5,#1					;@ Timer0 = TRUE
 	movpl r0,#0x10
 	blpl setInterrupt
@@ -570,7 +570,7 @@ noTimer0:
 	beq noTimer1
 ;@----------------------------------------------------------------------------
 								;@ TIMER1
-	ldrb r2,[t9optbl,#tlcsTimer+1]
+	ldrb r2,[t9optbl,#tlcsUpCounter+1]
 	ldrb r1,[t9optbl,#tlcsT01Mod]
 	ands r1,r1,#0x0C
 	bne t1c2
@@ -588,17 +588,17 @@ t1c2:
 t1c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
-		subpl r12,r12,r0
+		subspl r12,r12,r0
 		bpl t1c2Loop
 		str r12,[t9optbl,#tlcsTimerClock+4]
 
 timer1End:
-	ldrb r0,[t9optbl,#tlcsTimerThreshold+1]
+	ldrb r0,[t9optbl,#tlcsTimerCompare+1]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcsTimer+1]
+	strb r2,[t9optbl,#tlcsUpCounter+1]
 	movpl r0,#0x11
 	blpl setInterrupt
 
@@ -611,7 +611,7 @@ noTimer1:
 	ldrb r1,[t9optbl,#tlcsT23Mod]
 	ands r1,r1,#0x03
 	beq noTimer2				;@ TIMER2 case 0, nothing
-	ldrb r2,[t9optbl,#tlcsTimer+2]
+	ldrb r2,[t9optbl,#tlcsUpCounter+2]
 
 t2c2:
 	cmp r1,#0x02
@@ -623,27 +623,29 @@ t2c2:
 t2c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
-		subpl r12,r12,r0
+		subspl r12,r12,r0
 		bpl t2c2Loop
 		str r12,[t9optbl,#tlcsTimerClock+8]
 
 timer2End:
-	ldrb r0,[t9optbl,#tlcsTimerThreshold+2]
+	ldrb r0,[t9optbl,#tlcsTimerCompare+2]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcsTimer+2]
-	movpl r5,#1					;@ Timer2 = TRUE
-	movpl r0,#0x12
-	blpl setInterrupt
+	strb r2,[t9optbl,#tlcsUpCounter+2]
+	bmi noTimer2
+	bl clockFlipFlop3ByT2
+	mov r5,#1					;@ Timer2 = TRUE
+	mov r0,#0x12
+	bl setInterrupt
 
 noTimer2:
 	tst r4,#0x08
 	beq noTimer3
 ;@----------------------------------------------------------------------------
 								;@ TIMER3
-	ldrb r2,[t9optbl,#tlcsTimer+3]
+	ldrb r2,[t9optbl,#tlcsUpCounter+3]
 	ldrb r1,[t9optbl,#tlcsT23Mod]
 	ands r1,r1,#0x0C
 	bne t3c2
@@ -661,19 +663,19 @@ t3c2:
 t3c2Loop:
 		cmp r12,r0
 		addpl r2,r2,#1
-		subpl r12,r12,r0
+		subspl r12,r12,r0
 		bpl t3c2Loop
 		str r12,[t9optbl,#tlcsTimerClock+12]
 
 timer3End:
-	ldrb r0,[t9optbl,#tlcsTimerThreshold+3]
+	ldrb r0,[t9optbl,#tlcsTimerCompare+3]
 	cmp r0,#0
 	moveq r0,#0x100
 	cmp r2,r0
 	subpl r2,r2,r0
-	strb r2,[t9optbl,#tlcsTimer+3]
+	strb r2,[t9optbl,#tlcsUpCounter+3]
 	bmi noTimer3
-	bl clockFlipFlop3
+	bl clockFlipFlop3ByT3
 	mov r0,#0x13
 	bl setInterrupt
 
@@ -684,7 +686,7 @@ noTimers:
 	bx lr
 
 ;@----------------------------------------------------------------------------
-clockFlipFlop2:
+clockFlipFlop3ByT2:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9optbl,#tlcsTFFCR]
 	and r0,r0,#0x30
@@ -692,7 +694,7 @@ clockFlipFlop2:
 	bxne lr
 	b changeFlipFlop3
 ;@----------------------------------------------------------------------------
-clockFlipFlop3:
+clockFlipFlop3ByT3:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9optbl,#tlcsTFFCR]
 	and r0,r0,#0x30
@@ -956,12 +958,12 @@ timerRunR:					;@ 0x20
 ;@----------------------------------------------------------------------------
 timer0R:					;@ 0x22
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcsTimerThreshold]
+	ldrb r0,[t9optbl,#tlcsTimerCompare]
 	bx lr
 ;@----------------------------------------------------------------------------
 timer1R:					;@ 0x23
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcsTimerThreshold+1]
+	ldrb r0,[t9optbl,#tlcsTimerCompare+1]
 	bx lr
 ;@----------------------------------------------------------------------------
 timerT01ModR:				;@ 0x24
@@ -977,12 +979,12 @@ timerTffcrR:				;@ 0x25
 ;@----------------------------------------------------------------------------
 timer2R:					;@ 0x26
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcsTimerThreshold+2]
+	ldrb r0,[t9optbl,#tlcsTimerCompare+2]
 	bx lr
 ;@----------------------------------------------------------------------------
 timer3R:					;@ 0x27
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcsTimerThreshold+3]
+	ldrb r0,[t9optbl,#tlcsTimerCompare+3]
 	bx lr
 ;@----------------------------------------------------------------------------
 timerT23ModR:				;@ 0x28
@@ -1026,7 +1028,9 @@ timerWrite8:				;@ r0 = value, r1 = address
 timerRunW:						;@ 0x20
 ;@----------------------------------------------------------------------------
 	strb r0,[t9optbl,#tlcsTRun]
-	ldr r2,[t9optbl,#tlcsTimer]
+	tst r0,#0x80
+	biceq r0,r0,#0x0F
+	ldr r2,[t9optbl,#tlcsUpCounter]
 	tst r0,#0x01
 	biceq r2,r2,#0x000000FF
 	tst r0,#0x02
@@ -1035,22 +1039,29 @@ timerRunW:						;@ 0x20
 	biceq r2,r2,#0x00FF0000
 	tst r0,#0x08
 	biceq r2,r2,#0xFF000000
-	str r2,[t9optbl,#tlcsTimer]	;@ str ?
+	str r2,[t9optbl,#tlcsUpCounter]
 	bx lr
 ;@----------------------------------------------------------------------------
 timer0W:					;@ 0x22
 ;@----------------------------------------------------------------------------
-	strb r0,[t9optbl,#tlcsTimerThreshold]
+	strb r0,[t9optbl,#tlcsTimerCompare]
 	bx lr
 ;@----------------------------------------------------------------------------
 timer1W:					;@ 0x23
 ;@----------------------------------------------------------------------------
-	strb r0,[t9optbl,#tlcsTimerThreshold+1]
+	strb r0,[t9optbl,#tlcsTimerCompare+1]
 	bx lr
 ;@----------------------------------------------------------------------------
 timerT01ModW:				;@ 0x24
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9optbl,#tlcsT01Mod]
 	strb r0,[t9optbl,#tlcsT01Mod]
+	eor r1,r1,r0
+	mov r0,#0
+	tst r1,#0x03				;@ Timer0 input clock changed?
+	strne r0,[t9optbl,#tlcsTimerClock]
+	tst r1,#0x0C				;@ Timer1 input clock changed?
+	strne r0,[t9optbl,#tlcsTimerClock+4]
 	bx lr
 ;@----------------------------------------------------------------------------
 timerTffcrW:				;@ 0x25
@@ -1067,17 +1078,24 @@ timerTffcrW:				;@ 0x25
 ;@----------------------------------------------------------------------------
 timer2W:					;@ 0x26
 ;@----------------------------------------------------------------------------
-	strb r0,[t9optbl,#tlcsTimerThreshold+2]
+	strb r0,[t9optbl,#tlcsTimerCompare+2]
 	bx lr
 ;@----------------------------------------------------------------------------
 timer3W:					;@ 0x27
 ;@----------------------------------------------------------------------------
-	strb r0,[t9optbl,#tlcsTimerThreshold+3]
+	strb r0,[t9optbl,#tlcsTimerCompare+3]
 	bx lr
 ;@----------------------------------------------------------------------------
 timerT23ModW:				;@ 0x28
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9optbl,#tlcsT23Mod]
 	strb r0,[t9optbl,#tlcsT23Mod]
+	eor r1,r1,r0
+	mov r0,#0
+	tst r1,#0x03				;@ Timer2 input clock changed?
+	strne r0,[t9optbl,#tlcsTimerClock+8]
+	tst r1,#0x0C				;@ Timer3 input clock changed?
+	strne r0,[t9optbl,#tlcsTimerClock+12]
 	bx lr
 ;@----------------------------------------------------------------------------
 timerTrdcW:					;@ 0x29

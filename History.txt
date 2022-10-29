@@ -2,7 +2,7 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.5 - 2022-10-28 (FluBBa)
+V0.4.5 - 2022-10-29 (FluBBa)
 	Fixed timer flip flop.
 	Fixed timer rate.
 	Changed timer0 external clocking.
