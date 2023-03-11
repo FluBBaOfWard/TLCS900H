@@ -102,7 +102,7 @@ tlcsLoop:
 	mov r12,r12
 	b debugContinue
 	.short 0x6464,0x0000
-	.string "%r12%"
+	.string "PC %r12%"
 	.align 2
 debugContinue:
 #endif
@@ -162,7 +162,10 @@ tlcsOpz:
 asmE:
 	mov r11,r11
 	ldr r0,=0xEEEEEEEE
-	b asmE
+	sub t9pc,t9pc,#1
+	ldr r0,=debugCrashInstruction
+	mov lr,pc
+	bx r0
 tlcsEnd:
 	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
