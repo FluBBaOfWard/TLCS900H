@@ -6,12 +6,18 @@ Toshiba TLCS-900H cpu emulator for ARM32.
 
 You can use defines to alter the behaviour of the emulator.
 
+## Projects that use this cpu core
+
+* https://github.com/FluBBaOfWard/NGPDS
+* https://github.com/FluBBaOfWard/NGPGBA
+
 ## Credits:
 
 Thanks to:
 Reesy & Dwedit for help and inspiration with a lot of things.
 
-
 Fredrik Ahlström
-Twitter @TheRealFluBBa
-http://www.github.com/FluBBaOfWard
+
+X/Twitter @TheRealFluBBa
+
+https://www.github.com/FluBBaOfWard

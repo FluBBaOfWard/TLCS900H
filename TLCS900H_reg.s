@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2023 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -33,7 +33,7 @@
 regRCB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldr r1,[t9optbl,#tlcsCurrentMapBank]
+	ldr r1,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r1,r0]
 	mov t9Reg,t9Reg,ror#2
 	t9eatcycles 1
@@ -44,7 +44,7 @@ regRCB:
 regRCL:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldr r1,[t9optbl,#tlcsCurrentMapBank]
+	ldr r1,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r1,r0]
 	mov t9Reg,t9Reg,asr#2
 	t9eatcycles 1
@@ -121,7 +121,7 @@ regOpCodes:
 regRCW:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldr r1,[t9optbl,#tlcsCurrentMapBank]
+	ldr r1,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r1,r0]
 	bic t9Reg,t9Reg,#1
 	
@@ -507,7 +507,7 @@ itWasAdd:
 	adds r2,r2,r0
 	orrcs t9f,t9f,#PSR_C
 carryDone:
-	add r0,t9optbl,#tlcsPzst
+	add r0,t9ptr,#tlcsPzst
 	ldrb r0,[r0,r2,lsr#24]		;@ Get PZS
 	orr t9f,t9f,r0
 	eor r1,r1,r2,ror#28
@@ -928,7 +928,7 @@ regLDCcrrB:					;@ Load Control Register cr, r
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	tst r0,#0xD1				;@ Allow 0x22, 0x26, 0x2A & 0x2E
-	addeq r2,t9optbl,#tlcsDmaS
+	addeq r2,t9ptr,#tlcsDmaS
 	strbeq r1,[r2,r0]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
@@ -937,7 +937,7 @@ regLDCcrrW:					;@ Load Control Register cr, r
 	ldrb r0,[t9pc],#1			;@ CR
 	ldrh r1,[t9gprBank,t9Reg]
 	tst r0,#0xD3				;@ Allow 0x20, 0x24, 0x28 & 0x2C
-	addeq r2,t9optbl,#tlcsDmaS
+	addeq r2,t9ptr,#tlcsDmaS
 	strheq r1,[r2,r0]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
@@ -945,7 +945,7 @@ regLDCcrrL:					;@ Load Control Register cr, r
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	tst r0,#0xE3				;@ Only allow 0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18 & 0x1C
-	addeq r2,t9optbl,#tlcsDmaS
+	addeq r2,t9ptr,#tlcsDmaS
 	streq r1,[r2,r0]
 	t9fetch 8
 
@@ -959,7 +959,7 @@ regLDCrcr:					;@ Load Control Register r, cr
 regLDCrcrB:					;@ Load Control Register r, cr
 ;@----------------------------------------------------------------------------
 	tst r0,#0xD1				;@ Only allow 0x22, 0x26, 0x2A & 0x2E
-	addeq r2,t9optbl,#tlcsDmaS
+	addeq r2,t9ptr,#tlcsDmaS
 	ldrbeq r0,[r2,r0]
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 8
@@ -968,7 +968,7 @@ regLDCrcrW:					;@ Load Control Register r, cr
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1			;@ CR
 	tst r0,#0xD3				;@ Only allow 0x20, 0x24, 0x28 & 0x2C
-	addeq r2,t9optbl,#tlcsDmaS
+	addeq r2,t9ptr,#tlcsDmaS
 	ldrheq r0,[r2,r0]
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 8
@@ -976,7 +976,7 @@ regLDCrcrW:					;@ Load Control Register r, cr
 regLDCrcrL:					;@ Load Control Register r, cr
 ;@----------------------------------------------------------------------------
 	tst r0,#0xE3				;@ Allow 0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18 & 0x1C
-	addeq r2,t9optbl,#tlcsDmaS
+	addeq r2,t9ptr,#tlcsDmaS
 	ldreq r0,[r2,r0]
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 8
@@ -2136,7 +2136,7 @@ regRLCB:
 	orr r0,r0,r0,lsl#8
 	orr r0,r0,r0,lsl#16
 	movs r0,r0,lsl r12
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	mov r0,r0,lsr#24
@@ -2149,7 +2149,7 @@ regRLCW:
 	orr r0,r0,r0,lsl#16
 	movs r0,r0,lsl r12
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C
@@ -2193,7 +2193,7 @@ regRRCB:
 	orr r0,r0,r0,lsl#8
 	orr r0,r0,r0,lsl#16
 	movs r0,r0,ror r12
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -2205,7 +2205,7 @@ regRRCW:
 	orr r0,r0,r0,lsl#16
 	movs r0,r0,ror r12
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C|PSR_S
@@ -2256,7 +2256,7 @@ regRLB:
 	orr r0,r0,r0,lsr#9
 	orr r0,r0,r0,lsr#18
 	movs r0,r0,lsl r12
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	mov r0,r0,lsr#24
@@ -2272,7 +2272,7 @@ regRLW:
 	orr r0,r0,r0,lsr#17
 	movs r0,r0,lsl r12
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C
@@ -2325,7 +2325,7 @@ regRRB:
 	orr r0,r0,r0,lsl#18
 	movs r0,r0,lsr r12
 	and r0,r0,#0xFF
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -2340,7 +2340,7 @@ regRRW:
 	mov r0,r0,ror#16
 	movs r0,r0,ror r12
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -2386,7 +2386,7 @@ regSLAB:
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	mov r0,r0,lsl r12
 	movs r1,r0,lsl#24
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -2398,7 +2398,7 @@ regSLAW:
 	mov r0,r0,lsl r12
 	movs r1,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C
@@ -2442,7 +2442,7 @@ regSRAB:
 	mov r0,r0,lsl#24
 	mov r0,r0,asr r12
 	movs r0,r0,lsr#24
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -2454,7 +2454,7 @@ regSRAW:
 	mov r0,r0,lsl#16
 	mov r0,r0,asr r12
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	bic t9f,t9f,#PSR_S|PSR_Z
 	movs r0,r0,asr#16
@@ -2496,7 +2496,7 @@ regSRLB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	movs r0,r0,lsr r12
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -2508,7 +2508,7 @@ regSRLW:
 	movs r0,r0,lsr r12
 	eor r1,r0,r0,lsr#8
 	and r1,r1,#0xFF
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1]			;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C

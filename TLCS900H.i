@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2023 Fredrik Ahlström. All rights reserved.
 //
 
 				;@ r0,r1,r2&r3=temp regs
@@ -14,7 +14,7 @@ t9opCode		.req r6
 t9f				.req r7
 t9cycles		.req r8
 t9pc			.req r9
-t9optbl			.req r10
+t9ptr			.req r10
 t9gprBank		.req r11
 ;@t9opCode2		.req r12	;@ keep this at r12 (scratch for APCS)
 				;@ r13=SP

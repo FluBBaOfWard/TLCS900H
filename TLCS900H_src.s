@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2023 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -180,7 +180,7 @@ srcRLD:
 	and r1,r0,#0xFF
 	and r2,r2,#0x0F
 	orr r0,r2,r0,lsr#24
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb r1,[r2,r1]				;@ Get PZS
 	and t9f,t9f,#PSR_C			;@ Keep C
 	orr t9f,t9f,r1
@@ -196,7 +196,7 @@ srcRRD:
 	orr r1,r1,r0,lsr#28
 	strb r1,[t9gprBank,#0x00]	;@ Reg A
 	orr r0,r0,r2,lsl#4
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb r1,[r2,r1]				;@ Get PZS
 	and t9f,t9f,#PSR_C			;@ Keep C
 	orr t9f,t9f,r1
@@ -814,7 +814,7 @@ srcRLCW:
 	bl t9LoadW_mem
 	orrs r0,r0,r0,lsl#16
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P.
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_C
@@ -829,7 +829,7 @@ srcRLCB:
 	bl t9LoadB_mem
 	movs r0,r0,lsl#25
 	orrcs r0,r0,#0x01000000
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	mov r0,r0,lsr#24
@@ -850,7 +850,7 @@ srcRRCW:
 	orr r0,r0,r0,lsl#16
 	movs r0,r0,ror#1
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C|PSR_S
@@ -863,7 +863,7 @@ srcRRCB:
 	bl t9LoadB_mem
 	movs r0,r0,lsr#1
 	orrcs r0,r0,#0x00000080
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	bl t9StoreB_mem
@@ -884,7 +884,7 @@ srcRLW:						;@ Rotate Left
 	adc r0,r0,r0
 	movs r1,r0,lsl#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -899,7 +899,7 @@ srcRLB:						;@ Rotate Left
 	tst t9f,t9f,lsr#2			;@ Get C
 	adc r0,r0,r0
 	movs r1,r0,lsl#24
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	bl t9StoreB_mem
@@ -921,7 +921,7 @@ srcRRW:						;@ Rotate Right
 	mov r1,r0,rrx
 	movs r0,r1,asr#16
 	eor r1,r1,r1,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C
@@ -936,7 +936,7 @@ srcRRB:						;@ Rotate Right
 	tst t9f,#PSR_C
 	orrne r0,r0,#0x00000100
 	movs r0,r0,lsr#1
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	bl t9StoreB_mem
@@ -957,7 +957,7 @@ srcSLLW:					;@ Shift Left Logical
 	bl t9LoadW_mem
 	movs r0,r0,lsl#17
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C
@@ -972,7 +972,7 @@ srcSLLB:					;@ Shift Left Logical
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
 	movs r0,r0,lsl#25
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0,lsr#24]		;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	mov r0,r0,lsr#24
@@ -993,7 +993,7 @@ srcSRAW:					;@ Shift Right Arithmetic
 	movs r0,r0,lsl#16
 	mov r0,r0,asr#1
 	eor r1,r0,r0,lsl#8
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1,lsr#24]		;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
@@ -1008,7 +1008,7 @@ srcSRAB:					;@ Shift Right Arithmetic
 	bl t9LoadB_mem
 	and r1,r0,#0x80
 	orrs r0,r1,r0,lsr#1
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	bl t9StoreB_mem
@@ -1028,7 +1028,7 @@ srcSRLW:					;@ Shift Right Logical
 	movs r0,r0,lsr#1
 	eor r1,r0,r0,lsr#8
 	and r1,r1,#0xFF
-	add r2,t9optbl,#tlcsPzst
+	add r2,t9ptr,#tlcsPzst
 	ldrb t9f,[r2,r1]			;@ Get P
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrcs t9f,t9f,#PSR_C
@@ -1040,7 +1040,7 @@ srcSRLB:					;@ Shift Right Logical
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
 	movs r0,r0,lsr#1
-	add r1,t9optbl,#tlcsPzst
+	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orrcs t9f,t9f,#PSR_C
 	bl t9StoreB_mem

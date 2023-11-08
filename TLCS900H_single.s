@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2023 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -246,7 +246,7 @@ sngPOPSR:					;@ Pop Status Register
 	orrmi t9f,t9f,#PSR_n
 
 	mov r0,r0,lsr#8
-	strb r0,[t9optbl,#tlcsSrB]
+	strb r0,[t9ptr,#tlcsSrB]
 
 	bl changedSR
 	bl intCheckPending
@@ -267,7 +267,7 @@ sngRETI:					;@ Return from Interrupt
 	orrmi t9f,t9f,#PSR_n
 
 	mov r0,r0,lsr#8
-	strb r0,[t9optbl,#tlcsSrB]
+	strb r0,[t9ptr,#tlcsSrB]
 
 	bl pop32
 	bl encode_r0_pc
@@ -279,14 +279,14 @@ sngRETI:					;@ Return from Interrupt
 ;@----------------------------------------------------------------------------
 sngINCF:					;@ Increment Register File Pointer
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcsSrB]
+	ldrb r0,[t9ptr,#tlcsSrB]
 	add r0,r0,#1
 	bl setStatusRFP
 	t9fetch 2
 ;@----------------------------------------------------------------------------
 sngDECF:					;@ Decrement Register File Pointer
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9optbl,#tlcsSrB]
+	ldrb r0,[t9ptr,#tlcsSrB]
 	sub r0,r0,#1
 	bl setStatusRFP
 	t9fetch 2
@@ -307,14 +307,14 @@ sngEI:						;@ Enable Interrupt
 sngEX:						;@ Exchange F & F'
 ;@----------------------------------------------------------------------------
 	mov r0,t9f
-	ldrb t9f,[t9optbl,#tlcsFDash]
-	strb r0,[t9optbl,#tlcsFDash]
+	ldrb t9f,[t9ptr,#tlcsFDash]
+	strb r0,[t9ptr,#tlcsFDash]
 	t9fetch 2
 
 ;@----------------------------------------------------------------------------
 sngCALL16:					;@ Call 16bit address
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9optbl,#tlcsLastBank]
+	ldr r0,[t9ptr,#tlcsLastBank]
 	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	sub r0,t9pc,r0
@@ -329,7 +329,7 @@ sngCALL24:					;@ Call 24bit address
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
-	ldr r0,[t9optbl,#tlcsLastBank]
+	ldr r0,[t9ptr,#tlcsLastBank]
 	sub r0,t9pc,r0
 	orr t9pc,r1,r2,lsl#16		;@ New pc
 	bl push32					;@ Push old pc
@@ -341,7 +341,7 @@ sngCALR:					;@ Call Relative PC+d16
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
 	orr r1,r0,r1,lsl#8			;@ Offset
-	ldr r0,[t9optbl,#tlcsLastBank]
+	ldr r0,[t9ptr,#tlcsLastBank]
 	sub r0,t9pc,r0				;@ New pc
 	add t9pc,t9pc,r1
 	bl push32					;@ Push old pc
@@ -751,7 +751,7 @@ sngSWI2:					;@ Illegal instruction interrupt.
 ;@----------------------------------------------------------------------------
 sngSWI:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9optbl,#tlcsLastBank]
+	ldr r0,[t9ptr,#tlcsLastBank]
 	sub r0,t9pc,r0
 	bl push32
 	bl pushSR
