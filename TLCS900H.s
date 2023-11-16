@@ -67,8 +67,6 @@
 	.global loadTLCS900
 
 	.global tlcs900HState
-	.global statusRFP
-	.global currentGprBank
 
 ;@----------------------------------------------------------------------------
 	.syntax unified
@@ -1001,11 +999,9 @@ tlcs900HState:
 	.long 0			;@ tlcsLastBank
 	.short	0		;@ tlcsF, tlcsSrB
 	.byte 0			;@ tlcsFDash
-statusRFP:
 	.byte 0			;@ tlcsStatusRFP
 	.long 0			;@ tlcsCycles
 	.long 0			;@ tlcsPcAsm
-currentGprBank:
 	.long 0			;@ tlcsCurrentGprBank
 	.long 0			;@ tlcsCurrentMapBank
 	.long 0			;@ tlcsDMAStartVector
@@ -1027,7 +1023,7 @@ currentGprBank:
 	.byte 0			;@ tlcsTFF3
 	.byte 0			;@ tlcsCycShift
 	.space 3		;@ tlcsPadding0
-// tlcs900HStateEnd:
+
 	.long 0			;@ tff3Function
 	.long 0			;@ romBaseLo
 	.long 0			;@ romBaseHi
