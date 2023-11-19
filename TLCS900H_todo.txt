@@ -1,6 +1,7 @@
 TLCS900H To do
 --------------
 
+	In SRC op-codes, move reading of mem to before table, add LUT, skip B/W check.
 	Timers; 16bit, PWM and more are not supported.
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Add another jump table for reg opcodes?

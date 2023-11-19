@@ -2,8 +2,11 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2023-11-08 (FluBBa)
+V0.4.6 - 2023-11-19 (FluBBa)
 	Renamed t9optbl to t9ptr.
+	Fixed all code to use unified syntax.
+	Moved IO handling to cpu core.
+	Removed C cpu register macros.
 
 V0.4.5 - 2022-10-30 (FluBBa)
 	Fixed timer flip flop.

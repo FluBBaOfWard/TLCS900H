@@ -19,10 +19,8 @@
 	.global resetDMA
 	.global resetTimers
 	.global resetInterrupts
-	.global timerRead8
-	.global timerWrite8
-	.global intWrite8
-	.global intRead8
+	.global t9LoadB_Low
+	.global t9StoreB_Low
 
 	.syntax unified
 	.arm
@@ -63,8 +61,165 @@ resetInterrupts:
 	mov r2,#16					;@ 16*4
 	b memset_					;@ Clear INT regs
 
+;@----------------------------------------------------------------------------
+t9LoadB_Low:
+;@----------------------------------------------------------------------------
+	and r1,r0,#0xF0
+
+	cmp r1,#0x70
+	beq intRead8
+
+	cmp r1,#0x20
+	beq timerRead8
+
+	ldr r2,=systemMemory
+	ldrb r0,[r2,r0]
+	bx lr
+;@----------------------------------------------------------------------------
+timerRead8:					;@ 0x20-0x2F, r0 = address
+;@----------------------------------------------------------------------------
+	and r0,r0,#0x0F
+	ldr pc,[pc,r0,lsl#2]
+	.long 0
+timerReadLUT:
+	.long timerRunR				;@ 0x20
+	.long timerBadR				;@ 0x21
+	.long timer0R				;@ 0x22
+	.long timer1R				;@ 0x23
+	.long timerT01ModR			;@ 0x24
+	.long timerTffcrR			;@ 0x25
+	.long timer2R				;@ 0x26
+	.long timer3R				;@ 0x27
+	.long timerT23ModR			;@ 0x28
+	.long timerTrdcR			;@ 0x29
+	.long timerBadR				;@ 0x2A
+	.long timerBadR				;@ 0x2B
+	.long timerBadR				;@ 0x2C
+	.long timerBadR				;@ 0x2D
+	.long timerBadR				;@ 0x2E
+	.long timerBadR				;@ 0x2F
 ;@---------------------------------------------------------------------------
-intWrite8:					;@ r0 = value, r1 = address
+intRead8:					;@ 0x70-0x7F, r0 = address
+;@---------------------------------------------------------------------------
+	and r1,r0,#0x0F
+	mov r0,#0
+	ldr pc,[pc,r1,lsl#2]
+	.long 0
+intReadLUT:
+	.long intRd70
+	.long intRd71
+	.long intRd72
+	.long intRd73
+	.long intRd74
+	.long intRd75
+	.long intRd76
+	.long intRd77
+	.long intRd78
+	.long intRd79
+	.long intRd7A
+	.long intRd7B
+	.long intRd7C
+	.long intRd7D
+	.long intRd7E
+	.long intRd7F
+
+;@----------------------------------------------------------------------------
+t9StoreB_Low:
+;@----------------------------------------------------------------------------
+	ldr r2,=systemMemory
+	ldrb r3,[r2,r1]
+	strb r0,[r2,r1]
+
+	cmp r1,#0xB2				;@ COMMStatus
+	beq setCommStatus
+
+	cmp r1,#0xB8				;@ Soundchip enable/disable, 0x55 On 0xAA Off.
+	beq setMuteT6W28
+
+	cmp r1,#0xB9				;@ Z80 enable/disable, 0x55 On 0xAA Off.
+	beq Z80_SetEnable
+
+	cmp r1,#0xBA				;@ Z80 NMI
+	beq Z80_nmi_do
+
+	cmp r1,#0xA0				;@ T6W28, Right
+	beq T6W28_R_W
+	cmp r1,#0xA1				;@ T6W28, Left
+	beq T6W28_L_W
+	cmp r1,#0xA2				;@ T6W28 DAC, Left
+	beq T6W28_DAC_L_W
+	cmp r1,#0xA3				;@ T6W28 DAC, Right
+	beq T6W28_DAC_R_W
+
+	cmp r1,#0x6F				;@ Watchdog
+	beq watchDogW
+
+	cmp r1,#0x6D				;@ Battery A/D start
+	beq ADStart
+
+	cmp r1,#0x80				;@ CpuSpeed
+	beq cpuSpeedW
+
+	and r2,r1,#0xF0
+	cmp r2,#0x20
+	beq timerWrite8
+
+	and r0,r0,#0xFF
+	cmp r2,#0x70
+	beq intWrite8
+
+//	cmp r1,#0xB3				;@ Power button NMI on/off.
+	bx lr
+
+;@----------------------------------------------------------------------------
+watchDogW:					;@ 0x6F
+;@----------------------------------------------------------------------------
+	bx lr
+;@----------------------------------------------------------------------------
+cpuSpeedW:
+;@----------------------------------------------------------------------------
+	and r0,r0,#0x07
+	cmp r0,#4
+	movpl r0,#4
+	subs r1,r0,r3
+	bxeq lr
+	strb r0,[r2,#0x80]
+	rsb r0,r0,#T9CYC_SHIFT
+	strb r0,[t9ptr,#tlcsCycShift]
+	mov t9cycles,t9cycles,ror r1
+	bx lr
+
+;@----------------------------------------------------------------------------
+setCommStatus:				;@ 0xB2
+;@----------------------------------------------------------------------------
+	and r0,r0,#1
+	strb r0,[r2,r1]				;@ r2 = systemMemory
+	bx lr
+;@----------------------------------------------------------------------------
+timerWrite8:				;@ 0x20-0x2F, r0 = value, r1 = address
+;@----------------------------------------------------------------------------
+	and r1,r1,#0x0F
+	ldr pc,[pc,r1,lsl#2]
+	.long 0
+	.long timerRunW				;@ 0x20
+	.long timerBadW				;@ 0x21
+	.long timer0W				;@ 0x22
+	.long timer1W				;@ 0x23
+	.long timerT01ModW			;@ 0x24
+	.long timerTffcrW			;@ 0x25
+	.long timer2W				;@ 0x26
+	.long timer3W				;@ 0x27
+	.long timerT23ModW			;@ 0x28
+	.long timerTrdcW			;@ 0x29
+	.long timerBadW				;@ 0x2A
+	.long timerBadW				;@ 0x2B
+	.long timerBadW				;@ 0x2C
+	.long timerBadW				;@ 0x2D
+	.long timerBadW				;@ 0x2E
+	.long timerBadW				;@ 0x2F
+
+;@---------------------------------------------------------------------------
+intWrite8:					;@ 0x70-0x7F, r0 = value, r1 = address
 ;@---------------------------------------------------------------------------
 	mov r1,r1,lsl#28
 	and r2,r0,#0x70
@@ -95,54 +250,54 @@ intWrite8:					;@ r0 = value, r1 = address
 	.long intWr7F
 intWr70:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x0A]
+	strbeq r1,[t9ptr,#tlcsIPending+0x0A]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x1C]
+	strbeq r1,[t9ptr,#tlcsIPending+0x1C]
 	b intCheckPending
 intWr71:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x0B]
+	strbeq r1,[t9ptr,#tlcsIPending+0x0B]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x0C]
+	strbeq r1,[t9ptr,#tlcsIPending+0x0C]
 	b intCheckPending
 intWr72:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x0D]
+	strbeq r1,[t9ptr,#tlcsIPending+0x0D]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x0E]
+	strbeq r1,[t9ptr,#tlcsIPending+0x0E]
 	b intCheckPending
 intWr73:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x10]
+	strbeq r1,[t9ptr,#tlcsIPending+0x10]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x11]
+	strbeq r1,[t9ptr,#tlcsIPending+0x11]
 	b intCheckPending
 intWr74:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x12]
+	strbeq r1,[t9ptr,#tlcsIPending+0x12]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x13]
+	strbeq r1,[t9ptr,#tlcsIPending+0x13]
 intWr75:
 intWr76:
 	b intCheckPending
 intWr77:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x18]
+	strbeq r1,[t9ptr,#tlcsIPending+0x18]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x19]
+	strbeq r1,[t9ptr,#tlcsIPending+0x19]
 intWr78:
 	b intCheckPending
 intWr79:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x1D]
+	strbeq r1,[t9ptr,#tlcsIPending+0x1D]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x1E]
+	strbeq r1,[t9ptr,#tlcsIPending+0x1E]
 	b intCheckPending
 intWr7A:
 	tst r0,#0x08
-	streqb r1,[t9ptr,#tlcsIPending+0x1F]
+	strbeq r1,[t9ptr,#tlcsIPending+0x1F]
 	tst r0,#0x80
-	streqb r1,[t9ptr,#tlcsIPending+0x20]
+	strbeq r1,[t9ptr,#tlcsIPending+0x20]
 intWr7B:
 	b intCheckPending
 
@@ -155,29 +310,7 @@ intWr7F:
 	add r2,t9ptr,#tlcsDMAStartVector
 	strb r0,[r2,r1,lsr#28]
 	bx lr
-;@---------------------------------------------------------------------------
-intRead8:					;@ r0 = address
-;@---------------------------------------------------------------------------
-	and r1,r0,#0x0F
-	mov r0,#0
-	ldr pc,[pc,r1,lsl#2]
-	.long 0
-	.long intRd70
-	.long intRd71
-	.long intRd72
-	.long intRd73
-	.long intRd74
-	.long intRd75
-	.long intRd76
-	.long intRd77
-	.long intRd78
-	.long intRd79
-	.long intRd7A
-	.long intRd7B
-	.long intRd7C
-	.long intRd7D
-	.long intRd7E
-	.long intRd7F
+;@----------------------------------------------------------------------------
 intRd70:
 	ldrb r1,[t9ptr,#tlcsIPending+0x0A]
 	cmp r1,#0
@@ -325,9 +458,7 @@ interrupt:					;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------
 setVBlankInterrupt:
 ;@---------------------------------------------------------------------------
-	mov r0,#0x07
-	strb r0,[t9ptr,#tlcsIPending+0x0B]
-	bx lr
+	mov r0,#0x0B
 ;@---------------------------------------------------------------------------
 setInterrupt:				;@ r0 = index
 ;@---------------------------------------------------------------------------
@@ -927,28 +1058,6 @@ DMA_Finnish:
 dmaEnd:
 	ldmfd sp!,{r5,r6,lr}
 	bx lr
-;@----------------------------------------------------------------------------
-timerRead8:					;@ r0 = address
-;@----------------------------------------------------------------------------
-	and r0,r0,#0x0F
-	ldr pc,[pc,r0,lsl#2]
-	bx lr
-	.long timerRunR				;@ 0x20
-	.long timerBadR				;@ 0x21
-	.long timer0R				;@ 0x22
-	.long timer1R				;@ 0x23
-	.long timerT01ModR			;@ 0x24
-	.long timerTffcrR			;@ 0x25
-	.long timer2R				;@ 0x26
-	.long timer3R				;@ 0x27
-	.long timerT23ModR			;@ 0x28
-	.long timerTrdcR			;@ 0x29
-	.long timerBadR				;@ 0x2A
-	.long timerBadR				;@ 0x2B
-	.long timerBadR				;@ 0x2C
-	.long timerBadR				;@ 0x2D
-	.long timerBadR				;@ 0x2E
-	.long timerBadR				;@ 0x2F
 
 ;@----------------------------------------------------------------------------
 timerRunR:					;@ 0x20
@@ -1001,29 +1110,6 @@ timerBadR:					;@ 0x2X
 ;@----------------------------------------------------------------------------
 	mov r0,#0
 	bx lr
-;@----------------------------------------------------------------------------
-timerWrite8:				;@ r0 = value, r1 = address
-;@----------------------------------------------------------------------------
-	and r1,r1,#0x0F
-	ldr pc,[pc,r1,lsl#2]
-	bx lr
-	.long timerRunW				;@ 0x20
-	.long timerBadW				;@ 0x21
-	.long timer0W				;@ 0x22
-	.long timer1W				;@ 0x23
-	.long timerT01ModW			;@ 0x24
-	.long timerTffcrW			;@ 0x25
-	.long timer2W				;@ 0x26
-	.long timer3W				;@ 0x27
-	.long timerT23ModW			;@ 0x28
-	.long timerTrdcW			;@ 0x29
-	.long timerBadW				;@ 0x2A
-	.long timerBadW				;@ 0x2B
-	.long timerBadW				;@ 0x2C
-	.long timerBadW				;@ 0x2D
-	.long timerBadW				;@ 0x2E
-	.long timerBadW				;@ 0x2F
-
 ;@----------------------------------------------------------------------------
 timerRunW:						;@ 0x20
 ;@----------------------------------------------------------------------------
