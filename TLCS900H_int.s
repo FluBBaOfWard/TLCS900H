@@ -183,10 +183,12 @@ cpuSpeedW:
 	movpl r0,#4
 	subs r1,r0,r3
 	bxeq lr
+//	mov t9cycles,t9cycles,ror r1	;@ melonDS doesn't like this.
+	movpl t9cycles,t9cycles,asr r1
+	movmi t9cycles,t9cycles,lsl#1
 	strb r0,[r2,#0x80]
 	rsb r0,r0,#T9CYC_SHIFT
 	strb r0,[t9ptr,#tlcsCycShift]
-	mov t9cycles,t9cycles,ror r1
 	bx lr
 
 ;@----------------------------------------------------------------------------

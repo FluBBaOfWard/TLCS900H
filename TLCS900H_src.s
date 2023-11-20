@@ -37,10 +37,10 @@
 srcExXRR:
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	adr r2,srcOpCodes
-	ldr pc,[r2,r0,lsl#2]
+	ldrb r2,[t9pc],#1
+	and t9Reg,r2,#0x07
+	adr r1,srcOpCodes
+	ldr pc,[r1,r2,lsl#2]
 ;@----------------------------------------------------------------------------
 srcExXRRd:
 	and t9Reg,t9opCode,#0x07
@@ -48,18 +48,18 @@ srcExXRRd:
 	ldrsb r0,[t9pc],#1
 	add t9Mem,t9Mem,r0
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	adr r2,srcOpCodes
-	ldr pc,[r2,r0,lsl#2]
+	ldrb r2,[t9pc],#1
+	and t9Reg,r2,#0x07
+	adr r1,srcOpCodes
+	ldr pc,[r1,r2,lsl#2]
 ;@----------------------------------------------------------------------------
 srcEx8:
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	adr r2,srcOpCodes
-	ldr pc,[r2,r0,lsl#2]
+	ldrb r2,[t9pc],#1
+	and t9Reg,r2,#0x07
+	adr r1,srcOpCodes
+	ldr pc,[r1,r2,lsl#2]
 ;@----------------------------------------------------------------------------
 srcEx24:
 	ldrb t9Mem,[t9pc],#1
@@ -68,10 +68,10 @@ srcEx24:
 	ldrb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#16
 	t9eatcycles 3
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	adr r2,srcOpCodes
-	ldr pc,[r2,r0,lsl#2]
+	ldrb r2,[t9pc],#1
+	and t9Reg,r2,#0x07
+	adr r1,srcOpCodes
+	ldr pc,[r1,r2,lsl#2]
 ;@----------------------------------------------------------------------------
 srcExR32:
 	adr lr,src_asm
@@ -92,9 +92,9 @@ srcEx16:
 	t9eatcycles 2
 ;@----------------------------------------------------------------------------
 src_asm:
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr pc,[pc,r0,lsl#2]
+	ldrb r2,[t9pc],#1
+	and t9Reg,r2,#0x07
+	ldr pc,[pc,r2,lsl#2]
 	mov r11,r11
 srcOpCodes:
 ;@ 0x00
@@ -217,7 +217,7 @@ srcLDI_LDDdo:
 	beq unknown_RR_Target
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]
 	ands r1,t9opCode,#0x30		;@ Size
-	and t9opCode,r0,#0x02		;@ Increase/Decrease
+	and t9opCode,r2,#0x02		;@ Increase/Decrease
 	rsb t9opCode,t9opCode,#0x01
 	beq srcLDI_LDDB
 	cmp r1,#0x10
@@ -279,8 +279,8 @@ srcCPD:
 ;@----------------------------------------------------------------------------
 srcCPI_CPDdo:
 ;@----------------------------------------------------------------------------
-	and r0,r0,#0x02				;@ Increase/Decrease
-	rsb r0,r0,#0x01
+	and r2,r2,#0x02				;@ Increase/Decrease
+	rsb r2,r2,#0x01
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]
 	ands r1,t9opCode,#0x30		;@ Size
@@ -291,7 +291,7 @@ srcCPI_CPDdo:
 srcCPI_CPDW:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	add r1,t9Mem,r0,lsl#1
+	add r1,t9Mem,r2,lsl#1
 	str r1,[t9gprBank,t9Reg,lsl#2]
 	bl t9LoadW_mem
 	mov r1,r0
@@ -302,7 +302,7 @@ srcCPI_CPDW:
 srcCPI_CPDB:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	add r1,t9Mem,r0
+	add r1,t9Mem,r2
 	str r1,[t9gprBank,t9Reg,lsl#2]
 	bl t9LoadB_mem
 	mov r1,r0
