@@ -816,8 +816,10 @@ generic_SBC_L:				;@ r0=dst, r1=src
 
 	bx lr
 ;@----------------------------------------------------------------------------
-	.section .ewram,"ax"
+#if GBA
+	.section .ewram, "ax", %progbits	;@ For the GBA
 	.align 2
+#endif
 ;@----------------------------------------------------------------------------
 ;@----------------------------------------------------------------------------
 statusIFF:					;@ r0 out = current IFF
@@ -923,7 +925,7 @@ tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 	strb r0,[t9ptr,#tlcsStatusRFP]
 	mov r0,#0x100
 	str r0,[t9gprBank,#0x1C]	;@ XSP
-	mov r0,#0xF8
+	mov r0,#0xF8				;@ Sys=1, IE=7, Max=1, RFP=0.
 	strb r0,[t9ptr,#tlcsSrB]
 	mov r0,#T9CYC_SHIFT
 	strb r0,[t9ptr,#tlcsCycShift]

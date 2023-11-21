@@ -38,25 +38,7 @@ regRCB:
 	mov t9Reg,t9Reg,ror#2
 	t9eatcycles 1
 	ldrb r0,[t9pc],#1
-	adr r1,regOpCodes
-	ldr pc,[r1,r0,lsl#2]
-;@----------------------------------------------------------------------------
-regRCL:
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	ldr r1,[t9ptr,#tlcsCurrentMapBank]
-	ldrsb t9Reg,[r1,r0]
-	mov t9Reg,t9Reg,asr#2
-	t9eatcycles 1
-	ldrb r0,[t9pc],#1
-	adr r1,regOpCodes
-	ldr pc,[r1,r0,lsl#2]
-;@----------------------------------------------------------------------------
-reg_L:
-;@----------------------------------------------------------------------------
-	and t9Reg,t9opCode,#0x07
-	ldrb r0,[t9pc],#1
-	adr r1,regOpCodes
+	adr r1,regOpCodesB
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 reg_B:
@@ -67,54 +49,54 @@ reg_B:
 	ldrb r0,[t9pc],#1
 	ldr pc,[pc,r0,lsl#2]
 	.long 0
-regOpCodes:
+regOpCodesB:
 ;@ 0x00
-	.long er,		er,			er,			regLDi,		regPUSH,	regPOP,		regCPL,		regNEG
-	.long regMULi,	regMULSi,	regDIVi,	regDIVSi,	regLINK,	regUNLK,	regBS1F,	regBS1B
+	.long er,		er,			er,			regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
+	.long regMULiB,	regMULSiB,	regDIViB,	regDIVSiB,	er,			er,			er,			er
 ;@ 0x10
-	.long regDAA,	er,			regEXTZ,	regEXTS,	regPAA,		er,			er,			er
-	.long er,		er,			er,			er,			regDJNZ,	er,			er,			er
+	.long regDAA,	er,			er,			er,			er,			er,			er,			er
+	.long er,		er,			er,			er,			regDJNZB,	er,			er,			er
 ;@ 0x20
-	.long regANDCFi,regORCFi,	regXORCFi,	regLDCFi,	regSTCFi,	er,			er,			er
-	.long regANDCFA,regORCFA,	regXORCFA,	regLDCFA,	regSTCFA,	er,			regLDCcrr,	regLDCrcr
+	.long regANDCFiB,regORCFiB,	regXORCFiB,	regLDCFiB,	regSTCFiB,	er,			er,			er
+	.long regANDCFAB,regORCFAB,	regXORCFAB,	regLDCFAB,	regSTCFAB,	er,			regLDCcrrB,	regLDCrcrB
 ;@ 0x30
-	.long regRES,	regSET,		regCHG,		regBIT,		regTSET,	er,			er,			er
+	.long regRESB,	regSETB,	regCHGB,	regBITB,	regTSETB,	er,			er,			er
 	.long er,		er,			er,			er,			er,			er,			er,			er
 ;@ 0x40
-	.long regMUL,	regMUL,		regMUL,		regMUL,		regMUL,		regMUL,		regMUL,		regMUL
-	.long regMULS,	regMULS,	regMULS,	regMULS,	regMULS,	regMULS,	regMULS,	regMULS
+	.long er,		regMULB,	er,			regMULB,	er,			regMULB,	er,			regMULB
+	.long er,		regMULSB,	er,			regMULSB,	er,			regMULSB,	er,			regMULSB
 ;@ 0x50
-	.long regDIV,	regDIV,		regDIV,		regDIV,		regDIV,		regDIV,		regDIV,		regDIV
-	.long regDIVS,	regDIVS,	regDIVS,	regDIVS,	regDIVS,	regDIVS,	regDIVS,	regDIVS
+	.long er,		regDIVB,	er,			regDIVB,	er,			regDIVB,	er,			regDIVB
+	.long er,		regDIVSB,	er,			regDIVSB,	er,			regDIVSB,	er,			regDIVSB
 ;@ 0x60
-	.long regINC,	regINC,		regINC,		regINC,		regINC,		regINC,		regINC,		regINC
-	.long regDEC,	regDEC,		regDEC,		regDEC,		regDEC,		regDEC,		regDEC,		regDEC
+	.long regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB
+	.long regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB
 ;@ 0x70
-	.long regSCC,	regSCC,		regSCC,		regSCC,		regSCC,		regSCC,		regSCC,		regSCC
-	.long regSCC,	regSCC,		regSCC,		regSCC,		regSCC,		regSCC,		regSCC,		regSCC
+	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
+	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
 ;@ 0x80
-	.long regADD,	regADD,		regADD,		regADD,		regADD,		regADD,		regADD,		regADD
-	.long regLDRr,	regLDRr,	regLDRr,	regLDRr,	regLDRr,	regLDRr,	regLDRr,	regLDRr
+	.long regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB
+	.long regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB
 ;@ 0x90
-	.long regADC,	regADC,		regADC,		regADC,		regADC,		regADC,		regADC,		regADC
-	.long regLDrR,	regLDrR,	regLDrR,	regLDrR,	regLDrR,	regLDrR,	regLDrR,	regLDrR
+	.long regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB
+	.long regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB
 ;@ 0xA0
-	.long regSUB,	regSUB,		regSUB,		regSUB,		regSUB,		regSUB,		regSUB,		regSUB
-	.long regLDr3,	regLDr3,	regLDr3,	regLDr3,	regLDr3,	regLDr3,	regLDr3,	regLDr3
+	.long regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB
+	.long regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B
 ;@ 0xB0
-	.long regSBC,	regSBC,		regSBC,		regSBC,		regSBC,		regSBC,		regSBC,		regSBC
-	.long regEX,	regEX,		regEX,		regEX,		regEX,		regEX,		regEX,		regEX
+	.long regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB
+	.long regEXB,	regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB
 ;@ 0xC0
-	.long regAND,	regAND,		regAND,		regAND,		regAND,		regAND,		regAND,		regAND
-	.long regADDi,	regADCi,	regSUBi,	regSBCi,	regANDi,	regXORi,	regORi,		regCPi
+	.long regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB
+	.long regADDiB,	regADCiB,	regSUBiB,	regSBCiB,	regANDiB,	regXORiB,	regORiB,	regCPiB
 ;@ 0xD0
-	.long regXOR,	regXOR,		regXOR,		regXOR,		regXOR,		regXOR,		regXOR,		regXOR
-	.long regCPr3,	regCPr3,	regCPr3,	regCPr3,	regCPr3,	regCPr3,	regCPr3,	regCPr3
+	.long regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB
+	.long regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B
 ;@ 0xE0
-	.long regOR,	regOR,		regOR,		regOR,		regOR,		regOR,		regOR,		regOR
+	.long regORB,	regORB,		regORB,		regORB,		regORB,		regORB,		regORB,		regORB
 	.long regRLCi,	regRRCi,	regRLi,		regRRi,		regSLAi,	regSRAi,	regSLLi,	regSRLi
 ;@ 0xF0
-	.long regCP,	regCP,		regCP,		regCP,		regCP,		regCP,		regCP,		regCP
+	.long regCPB,	regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB
 	.long regRLCA,	regRRCA,	regRLA,		regRRA,		regSLAA,	regSRAA,	regSLLA,	regSRLA
 
 ;@----------------------------------------------------------------------------
@@ -124,7 +106,6 @@ regRCW:
 	ldr r1,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r1,r0]
 	bic t9Reg,t9Reg,#1
-	
 	t9eatcycles 1
 	ldrb r0,[t9pc],#1
 	adr r1,regOpCodesW
@@ -148,7 +129,7 @@ regOpCodesW:
 	.long regANDCFiW,regORCFiW,	regXORCFiW,	regLDCFiW,	regSTCFiW,	er,			er,			er
 	.long regANDCFAW,regORCFAW,	regXORCFAW,	regLDCFAW,	regSTCFAW,	er,			regLDCcrrW,	regLDCrcrW
 ;@ 0x30
-	.long regRESW,	regSETW,	regCHGW,	regBITW,	regTSET,	er,			er,			er
+	.long regRESW,	regSETW,	regCHGW,	regBITW,	regTSETW,	er,			er,			er
 	.long regMINC1,	regMINC2,	regMINC4,	er,			regMDEC1,	regMDEC2,	regMDEC4,	er
 ;@ 0x40
 	.long regMULW,	regMULW,	regMULW,	regMULW,	regMULW,	regMULW,	regMULW,	regMULW
@@ -187,17 +168,80 @@ regOpCodesW:
 	.long regCPW,	regCPW,		regCPW,		regCPW,		regCPW,		regCPW,		regCPW,		regCPW
 	.long regRLCA,	regRRCA,	regRLA,		regRRA,		regSLAA,	regSRAA,	regSLLA,	regSRLA
 
+;@----------------------------------------------------------------------------
+regRCL:
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1
+	ldr r1,[t9ptr,#tlcsCurrentMapBank]
+	ldrsb t9Reg,[r1,r0]
+	mov t9Reg,t9Reg,asr#2
+	t9eatcycles 1
+	ldrb r0,[t9pc],#1
+	adr r1,regOpCodesL
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+reg_L:
+;@----------------------------------------------------------------------------
+	and t9Reg,t9opCode,#0x07
+	ldrb r0,[t9pc],#1
+	ldr pc,[pc,r0,lsl#2]
+	.long 0
+regOpCodesL:
+;@ 0x00
+	.long er,		er,			er,			regLDiL,	regPUSHL,	regPOPL,	er,			er
+	.long er,		er,			er,			er,			regLINK,	regUNLK,	er,			er
+;@ 0x10
+	.long er,		er,			regEXTZL,	regEXTSL,	regPAAL,	er,			er,			er
+	.long er,		er,			er,			er,			er,			er,			er,			er
+;@ 0x20
+	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long er,		er,			er,			er,			er,			er,			regLDCcrrL,	regLDCrcrL
+;@ 0x30
+	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long er,		er,			er,			er,			er,			er,			er,			er
+;@ 0x40
+	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long er,		er,			er,			er,			er,			er,			er,			er
+;@ 0x50
+	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long er,		er,			er,			er,			er,			er,			er,			er
+;@ 0x60
+	.long regINCL,	regINCL,	regINCL,	regINCL,	regINCL,	regINCL,	regINCL,	regINCL
+	.long regDECL,	regDECL,	regDECL,	regDECL,	regDECL,	regDECL,	regDECL,	regDECL
+;@ 0x70
+	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long er,		er,			er,			er,			er,			er,			er,			er
+;@ 0x80
+	.long regADDL,	regADDL,	regADDL,	regADDL,	regADDL,	regADDL,	regADDL,	regADDL
+	.long regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL
+;@ 0x90
+	.long regADCL,	regADCL,	regADCL,	regADCL,	regADCL,	regADCL,	regADCL,	regADCL
+	.long regLDrRL,	regLDrRL,	regLDrRL,	regLDrRL,	regLDrRL,	regLDrRL,	regLDrRL,	regLDrRL
+;@ 0xA0
+	.long regSUBL,	regSUBL,	regSUBL,	regSUBL,	regSUBL,	regSUBL,	regSUBL,	regSUBL
+	.long regLDr3L,	regLDr3L,	regLDr3L,	regLDr3L,	regLDr3L,	regLDr3L,	regLDr3L,	regLDr3L
+;@ 0xB0
+	.long regSBCL,	regSBCL,	regSBCL,	regSBCL,	regSBCL,	regSBCL,	regSBCL,	regSBCL
+	.long regEXL,	regEXL,		regEXL,		regEXL,		regEXL,		regEXL,		regEXL,		regEXL
+;@ 0xC0
+	.long regANDL,	regANDL,	regANDL,	regANDL,	regANDL,	regANDL,	regANDL,	regANDL
+	.long regADDiL,	regADCiL,	regSUBiL,	regSBCiL,	regANDiL,	regXORiL,	regORiL,	regCPiL
+;@ 0xD0
+	.long regXORL,	regXORL,	regXORL,	regXORL,	regXORL,	regXORL,	regXORL,	regXORL
+	.long er,		er,			er,			er,			er,			er,			er,			er
+;@ 0xE0
+	.long regORL,	regORL,		regORL,		regORL,		regORL,		regORL,		regORL,		regORL
+	.long regRLCi,	regRRCi,	regRLi,		regRRi,		regSLAi,	regSRAi,	regSLLi,	regSRLi
+;@ 0xF0
+	.long regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L
+	.long regRLCA,	regRRCA,	regRLA,		regRRA,		regSLAA,	regSRAA,	regSLLA,	regSRLA
+
 er:
 	mov r11,r11
 	mov r0,#0xE6
 	t9fetch 0
 ;@----------------------------------------------------------------------------
 
-;@----------------------------------------------------------------------------
-regLDi:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne regLDiL
 ;@----------------------------------------------------------------------------
 regLDiB:
 ;@----------------------------------------------------------------------------
@@ -226,11 +270,6 @@ regLDiL:
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------
-regPUSH:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne regPUSHL
-;@----------------------------------------------------------------------------
 regPUSHB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -249,11 +288,6 @@ regPUSHL:
 	bl push32
 	t9fetch 7
 
-;@----------------------------------------------------------------------------
-regPOP:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne regPOPL
 ;@----------------------------------------------------------------------------
 regPOPB:
 ;@----------------------------------------------------------------------------
@@ -274,11 +308,6 @@ regPOPL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regCPL:						;@ Complement
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regCPLB:					;@ Complement
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -295,11 +324,6 @@ regCPLW:					;@ Complement
 	orr t9f,t9f,#PSR_H|PSR_n
 	t9fetch 4
 
-;@----------------------------------------------------------------------------
-regNEG:						;@ Negate
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regNEGB:					;@ Negate
 ;@----------------------------------------------------------------------------
@@ -318,15 +342,10 @@ regNEGW:					;@ Negate
 	t9fetch 5
 
 ;@----------------------------------------------------------------------------
-regMULi:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regMULiB:
 ;@----------------------------------------------------------------------------
-	movs r0,t9opCode,lsr#1
-	bcc unknown_RR_Target
+	tst t9Reg,#0x40000000
+	bne unknown_RR_Target
 	mov t9Reg,t9Reg,ror#30
 	ldrb r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -345,15 +364,10 @@ regMULiW:
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regMULSi:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regMULSiB:
 ;@----------------------------------------------------------------------------
-	movs r0,t9opCode,lsr#1
-	bcc unknown_RR_Target
+	tst t9Reg,#0x40000000
+	bne unknown_RR_Target
 	mov t9Reg,t9Reg,ror#30
 	ldrsb r0,[t9gprBank,t9Reg]
 	ldrsb r1,[t9pc],#1
@@ -372,15 +386,10 @@ regMULSiW:
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regDIVi:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regDIViB:
 ;@----------------------------------------------------------------------------
-	movs r0,t9opCode,lsr#1
-	bcc unknown_RR_Target
+	tst t9Reg,#0x40000000
+	bne unknown_RR_Target
 	mov t9Reg,t9Reg,ror#30
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -399,15 +408,10 @@ regDIViW:
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regDIVSi:
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x30			;@ Size ????
-	bne er
-;@----------------------------------------------------------------------------
 regDIVSiB:
 ;@----------------------------------------------------------------------------
-	movs r0,t9opCode,lsr#1
-	bcc unknown_RR_Target
+	tst t9Reg,#0x40000000
+	bne unknown_RR_Target
 	mov t9Reg,t9Reg,ror#30
 	ldrsh r0,[t9gprBank,t9Reg]
 	ldrsb r1,[t9pc],#1
@@ -459,7 +463,7 @@ bs1fLoop:
 	bcs bs1fEnd
 	add r1,r1,#1
 	bne bs1fLoop
-	orr t9f,t9f,#PSR_V
+	orr t9f,t9f,#PSR_V			;@ Bit not found
 bs1fEnd:
 	strb r1,[t9gprBank,#0x00]	;@ Reg A
 	t9fetch 4
@@ -475,7 +479,7 @@ bs1bLoop:
 	bcs bs1bEnd
 	sub r1,r1,#1
 	bne bs1bLoop
-	orr t9f,t9f,#PSR_V
+	orr t9f,t9f,#PSR_V			;@ Bit not found
 bs1bEnd:
 	strb r1,[t9gprBank,#0x00]	;@ Reg A
 	t9fetch 4
@@ -519,10 +523,11 @@ carryDone:
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------
-regEXTZ:					;@ Extend Zero
+regEXTZW:					;@ Extend Zero
 ;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	beq er
+	ldrb r1,[t9gprBank,t9Reg]
+	strh r1,[t9gprBank,t9Reg]
+	t9fetch 4
 ;@----------------------------------------------------------------------------
 regEXTZL:					;@ Extend Zero
 ;@----------------------------------------------------------------------------
@@ -530,18 +535,13 @@ regEXTZL:					;@ Extend Zero
 	ldrh r1,[t9gprBank,t9Reg]
 	str r1,[t9gprBank,t9Reg]
 	t9fetch 4
-;@----------------------------------------------------------------------------
-regEXTZW:					;@ Extend Zero
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9gprBank,t9Reg]
-	strh r1,[t9gprBank,t9Reg]
-	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regEXTS:					;@ Extend Sign
+regEXTSW:					;@ Extend Sign
 ;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	beq er
+	ldrsb r0,[t9gprBank,t9Reg]
+	strh r0,[t9gprBank,t9Reg]
+	t9fetch 5
 ;@----------------------------------------------------------------------------
 regEXTSL:					;@ Extend Sign
 ;@----------------------------------------------------------------------------
@@ -549,18 +549,7 @@ regEXTSL:					;@ Extend Sign
 	ldrsh r0,[t9gprBank,t9Reg]
 	str r0,[t9gprBank,t9Reg]
 	t9fetch 5
-;@----------------------------------------------------------------------------
-regEXTSW:					;@ Extend Sign
-;@----------------------------------------------------------------------------
-	ldrsb r0,[t9gprBank,t9Reg]
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 5
 
-;@----------------------------------------------------------------------------
-regPAA:						;@ Pointer Adjustment Accumulator
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	beq er
 ;@----------------------------------------------------------------------------
 regPAAL:					;@ Pointer Adjustment Accumulator
 ;@----------------------------------------------------------------------------
@@ -614,11 +603,6 @@ regMULA:					;@ Multiply and Add
 	t9fetch 31
 
 ;@----------------------------------------------------------------------------
-regDJNZ:					;@ Decrement and Jump if Non Zero
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regDJNZB:					;@ Decrement and Jump if Non Zero
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -639,11 +623,6 @@ regDJNZW:					;@ Decrement and Jump if Non Zero
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 7
 
-;@----------------------------------------------------------------------------
-regANDCFi:					;@ And Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regANDCFiB:					;@ And Carry Flag
 ;@----------------------------------------------------------------------------
@@ -667,11 +646,6 @@ regANDCFiW:					;@ And Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regORCFi:					;@ Or Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regORCFiB:					;@ Or Carry Flag
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -693,11 +667,6 @@ regORCFiW:					;@ Or Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regXORCFi:					;@ Xor Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regXORCFiB:					;@ Xor Carry Flag
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -718,11 +687,6 @@ regXORCFiW:					;@ Xor Carry Flag
 	eorne t9f,t9f,#PSR_C
 	t9fetch 4
 
-;@----------------------------------------------------------------------------
-regLDCFi:					;@ Load Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regLDCFiB:					;@ Load Carry Flag
 ;@----------------------------------------------------------------------------
@@ -747,11 +711,6 @@ regLDCFiW:					;@ Load Carry Flag
 	orrne t9f,t9f,#PSR_C
 	t9fetch 4
 
-;@----------------------------------------------------------------------------
-regSTCFi:					;@ Store Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regSTCFiB:					;@ Store Carry Flag
 ;@----------------------------------------------------------------------------
@@ -778,11 +737,6 @@ regSTCFiW:					;@ Store Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regANDCFA:					;@ And Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regANDCFAB:					;@ And Carry Flag
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -805,11 +759,6 @@ regANDCFAW:					;@ And Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regORCFA:					;@ Or Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regORCFAB:					;@ Or Carry Flag
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -831,11 +780,6 @@ regORCFAW:					;@ Or Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regXORCFA:					;@ Xor Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regXORCFAB:					;@ Xor Carry Flag
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -856,11 +800,6 @@ regXORCFAW:					;@ Xor Carry Flag
 	eorne t9f,t9f,#PSR_C
 	t9fetch 4
 
-;@----------------------------------------------------------------------------
-regLDCFA:					;@ Load Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regLDCFAB:					;@ Load Carry Flag
 ;@----------------------------------------------------------------------------
@@ -888,11 +827,6 @@ regLDCFAW:					;@ Load Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regSTCFA:					;@ Store Carry Flag
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regSTCFAB:					;@ Store Carry Flag
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
@@ -918,14 +852,11 @@ regSTCFAW:					;@ Store Carry Flag
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regLDCcrr:					;@ Should this also include interrupt nesting counter? (0x7C on TLCS-900/H1, has 8 DMA channels.)
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1			;@ CR
-	tst t9opCode,#0x20			;@ Size
-	bne regLDCcrrL
+;@ Should this also include interrupt nesting counter? (0x7C on TLCS-900/H1, has 8 DMA channels.)
 ;@----------------------------------------------------------------------------
 regLDCcrrB:					;@ Load Control Register cr, r
 ;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1			;@ CR
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	tst r0,#0xD1				;@ Allow 0x22, 0x26, 0x2A & 0x2E
 	addeq r2,t9ptr,#tlcsDmaS
@@ -943,6 +874,7 @@ regLDCcrrW:					;@ Load Control Register cr, r
 ;@----------------------------------------------------------------------------
 regLDCcrrL:					;@ Load Control Register cr, r
 ;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1			;@ CR
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	tst r0,#0xE3				;@ Only allow 0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18 & 0x1C
 	addeq r2,t9ptr,#tlcsDmaS
@@ -950,14 +882,9 @@ regLDCcrrL:					;@ Load Control Register cr, r
 	t9fetch 8
 
 ;@----------------------------------------------------------------------------
-regLDCrcr:					;@ Load Control Register r, cr
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1			;@ CR
-	tst t9opCode,#0x30			;@ Size
-	bne regLDCrcrL
-;@----------------------------------------------------------------------------
 regLDCrcrB:					;@ Load Control Register r, cr
 ;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1			;@ CR
 	tst r0,#0xD1				;@ Only allow 0x22, 0x26, 0x2A & 0x2E
 	addeq r2,t9ptr,#tlcsDmaS
 	ldrbeq r0,[r2,r0]
@@ -975,17 +902,13 @@ regLDCrcrW:					;@ Load Control Register r, cr
 ;@----------------------------------------------------------------------------
 regLDCrcrL:					;@ Load Control Register r, cr
 ;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1			;@ CR
 	tst r0,#0xE3				;@ Allow 0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18 & 0x1C
 	addeq r2,t9ptr,#tlcsDmaS
 	ldreq r0,[r2,r0]
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 8
 
-;@----------------------------------------------------------------------------
-regRES:						;@ Reset Bit
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x30			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regRESB:					;@ Reset Bit
 ;@----------------------------------------------------------------------------
@@ -1008,11 +931,6 @@ regRESW:					;@ Reset Bit
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regSET:						;@ Set Bit
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regSETB:					;@ Set Bit
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9pc],#1
@@ -1034,11 +952,6 @@ regSETW:					;@ Set Bit
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regCHG:						;@ Change Bit
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regCHGB:					;@ Change Bit
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9pc],#1
@@ -1059,11 +972,6 @@ regCHGW:					;@ Change Bit
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 
-;@----------------------------------------------------------------------------
-regBIT:						;@ Bit Test
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regBITB:					;@ Bit Test
 ;@----------------------------------------------------------------------------
@@ -1089,11 +997,6 @@ regBITW:					;@ Bit Test
 	orreq t9f,t9f,#PSR_Z
 	t9fetch 4
 
-;@----------------------------------------------------------------------------
-regTSET:					;@ Test and Set
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regTSETB:					;@ Test and Set
 ;@----------------------------------------------------------------------------
@@ -1204,17 +1107,10 @@ regMDEC4:					;@ Modulo Decrement 4
 	t9fetch 8
 
 ;@----------------------------------------------------------------------------
-regMUL:						;@ Multiply
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regMULB:					;@ Multiply
 ;@----------------------------------------------------------------------------
-	movs t9Reg2,r0,lsr#1		;@ From Second
-	bcc unknown_RR_Target
-	and t9Reg2,t9Reg2,#0x03
-	mov t9Reg2,t9Reg2,lsl#2
+	and t9Reg2,r0,#0x06		;@ From Second
+	mov t9Reg2,t9Reg2,lsl#1
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	ldrb r0,[t9gprBank,t9Reg2]	;@ reg R
 	mul r0,r1,r0
@@ -1232,18 +1128,11 @@ regMULW:					;@ Multiply
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regMULS:					;@ Multiply Signed
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regMULSB:					;@ Multiply Signed
 ;@----------------------------------------------------------------------------
-	movs t9Reg2,r0,lsr#1		;@ From Second
-	bcc unknown_RR_Target
+	and t9Reg2,r0,#0x06		;@ From Second
 	mov t9Reg,t9Reg,ror#30
-	and t9Reg2,t9Reg2,#0x03
-	mov t9Reg2,t9Reg2,lsl#2
+	mov t9Reg2,t9Reg2,lsl#1
 	ldrsb r1,[t9gprBank,t9Reg]
 	ldrsb r0,[t9gprBank,t9Reg2]	;@ reg R
 	mul r0,r1,r0
@@ -1261,17 +1150,10 @@ regMULSW:					;@ Multiply Signed
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regDIV:						;@ Division
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ size
-	bne er
-;@----------------------------------------------------------------------------
 regDIVB:					;@ Division
 ;@----------------------------------------------------------------------------
-	movs t9Reg2,r0,lsr#1		;@ From Second
-	bcc unknown_RR_Target
-	and t9Reg2,t9Reg2,#0x03
-	mov t9Reg2,t9Reg2,lsl#2
+	and t9Reg2,r0,#0x06			;@ From Second
+	mov t9Reg2,t9Reg2,lsl#1
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	ldrh r0,[t9gprBank,t9Reg2]	;@ reg R
 	bl generic_DIV_B
@@ -1288,18 +1170,11 @@ regDIVW:					;@ Division
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regDIVS:					;@ Division Signed
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
-;@----------------------------------------------------------------------------
 regDIVSB:					;@ Division Signed
 ;@----------------------------------------------------------------------------
-	movs t9Reg2,r0,lsr#1		;@ From Second
-	bcc unknown_RR_Target
+	and t9Reg2,r0,#0x06		;@ From Second
 	mov t9Reg,t9Reg,ror#30
-	and t9Reg2,t9Reg2,#0x03
-	mov t9Reg2,t9Reg2,lsl#2
+	mov t9Reg2,t9Reg2,lsl#1
 	ldrsb r1,[t9gprBank,t9Reg]
 	ldrsh r0,[t9gprBank,t9Reg2]	;@ reg R
 	bl generic_DIV_W
@@ -1316,15 +1191,10 @@ regDIVSW:					;@ Division Signed
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-regINC:						;@ Increment
+regINCB:					;@ Increment
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
 	moveq r1,#0x08
-	tst t9opCode,#0x20			;@ size
-	bne regINCL
-;@----------------------------------------------------------------------------
-regINCB:					;@ Increment
-;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_INC_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1341,21 +1211,18 @@ regINCW:					;@ Increment
 ;@----------------------------------------------------------------------------
 regINCL:					;@ Increment
 ;@----------------------------------------------------------------------------
+	ands r1,r0,#0x07			;@ From Second
+	moveq r1,#0x08
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	add r0,r0,r1
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 5
 
 ;@----------------------------------------------------------------------------
-regDEC:						;@ Decrement
+regDECB:					;@ Decrement
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
 	moveq r1,#0x08
-	tst t9opCode,#0x20			;@ Size
-	bne regDECL
-;@----------------------------------------------------------------------------
-regDECB:					;@ Decrement
-;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_DEC_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1372,16 +1239,13 @@ regDECW:					;@ Decrement
 ;@----------------------------------------------------------------------------
 regDECL:					;@ Decrement
 ;@----------------------------------------------------------------------------
+	ands r1,r0,#0x07			;@ From Second
+	moveq r1,#0x08
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	sub r0,r0,r1
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 5
 
-;@----------------------------------------------------------------------------
-regSCC:						;@ Set Condition Code
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regSCCB:					;@ Set Condition Code
 ;@----------------------------------------------------------------------------
@@ -1396,14 +1260,9 @@ regSCCW:					;@ Set Condition Code
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------
-regLDRr:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regLDRrL
-;@----------------------------------------------------------------------------
 regLDRrB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1420,19 +1279,15 @@ regLDRrW:
 ;@----------------------------------------------------------------------------
 regLDRrL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regLDrR:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regLDrRL
-;@----------------------------------------------------------------------------
 regLDrRB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
@@ -1448,19 +1303,15 @@ regLDrRW:
 ;@----------------------------------------------------------------------------
 regLDrRL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regADD:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regADDL
-;@----------------------------------------------------------------------------
 regADDB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1481,6 +1332,7 @@ regADDW:
 ;@----------------------------------------------------------------------------
 regADDL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_ADD_L
@@ -1488,14 +1340,9 @@ regADDL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regADC:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regADCL
-;@----------------------------------------------------------------------------
 regADCB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1516,6 +1363,7 @@ regADCW:
 ;@----------------------------------------------------------------------------
 regADCL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_ADC_L
@@ -1523,14 +1371,9 @@ regADCL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regSUB:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regSUBL
-;@----------------------------------------------------------------------------
 regSUBB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1551,6 +1394,7 @@ regSUBW:
 ;@----------------------------------------------------------------------------
 regSUBL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_SUB_L
@@ -1558,14 +1402,9 @@ regSUBL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regSBC:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regSBCL
-;@----------------------------------------------------------------------------
 regSBCB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1586,6 +1425,7 @@ regSBCW:
 ;@----------------------------------------------------------------------------
 regSBCL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_SBC_L
@@ -1593,14 +1433,9 @@ regSBCL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regLDr3:
-;@----------------------------------------------------------------------------
-	and r0,r0,#0x07				;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regLDr3L
-;@----------------------------------------------------------------------------
 regLDr3B:
 ;@----------------------------------------------------------------------------
+	and r0,r0,#0x07				;@ From Second
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1612,18 +1447,14 @@ regLDr3W:
 ;@----------------------------------------------------------------------------
 regLDr3L:
 ;@----------------------------------------------------------------------------
+	and r0,r0,#0x07				;@ From Second
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regEX:
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regEXL
-;@----------------------------------------------------------------------------
 regEXB:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	movs t9Reg2,t9Reg2,lsr#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1644,6 +1475,7 @@ regEXW:
 ;@----------------------------------------------------------------------------
 regEXL:
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	ldr r1,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
@@ -1651,14 +1483,9 @@ regEXL:
 	t9fetch 5
 
 ;@----------------------------------------------------------------------------
-regADDi:
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regADDiL
-;@----------------------------------------------------------------------------
 regADDiB:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_ADD_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1676,6 +1503,7 @@ regADDiW:
 ;@----------------------------------------------------------------------------
 regADDiL:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1688,14 +1516,9 @@ regADDiL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regADCi:
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regADCiL
-;@----------------------------------------------------------------------------
 regADCiB:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_ADC_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1713,6 +1536,7 @@ regADCiW:
 ;@----------------------------------------------------------------------------
 regADCiL:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1725,14 +1549,9 @@ regADCiL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regSUBi:
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regSUBiL
-;@----------------------------------------------------------------------------
 regSUBiB:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_SUB_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1750,6 +1569,7 @@ regSUBiW:
 ;@----------------------------------------------------------------------------
 regSUBiL:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1762,14 +1582,9 @@ regSUBiL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regSBCi:
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regSBCiL
-;@----------------------------------------------------------------------------
 regSBCiB:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_SBC_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1787,6 +1602,7 @@ regSBCiW:
 ;@----------------------------------------------------------------------------
 regSBCiL:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1799,14 +1615,9 @@ regSBCiL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regCPi:
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regCPiL
-;@----------------------------------------------------------------------------
 regCPiB:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_SUB_B
 	t9fetch 4
@@ -1822,6 +1633,7 @@ regCPiW:
 ;@----------------------------------------------------------------------------
 regCPiL:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1833,14 +1645,9 @@ regCPiL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regANDi:
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regANDiL
-;@----------------------------------------------------------------------------
 regANDiB:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_AND_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1858,6 +1665,7 @@ regANDiW:
 ;@----------------------------------------------------------------------------
 regANDiL:
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1870,14 +1678,9 @@ regANDiL:
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regORi:						;@ Logical OR imidiate
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regORiL
-;@----------------------------------------------------------------------------
 regORiB:					;@ Logical OR imidiate
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_OR_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1895,6 +1698,7 @@ regORiW:					;@ Logical OR imidiate
 ;@----------------------------------------------------------------------------
 regORiL:					;@ Logical OR imidiate
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1907,14 +1711,9 @@ regORiL:					;@ Logical OR imidiate
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regXORi:					;@ Exclusive OR imidiate
-;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
-	tst t9opCode,#0x20			;@ Size
-	bne regXORiL
-;@----------------------------------------------------------------------------
 regXORiB:					;@ Exclusive OR imidiate
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_XOR_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
@@ -1932,6 +1731,7 @@ regXORiW:					;@ Exclusive OR imidiate
 ;@----------------------------------------------------------------------------
 regXORiL:					;@ Exclusive OR imidiate
 ;@----------------------------------------------------------------------------
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrb r2,[t9pc],#1
@@ -1944,14 +1744,9 @@ regXORiL:					;@ Exclusive OR imidiate
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regAND:						;@ And
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regANDL
-;@----------------------------------------------------------------------------
 regANDB:					;@ And
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -1972,6 +1767,7 @@ regANDW:					;@ And
 ;@----------------------------------------------------------------------------
 regANDL:					;@ And
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_AND_L
@@ -1979,14 +1775,9 @@ regANDL:					;@ And
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regOR:						;@ Logical OR
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regORL
-;@----------------------------------------------------------------------------
 regORB:						;@ Logical OR
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -2007,6 +1798,7 @@ regORW:						;@ Logical OR
 ;@----------------------------------------------------------------------------
 regORL:						;@ Logical OR
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_OR_L
@@ -2014,14 +1806,9 @@ regORL:						;@ Logical OR
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-regXOR:						;@ Exclusive OR
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regXORL
-;@----------------------------------------------------------------------------
 regXORB:					;@ Exclusive OR
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -2042,17 +1829,13 @@ regXORW:					;@ Exclusive OR
 ;@----------------------------------------------------------------------------
 regXORL:					;@ Exclusive OR
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_XOR_L
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
-;@----------------------------------------------------------------------------
-regCPr3:					;@ Compare
-;@----------------------------------------------------------------------------
-	tst t9opCode,#0x20			;@ Size
-	bne er
 ;@----------------------------------------------------------------------------
 regCPr3B:					;@ Compare
 ;@----------------------------------------------------------------------------
@@ -2069,14 +1852,9 @@ regCPr3W:					;@ Compare
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regCP:						;@ Compare
-;@----------------------------------------------------------------------------
-	and t9Reg2,r0,#0x07			;@ From Second
-	tst t9opCode,#0x20			;@ Size
-	bne regCP_L
-;@----------------------------------------------------------------------------
 regCPB:						;@ Compare
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
@@ -2094,6 +1872,7 @@ regCPW:						;@ Compare
 ;@----------------------------------------------------------------------------
 regCP_L:					;@ Compare long, regCPL (complement) already exists
 ;@----------------------------------------------------------------------------
+	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	bl generic_SUB_L
