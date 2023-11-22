@@ -28,7 +28,7 @@
 #endif
 	.align 2
 ;@----------------------------------------------------------------------------
-;@ 71 size checks.
+;@ 7 size checks.
 ;@----------------------------------------------------------------------------
 regRCB:
 ;@----------------------------------------------------------------------------
@@ -1891,23 +1891,9 @@ rlca_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regRLCB
-	cmp r0,#0x10
-	beq regRLCW
-;@----------------------------------------------------------------------------
-regRLCL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r1,r0,lsl r12
-	orrcs t9f,t9f,#PSR_C
-	orrmi t9f,t9f,#PSR_S
-	rsb r12,r12,#0x20
-	orrs r0,r1,r0,lsr r12
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regRLCW
+	bcs regRLCL
 ;@----------------------------------------------------------------------------
 regRLCB:
 ;@----------------------------------------------------------------------------
@@ -1937,6 +1923,19 @@ regRLCW:
 	mov r0,r0,lsr#16
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6
+;@----------------------------------------------------------------------------
+regRLCL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r1,r0,lsl r12
+	orrcs t9f,t9f,#PSR_C
+	orrmi t9f,t9f,#PSR_S
+	rsb r12,r12,#0x20
+	orrs r0,r1,r0,lsr r12
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8
 
 ;@----------------------------------------------------------------------------
 regRRCA:
@@ -1951,20 +1950,9 @@ rrca_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regRRCB
-	cmp r0,#0x10
-	beq regRRCW
-;@----------------------------------------------------------------------------
-regRRCL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r0,r0,ror r12
-	orrcs t9f,t9f,#PSR_C|PSR_S
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regRRCW
+	bcs regRRCL
 ;@----------------------------------------------------------------------------
 regRRCB:
 ;@----------------------------------------------------------------------------
@@ -1991,6 +1979,16 @@ regRRCW:
 	orreq t9f,t9f,#PSR_Z
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6
+;@----------------------------------------------------------------------------
+regRRCL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r0,r0,ror r12
+	orrcs t9f,t9f,#PSR_C|PSR_S
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8
 
 ;@----------------------------------------------------------------------------
 regRLA:
@@ -2005,26 +2003,9 @@ rla_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regRLB
-	cmp r0,#0x10
-	beq regRLW
-;@----------------------------------------------------------------------------
-regRLL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and r2,t9f,#PSR_C			;@ Bit#1
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r1,r0,lsl r12
-	rsb r12,r12,#33
-	orr r1,r1,r2,ror r12
-	orrcs t9f,t9f,#PSR_C
-	orrmi t9f,t9f,#PSR_S
-	rsb r12,r12,#32
-	orrs r0,r1,r0,lsr r12
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regRLW
+	bcs regRLL
 ;@----------------------------------------------------------------------------
 regRLB:
 ;@----------------------------------------------------------------------------
@@ -2060,6 +2041,22 @@ regRLW:
 	orreq t9f,t9f,#PSR_Z
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6
+;@----------------------------------------------------------------------------
+regRLL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and r2,t9f,#PSR_C			;@ Bit#1
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r1,r0,lsl r12
+	rsb r12,r12,#33
+	orr r1,r1,r2,ror r12
+	orrcs t9f,t9f,#PSR_C
+	orrmi t9f,t9f,#PSR_S
+	rsb r12,r12,#32
+	orrs r0,r1,r0,lsr r12
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8
 
 ;@----------------------------------------------------------------------------
 regRRA:
@@ -2074,26 +2071,9 @@ rra_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regRRB
-	cmp r0,#0x10
-	beq regRRW
-;@----------------------------------------------------------------------------
-regRRL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and r2,t9f,#PSR_C			;@ Bit#1
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r1,r0,lsr r12
-	orrcs t9f,t9f,#PSR_C
-	rsb r12,r12,#33
-	orr r0,r1,r0,lsl r12
-	sub r12,r12,#1
-	orrs r0,r0,r2,lsl r12
-	orrmi t9f,t9f,#PSR_S
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regRRW
+	bcs regRRL
 ;@----------------------------------------------------------------------------
 regRRB:
 ;@----------------------------------------------------------------------------
@@ -2128,6 +2108,22 @@ regRRW:
 	orreq t9f,t9f,#PSR_Z
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6
+;@----------------------------------------------------------------------------
+regRRL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and r2,t9f,#PSR_C			;@ Bit#1
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r1,r0,lsr r12
+	orrcs t9f,t9f,#PSR_C
+	rsb r12,r12,#33
+	orr r0,r1,r0,lsl r12
+	sub r12,r12,#1
+	orrs r0,r0,r2,lsl r12
+	orrmi t9f,t9f,#PSR_S
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8
 
 ;@----------------------------------------------------------------------------
 regSLAA:
@@ -2144,21 +2140,9 @@ sla_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regSLAB
-	cmp r0,#0x10
-	beq regSLAW
-;@----------------------------------------------------------------------------
-regSLAL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r0,r0,lsl r12
-	orrcs t9f,t9f,#PSR_C
-	orrmi t9f,t9f,#PSR_S
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8+2
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regSLAW
+	bcs regSLAL
 ;@----------------------------------------------------------------------------
 regSLAB:
 ;@----------------------------------------------------------------------------
@@ -2185,6 +2169,17 @@ regSLAW:
 	orreq t9f,t9f,#PSR_Z
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6+2
+;@----------------------------------------------------------------------------
+regSLAL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r0,r0,lsl r12
+	orrcs t9f,t9f,#PSR_C
+	orrmi t9f,t9f,#PSR_S
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8+2
 
 ;@----------------------------------------------------------------------------
 regSRAA:
@@ -2199,21 +2194,9 @@ sra_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regSRAB
-	cmp r0,#0x10
-	beq regSRAW
-;@----------------------------------------------------------------------------
-regSRAL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r0,r0,asr r12
-	orrcs t9f,t9f,#PSR_C
-	orrmi t9f,t9f,#PSR_S
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8+2
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regSRAW
+	bcs regSRAL
 ;@----------------------------------------------------------------------------
 regSRAB:
 ;@----------------------------------------------------------------------------
@@ -2242,6 +2225,17 @@ regSRAW:
 	orreq t9f,t9f,#PSR_Z
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6+2
+;@----------------------------------------------------------------------------
+regSRAL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r0,r0,asr r12
+	orrcs t9f,t9f,#PSR_C
+	orrmi t9f,t9f,#PSR_S
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8+2
 
 ;@----------------------------------------------------------------------------
 regSRLA:
@@ -2256,20 +2250,9 @@ srl_e:
 	ands r12,r12,#0x0F
 	moveq r12,#0x10
 	sub t9cycles,t9cycles,r12,lsl#T9CYC_SHIFT+1
-	ands r0,t9opCode,#0x30		;@ Size
-	beq regSRLB
-	cmp r0,#0x10
-	beq regSRLW
-;@----------------------------------------------------------------------------
-regSRLL:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	and t9f,t9f,#PSR_P			;@ Unknown
-	movs r0,r0,lsr r12
-	orrcs t9f,t9f,#PSR_C
-	orreq t9f,t9f,#PSR_Z
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 8+2
+	movs r0,t9opCode,lsl#27		;@ Size
+	bmi regSRLW
+	bcs regSRLL
 ;@----------------------------------------------------------------------------
 regSRLB:
 ;@----------------------------------------------------------------------------
@@ -2294,6 +2277,16 @@ regSRLW:
 	orreq t9f,t9f,#PSR_Z
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 6+2
+;@----------------------------------------------------------------------------
+regSRLL:
+;@----------------------------------------------------------------------------
+	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	and t9f,t9f,#PSR_P			;@ Unknown
+	movs r0,r0,lsr r12
+	orrcs t9f,t9f,#PSR_C
+	orreq t9f,t9f,#PSR_Z
+	str r0,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 8+2
 
 ;@----------------------------------------------------------------------------
 

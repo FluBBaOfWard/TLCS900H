@@ -2,13 +2,14 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2023-11-21 (FluBBa)
+V0.4.6 - 2023-11-22 (FluBBa)
 	Fixed regTSETW opcode.
 	Fixed all code to use unified syntax.
 	Renamed t9optbl to t9ptr.
 	Moved IO handling to cpu core.
 	Removed C cpu register macros.
 	Optimized register opcodes.
+	Optimized size check of opcodes.
 
 V0.4.5 - 2022-10-30 (FluBBa)
 	Fixed timer flip flop.
