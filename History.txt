@@ -2,7 +2,7 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2023-11-22 (FluBBa)
+V0.4.6 - 2023-11-23 (FluBBa)
 	Fixed regTSETW opcode.
 	Fixed all code to use unified syntax.
 	Renamed t9optbl to t9ptr.
