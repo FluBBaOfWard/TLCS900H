@@ -1004,9 +1004,10 @@ tlcs900HState:
 	.byte 0			;@ tlcsStatusRFP
 	.long 0			;@ tlcsCycles
 	.long 0			;@ tlcsPcAsm
+	.long 0			;@ tlcsDMAStartVector
 	.long 0			;@ tlcsCurrentGprBank
 	.long 0			;@ tlcsCurrentMapBank
-	.long 0			;@ tlcsDMAStartVector
+	.long 0			;@ tlcsPadding1
 	.space 4*4		;@ tlcsDmaS
 	.space 4*4		;@ tlcsDmaD
 	.space 4*4		;@ tlcsDmaC/DmaM

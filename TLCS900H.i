@@ -33,9 +33,10 @@ tlcsFDash:			.byte 0
 tlcsStatusRFP:		.byte 0		;@ Register File Pointer
 tlcsCycles:			.long 0
 tlcsPcAsm:			.long 0
+tlcsDMAStartVector:	.long 0
 tlcsCurrentGprBank:	.long 0
 tlcsCurrentMapBank:	.long 0
-tlcsDMAStartVector:	.long 0
+tlcsPadding1:		.long 0
 tlcsDmaS:			.space 4*4
 tlcsDmaD:			.space 4*4
 tlcsDmaC:			.short 0
