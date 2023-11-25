@@ -31,21 +31,31 @@
 	.global generic_DIV_B
 	.global generic_DIV_W
 	.global generic_ADD_B
+	.global generic_ADD_B_reg
+	.global generic_ADD_B_mem
 	.global generic_ADD_W
-	.global generic_ADD_L
+	.global generic_ADD_W_reg
+	.global generic_ADD_L_reg
 	.global generic_ADC_B
+	.global generic_ADC_B_reg
+	.global generic_ADC_B_mem
 	.global generic_ADC_W
-	.global generic_ADC_L
+	.global generic_ADC_W_reg
+	.global generic_ADC_L_reg
 	.global generic_AND_B
+	.global generic_AND_B_reg
+	.global generic_AND_B_mem
 	.global generic_AND_W
-	.global generic_AND_L
+	.global generic_AND_W_reg
+	.global generic_AND_L_reg
 	.global generic_DEC_B
-	.global generic_DEC_W
 	.global generic_INC_B
-	.global generic_INC_W
 	.global generic_OR_B
+	.global generic_OR_B_reg
+	.global generic_OR_B_mem
 	.global generic_OR_W
-	.global generic_OR_L
+	.global generic_OR_W_reg
+	.global generic_OR_L_reg
 	.global generic_SBC_B
 	.global generic_SBC_W
 	.global generic_SBC_L
@@ -53,8 +63,11 @@
 	.global generic_SUB_W
 	.global generic_SUB_L
 	.global generic_XOR_B
+	.global generic_XOR_B_reg
+	.global generic_XOR_B_mem
 	.global generic_XOR_W
-	.global generic_XOR_L
+	.global generic_XOR_W_reg
+	.global generic_XOR_L_reg
 	.global conditionCode
 	.global setStatusRFP
 	.global changedSR
@@ -425,6 +438,15 @@ generic_DIV_W:				;@ r0= u32 val, r1= u16 div
 	bx lr
 
 ;@----------------------------------------------------------------------------
+generic_AND_B_mem:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
+;@----------------------------------------------------------------------------
+generic_AND_B_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9gprBank,t9Reg,ror#30]
+;@----------------------------------------------------------------------------
 generic_AND_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	and r0,r0,r1
@@ -432,6 +454,10 @@ generic_AND_B:				;@ r0=dst, r1=src
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orr t9f,t9f,#PSR_H
 	bx lr
+;@----------------------------------------------------------------------------
+generic_AND_W_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrh r1,[t9gprBank,t9Reg]
 ;@----------------------------------------------------------------------------
 generic_AND_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
@@ -445,8 +471,9 @@ generic_AND_W:				;@ r0=dst, r1=src
 	bicne t9f,t9f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
-generic_AND_L:				;@ r0=dst, r1=src
+generic_AND_L_reg:			;@ r0=dst
 ;@----------------------------------------------------------------------------
+	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ands r0,r0,r1
 	eor r1,r0,r0,lsl#16
 	eor r1,r1,r1,lsl#8
@@ -457,12 +484,25 @@ generic_AND_L:				;@ r0=dst, r1=src
 	bicne t9f,t9f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
+generic_OR_B_mem:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
+;@----------------------------------------------------------------------------
+generic_OR_B_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9gprBank,t9Reg,ror#30]
+;@----------------------------------------------------------------------------
 generic_OR_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	orr r0,r0,r1
 	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	bx lr
+;@----------------------------------------------------------------------------
+generic_OR_W_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrh r1,[t9gprBank,t9Reg]
 ;@----------------------------------------------------------------------------
 generic_OR_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
@@ -476,8 +516,9 @@ generic_OR_W:				;@ r0=dst, r1=src
 	orreq t9f,t9f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
-generic_OR_L:				;@ r0=dst, r1=src
+generic_OR_L_reg:			;@ r0=dst
 ;@----------------------------------------------------------------------------
+	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	orrs r0,r0,r1
 	eor r1,r0,r0,lsl#16
 	eor r1,r1,r1,lsl#8
@@ -488,12 +529,25 @@ generic_OR_L:				;@ r0=dst, r1=src
 	orreq t9f,t9f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
+generic_XOR_B_mem:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
+;@----------------------------------------------------------------------------
+generic_XOR_B_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9gprBank,t9Reg,ror#30]
+;@----------------------------------------------------------------------------
 generic_XOR_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	eor r0,r0,r1
 	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	bx lr
+;@----------------------------------------------------------------------------
+generic_XOR_W_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrh r1,[t9gprBank,t9Reg]
 ;@----------------------------------------------------------------------------
 generic_XOR_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
@@ -507,8 +561,9 @@ generic_XOR_W:				;@ r0=dst, r1=src
 	orreq t9f,t9f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
-generic_XOR_L:				;@ r0=dst, r1=src
+generic_XOR_L_reg:			;@ r0=dst
 ;@----------------------------------------------------------------------------
+	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	eors r0,r0,r1
 	eor r1,r0,r0,lsl#16
 	eor r1,r1,r1,lsl#8
@@ -518,6 +573,15 @@ generic_XOR_L:				;@ r0=dst, r1=src
 	orrmi t9f,t9f,#PSR_S
 	orreq t9f,t9f,#PSR_Z
 	bx lr
+;@----------------------------------------------------------------------------
+generic_ADD_B_mem:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
+;@----------------------------------------------------------------------------
+generic_ADD_B_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9gprBank,t9Reg,ror#30]
 ;@----------------------------------------------------------------------------
 generic_ADD_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
@@ -533,6 +597,10 @@ generic_ADD_B:				;@ r0=dst, r1=src
 	mov r0,r0,lsr#24
 	bx lr
 ;@----------------------------------------------------------------------------
+generic_ADD_W_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrh r1,[t9gprBank,t9Reg]
+;@----------------------------------------------------------------------------
 generic_ADD_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#16
@@ -547,8 +615,9 @@ generic_ADD_W:				;@ r0=dst, r1=src
 	mov r0,r0,lsr#16
 	bx lr
 ;@----------------------------------------------------------------------------
-generic_ADD_L:				;@ r0=dst, r1=src
+generic_ADD_L_reg:			;@ r0=dst
 ;@----------------------------------------------------------------------------
+	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	mov r2,r0,lsl#4				;@ Prepare for check of half carry
 	adds r0,r0,r1
 	mrs t9f,cpsr				;@ S,Z,V&C
@@ -557,6 +626,15 @@ generic_ADD_L:				;@ r0=dst, r1=src
 	orrcs t9f,t9f,#PSR_H
 
 	bx lr
+;@----------------------------------------------------------------------------
+generic_ADC_B_mem:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
+;@----------------------------------------------------------------------------
+generic_ADC_B_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9gprBank,t9Reg,ror#30]
 ;@----------------------------------------------------------------------------
 generic_ADC_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
@@ -574,6 +652,10 @@ generic_ADC_B:				;@ r0=dst, r1=src
 	mov r0,r0,lsr#24
 	bx lr
 ;@----------------------------------------------------------------------------
+generic_ADC_W_reg:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	ldrh r1,[t9gprBank,t9Reg]
+;@----------------------------------------------------------------------------
 generic_ADC_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#16
@@ -590,8 +672,9 @@ generic_ADC_W:				;@ r0=dst, r1=src
 	mov r0,r0,lsr#16
 	bx lr
 ;@----------------------------------------------------------------------------
-generic_ADC_L:				;@ r0=dst, r1=src
+generic_ADC_L_reg:			;@ r0=dst
 ;@----------------------------------------------------------------------------
+	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	movs t9f,t9f,lsr#2			;@ Get C
 	eor t9f,r0,r1				;@ Prepare for check of half carry
 	adcs r0,r0,r1
@@ -618,22 +701,6 @@ generic_DEC_B:				;@ r0=dst, r1=src
 	mov r0,r0,lsr#24
 	bx lr
 ;@----------------------------------------------------------------------------
-generic_DEC_W:				;@ r0=dst, r1=src
-;@----------------------------------------------------------------------------
-	mov r0,r0,lsl#16
-
-	orr t9f,t9f,#PSR_n+PSR_H+PSR_S+PSR_V+PSR_Z	;@ Save carry & set n
-	mov r2,r0,lsl#4				;@ Prepare for H check
-	subs r0,r0,r1,lsl#16
-	bicpl t9f,t9f,#PSR_S
-	bicne t9f,t9f,#PSR_Z
-	bicvc t9f,t9f,#PSR_V
-	cmp r2,r1,lsl#20
-	biccs t9f,t9f,#PSR_H
-
-	mov r0,r0,lsr#16
-	bx lr
-;@----------------------------------------------------------------------------
 generic_INC_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#24
@@ -648,22 +715,6 @@ generic_INC_B:				;@ r0=dst, r1=src
 	orrcs t9f,t9f,#PSR_H
 
 	mov r0,r0,lsr#24
-	bx lr
-;@----------------------------------------------------------------------------
-generic_INC_W:				;@ r0=dst, r1=src
-;@----------------------------------------------------------------------------
-	mov r0,r0,lsl#16
-
-	and t9f,t9f,#PSR_C			;@ Save carry & clear n
-	mov r2,r0,lsl#4				;@ Prepare for H check
-	adds r0,r0,r1,lsl#16
-	orrmi t9f,t9f,#PSR_S
-	orreq t9f,t9f,#PSR_Z
-	orrvs t9f,t9f,#PSR_V
-	cmn r2,r1,lsl#20
-	orrcs t9f,t9f,#PSR_H
-
-	mov r0,r0,lsr#16
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_SUB_B:				;@ r0=dst, r1=src

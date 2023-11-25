@@ -1313,8 +1313,7 @@ regADDB:
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_ADD_B
+	bl generic_ADD_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1323,8 +1322,7 @@ regADDW:
 	and t9Reg2,r0,#0x07			;@ From Second
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_ADD_W
+	bl generic_ADD_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1332,8 +1330,7 @@ regADDL:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_ADD_L
+	bl generic_ADD_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
@@ -1344,8 +1341,7 @@ regADCB:
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_ADC_B
+	bl generic_ADC_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1354,8 +1350,7 @@ regADCW:
 	and t9Reg2,r0,#0x07			;@ From Second
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_ADC_W
+	bl generic_ADC_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1363,8 +1358,7 @@ regADCL:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_ADC_L
+	bl generic_ADC_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
@@ -1484,8 +1478,7 @@ regEXL:
 regADDiB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_ADD_B
+	bl generic_ADD_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1494,8 +1487,7 @@ regADDiW:
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_ADD_W
+	bl generic_ADD_W_reg
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1508,8 +1500,7 @@ regADDiL:
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_ADD_L
+	bl generic_ADD_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 7
 
@@ -1517,8 +1508,7 @@ regADDiL:
 regADCiB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_ADC_B
+	bl generic_ADC_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1527,8 +1517,7 @@ regADCiW:
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_ADC_W
+	bl generic_ADC_W_reg
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1541,8 +1530,7 @@ regADCiL:
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_ADC_L
+	bl generic_ADC_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 7
 
@@ -1646,8 +1634,7 @@ regCPiL:
 regANDiB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_AND_B
+	bl generic_AND_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1656,8 +1643,7 @@ regANDiW:
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_AND_W
+	bl generic_AND_W_reg
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1670,8 +1656,7 @@ regANDiL:
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_AND_L
+	bl generic_AND_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 7
 
@@ -1679,8 +1664,7 @@ regANDiL:
 regORiB:					;@ Logical OR imidiate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_OR_B
+	bl generic_OR_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1689,8 +1673,7 @@ regORiW:					;@ Logical OR imidiate
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_OR_W
+	bl generic_OR_W_reg
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1703,8 +1686,7 @@ regORiL:					;@ Logical OR imidiate
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_OR_L
+	bl generic_OR_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 7
 
@@ -1712,8 +1694,7 @@ regORiL:					;@ Logical OR imidiate
 regXORiB:					;@ Exclusive OR imidiate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_XOR_B
+	bl generic_XOR_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1722,8 +1703,7 @@ regXORiW:					;@ Exclusive OR imidiate
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_XOR_W
+	bl generic_XOR_W_reg
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1736,8 +1716,7 @@ regXORiL:					;@ Exclusive OR imidiate
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_XOR_L
+	bl generic_XOR_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 7
 
@@ -1748,8 +1727,7 @@ regANDB:					;@ And
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_AND_B
+	bl generic_AND_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1758,8 +1736,7 @@ regANDW:					;@ And
 	and t9Reg2,r0,#0x07			;@ From Second
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_AND_W
+	bl generic_AND_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1767,8 +1744,7 @@ regANDL:					;@ And
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_AND_L
+	bl generic_AND_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
@@ -1779,8 +1755,7 @@ regORB:						;@ Logical OR
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_OR_B
+	bl generic_OR_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1789,8 +1764,7 @@ regORW:						;@ Logical OR
 	and t9Reg2,r0,#0x07			;@ From Second
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_OR_W
+	bl generic_OR_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1798,8 +1772,7 @@ regORL:						;@ Logical OR
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_OR_L
+	bl generic_OR_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
@@ -1810,8 +1783,7 @@ regXORB:					;@ Exclusive OR
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_XOR_B
+	bl generic_XOR_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1820,8 +1792,7 @@ regXORW:					;@ Exclusive OR
 	and t9Reg2,r0,#0x07			;@ From Second
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	ldrh r1,[t9gprBank,t9Reg]
-	bl generic_XOR_W
+	bl generic_XOR_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1829,8 +1800,7 @@ regXORL:					;@ Exclusive OR
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_XOR_L
+	bl generic_XOR_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
