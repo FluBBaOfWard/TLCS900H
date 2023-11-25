@@ -537,11 +537,11 @@ generic_ADD_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#16
 
-	mov r2,r0,lsl#4				;@ Prepare for check of half carry
+	mov r2,r0,lsl#12			;@ Prepare for check of half carry
 	adds r0,r0,r1,lsl#16
 	mrs t9f,cpsr				;@ S,Z,V&C
 	mov t9f,t9f,lsr#28
-	cmn r2,r1,lsl#20
+	cmn r2,r1,lsl#28
 	orrcs t9f,t9f,#PSR_H
 
 	mov r0,r0,lsr#16
@@ -576,13 +576,14 @@ generic_ADC_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 generic_ADC_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
+	mov r0,r0,lsl#16
+
 	movs t9f,t9f,lsr#2			;@ Get C
 	subcs r1,r1,#0x10000
-	eor t9f,r0,r1,lsr#8			;@ Prepare for check of half carry
-	mov r0,r0,lsl#16
+	eor t9f,r1,r0,lsr#16		;@ Prepare for check of half carry
 	adcs r0,r0,r1,ror#16
 	mrs r1,cpsr					;@ S,Z,V&C
-	eor t9f,t9f,r0,lsr#24
+	eor t9f,t9f,r0,lsr#16
 	and t9f,t9f,#PSR_H			;@ H, correct
 	orr t9f,t9f,r1,lsr#28
 
@@ -592,11 +593,10 @@ generic_ADC_W:				;@ r0=dst, r1=src
 generic_ADC_L:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	movs t9f,t9f,lsr#2			;@ Get C
-	mov t9f,r0,lsr#24
-	eor t9f,r0,r1,lsr#24		;@ Prepare for check of half carry
+	eor t9f,r0,r1				;@ Prepare for check of half carry
 	adcs r0,r0,r1
 	mrs r1,cpsr					;@ S,Z,V&C
-	eor t9f,t9f,r0,lsr#24
+	eor t9f,t9f,r0
 	and t9f,t9f,#PSR_H			;@ H, correct
 	orr t9f,t9f,r1,lsr#28
 
@@ -685,12 +685,12 @@ generic_SUB_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#16
 
-	mov r2,r0,lsl#4 			;@ Prepare for check of half carry
+	mov r2,r0,lsl#12 			;@ Prepare for check of half carry
 	subs r0,r0,r1,lsl#16
 	mrs t9f,cpsr				;@ S,Z,V&C
 	mov t9f,t9f,lsr#28
 	eor t9f,t9f,#PSR_C|PSR_n	;@ Invert C and set n
-	cmp r2,r1,lsl#20
+	cmp r2,r1,lsl#28
 	orrcc t9f,t9f,#PSR_H
 
 	mov r0,r0,lsr#16
@@ -698,12 +698,12 @@ generic_SUB_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 generic_SUB_L:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
-	mov r2,r0,lsl#4 			;@ Prepare for check of half carry
+	mov r2,r0,lsl#28 			;@ Prepare for check of half carry
 	subs r0,r0,r1
 	mrs t9f,cpsr				;@ S,Z,V&C
 	mov t9f,t9f,lsr#28
 	eor t9f,t9f,#PSR_C|PSR_n	;@ Invert C and set n
-	cmp r2,r1,lsl#4
+	cmp r2,r1,lsl#28
 	orrcc t9f,t9f,#PSR_H
 
 	bx lr
@@ -730,12 +730,12 @@ generic_SBC_W:				;@ r0=dst, r1=src
 	and t9f,t9f,#PSR_C
 	subs r1,r1,t9f,lsl#15		;@ Fix up r1 and set correct C.
 	mov r1,r1,ror#16
-	mov r2,r0,lsl#20			;@ Prepare for check of H
+	mov r2,r0,lsl#28			;@ Prepare for check of H
 	rscs r0,r1,r0,lsl#16
 	mrs t9f,cpsr				;@ S,Z,V&C
 	mov t9f,t9f,lsr#28
 	eor t9f,t9f,#PSR_C|PSR_n	;@ Invert C and set n.
-	cmp r2,r1,lsl#4
+	cmp r2,r1,lsl#12
 	orrcc t9f,t9f,#PSR_H
 
 	mov r0,r0,lsr#16
@@ -749,7 +749,6 @@ generic_SBC_L:				;@ r0=dst, r1=src
 	sbcs r0,r0,r1
 	mrs t9f,cpsr				;@ S,Z,V&C
 	eor r2,r2,r0
-	mov r2,r2,lsr#24
 	and r2,r2,#PSR_H
 	orr t9f,r2,t9f,lsr#28
 	eor t9f,t9f,#PSR_C|PSR_n	;@ Invert C and set n.

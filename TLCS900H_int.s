@@ -1056,7 +1056,7 @@ DMA_Finnish:
 	bl setInterrupt
 	add r1,r5,#0x7C				;@ Clear old vector.
 	mov r0,#0
-	bl t9StoreB
+	bl t9StoreB_Low
 dmaEnd:
 	ldmfd sp!,{r5,r6,lr}
 	bx lr
