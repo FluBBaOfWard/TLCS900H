@@ -119,7 +119,7 @@ sngLD8_8:					;@ 0x08, Store imidiate byte in low memory.
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	bl t9StoreB
+	bl t9StoreB_Low
 	t9fetch 5
 ;@----------------------------------------------------------------------------
 sngLD8_16:					;@ 0x0A, Store imidiate word in low memory.
@@ -436,21 +436,20 @@ sngJR_never:				;@ 0x60, Jump Relative never
 ;@----------------------------------------------------------------------------
 sngJR_lt:					;@ 0x61, Jump Relative Less Than
 ;@----------------------------------------------------------------------------
+	ldrsb r0,[t9pc],#1
 	eor r1,t9f,t9f,lsr#3		;@ S^V
 	tst r1,#PSR_V
-	beq sngJR_never
-	ldrsb r0,[t9pc],#1
-	add t9pc,t9pc,r0
-	t9fetch 8
+	addne t9pc,t9pc,r0
+	subne t9cycles,t9cycles,#4*T9CYCLE
+	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJR_le:					;@ 0x62, Jump Relative Less or Equal
 ;@----------------------------------------------------------------------------
 	ldrsb r0,[t9pc],#1
-	eor r1,t9f,t9f,lsr#3		;@ S^V
-	orr r1,r1,t9f,lsr#2			;@ Z
-	tst r1,#PSR_V
-	addne t9pc,t9pc,r0
-	subne t9cycles,t9cycles,#4*T9CYCLE
+	mov r1,t9f,lsl#28
+	msr cpsr_flg,r1
+	addle t9pc,t9pc,r0
+	suble t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJR_ule:					;@ 0x63, Jump Relative Unsigned Less or Equal
@@ -480,11 +479,11 @@ sngJR_mi:					;@ 0x65, Jump Relative Minus
 ;@----------------------------------------------------------------------------
 sngJR_z:					;@ 0x66, Jump Relative Zero
 ;@----------------------------------------------------------------------------
-	tst t9f,#PSR_Z
-	beq sngJR_never
 	ldrsb r0,[t9pc],#1
-	add t9pc,t9pc,r0
-	t9fetch 8
+	tst t9f,#PSR_Z
+	addne t9pc,t9pc,r0
+	subne t9cycles,t9cycles,#4*T9CYCLE
+	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJR_c:					;@ 0x67, Jump Relative Carry
 ;@----------------------------------------------------------------------------
@@ -511,13 +510,12 @@ sngJR_ge:					;@ 0x69, Jump Relative Greater or Equal
 ;@----------------------------------------------------------------------------
 sngJR_gt:					;@ 0x6A, Jump Relative Greater Than
 ;@----------------------------------------------------------------------------
-	eor r1,t9f,t9f,lsr#3		;@ S^V
-	orr r1,r1,t9f,lsr#2			;@ Z
-	tst r1,#PSR_V
-	bne sngJR_never
 	ldrsb r0,[t9pc],#1
-	add t9pc,t9pc,r0
-	t9fetch 8
+	mov r1,t9f,lsl#28
+	msr cpsr_flg,r1
+	addgt t9pc,t9pc,r0
+	subgt t9cycles,t9cycles,#4*T9CYCLE
+	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJR_ugt:					;@ 0x6B, Jump Relative Unsigned Greater Than
 ;@----------------------------------------------------------------------------
@@ -546,11 +544,11 @@ sngJR_pl:					;@ 0x6D, Jump Relative Plus
 ;@----------------------------------------------------------------------------
 sngJR_nz:					;@ 0x6E, Jump Relative Not Zero
 ;@----------------------------------------------------------------------------
-	tst t9f,#PSR_Z
-	bne sngJR_never
 	ldrsb r0,[t9pc],#1
-	add t9pc,t9pc,r0
-	t9fetch 8
+	tst t9f,#PSR_Z
+	addeq t9pc,t9pc,r0
+	subeq t9cycles,t9cycles,#4*T9CYCLE
+	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJR_nc:					;@ 0x6F, Jump Relative Not Carry
 ;@----------------------------------------------------------------------------
@@ -582,11 +580,10 @@ sngJRL_le:					;@ Jump Relative Long, Less or Equal
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	eor r1,t9f,t9f,lsr#3		;@ S^V
-	orr r1,r1,t9f,lsr#2			;@ Z
-	tst r1,#PSR_V
-	addne t9pc,t9pc,r0
-	subne t9cycles,t9cycles,#4*T9CYCLE
+	mov r1,t9f,lsl#28
+	msr cpsr_flg,r1
+	addle t9pc,t9pc,r0
+	suble t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJRL_ule:					;@ Jump Relative Long, Unsigned Less or Equal
@@ -664,11 +661,10 @@ sngJRL_gt:					;@ Jump Relative Long, Greater Than
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	eor r1,t9f,t9f,lsr#3		;@ S^V
-	orr r1,r1,t9f,lsr#2			;@ Z
-	tst r1,#PSR_V
-	addeq t9pc,t9pc,r0
-	subeq t9cycles,t9cycles,#4*T9CYCLE
+	mov r1,t9f,lsl#28
+	msr cpsr_flg,r1
+	addgt t9pc,t9pc,r0
+	subgt t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngJRL_ugt:					;@ Jump Relative Long, Unsigned Greater
@@ -728,7 +724,7 @@ sngLDX:						;@ Load eXtract
 	add t9pc,t9pc,#1			;@ Skip 1 byte
 	ldrb r1,[t9pc],#2			;@ Skip more
 	ldrb r0,[t9pc],#2			;@ Skip even more
-	bl t9StoreB
+	bl t9StoreB_Low
 	t9fetch 9
 ;@----------------------------------------------------------------------------
 ;@sngSWI_0:					;@ Reset.

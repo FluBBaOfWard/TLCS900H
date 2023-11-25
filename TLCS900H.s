@@ -105,65 +105,7 @@ tlcsLoop:
 debugContinue:
 #endif
 	ldrbpl t9opCode,[t9pc],#1
-	ldrpl pc,[pc,t9opCode,lsl#2]
-	bmi tlcsEnd
-tlcsOpz:
-;@ 0x00
-	.long sngNOP,		sngNORMAL,	sngPUSHSR,	sngPOPSR,	sngMAX,		sngHALT,	sngEI,		sngRETI
-	.long sngLD8_8,		sngPUSH8,	sngLD8_16,	sngPUSH16,	sngINCF,	sngDECF,	sngRET,		sngRETD
-;@ 0x10
-	.long sngRCF,		sngSCF,		sngCCF,		sngZCF,		sngPUSHA,	sngPOPA,	sngEX,		sngLDF
-	.long sngPUSHF,		sngPOPF,	sngJP16,	sngJP24,	sngCALL16,	sngCALL24,	sngCALR,	asmE
-;@ 0x20
-	.long sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB
-	.long sngPUSHW,		sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW
-;@ 0x30
-	.long sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW
-	.long sngPUSHL,		sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL
-;@ 0x40
-	.long sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL
-	.long sngPOPW,		sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW
-;@ 0x50
-	.long asmE,			asmE,		asmE,		asmE,		asmE,		asmE,		asmE,		asmE
-	.long sngPOPL,		sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL
-;@ 0x60
-	.long sngJR_never,	sngJR_lt,	sngJR_le,	sngJR_ule,	sngJR_ov,	sngJR_mi,	sngJR_z,	sngJR_c
-	.long sngJR,		sngJR_ge,	sngJR_gt,	sngJR_ugt,	sngJR_nov,	sngJR_pl,	sngJR_nz,	sngJR_nc
-;@ 0x70
-	.long sngJRL_never,	sngJRL_lt,	sngJRL_le,	sngJRL_ule,	sngJRL_ov,	sngJRL_mi,	sngJRL_z,	sngJRL_c
-	.long sngJRL,		sngJRL_ge,	sngJRL_gt,	sngJRL_ugt,	sngJRL_nov,	sngJRL_pl,	sngJRL_nz,	sngJRL_nc
-;@ 0x80
-	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
-	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
-;@ 0x90
-	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
-	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
-;@ 0xA0
-	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
-	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
-;@ 0xB0
-	.long dstExXRR,		dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR
-	.long dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd
-;@ 0xC0
-	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCB
-	.long reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B
-;@ 0xD0
-	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCW
-	.long reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W
-;@ 0xE0
-	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCL
-	.long reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L
-;@ 0xF0
-	.long dstEx8,		dstEx16,	dstEx24,	dstExR32,	dstExDec,	dstExInc,	asmE,		sngLDX
-	.long sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI
-
-asmE:
-	mov r11,r11
-	ldr r0,=0xEEEEEEEE
-	sub t9pc,t9pc,#1
-	ldr r0,=debugCrashInstruction
-	mov lr,pc
-	bx r0
+	ldrpl pc,[t9ptr,t9opCode,lsl#2]
 tlcsEnd:
 	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
@@ -182,6 +124,13 @@ loadTLCS900:
 	ldr t9gprBank,[t9ptr,#tlcsCurrentGprBank]
 	bx lr
 
+asmE:
+	mov r11,r11
+	ldr r0,=0xEEEEEEEE
+	sub t9pc,t9pc,#1
+	ldr r0,=debugCrashInstruction
+	mov lr,pc
+	bx r0
 ;@----------------------------------------------------------------------------
 push8:
 ;@----------------------------------------------------------------------------
@@ -482,7 +431,6 @@ generic_AND_B:				;@ r0=dst, r1=src
 	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
 	orr t9f,t9f,#PSR_H
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_AND_W:				;@ r0=dst, r1=src
@@ -495,7 +443,6 @@ generic_AND_W:				;@ r0=dst, r1=src
 	orr t9f,t9f,#PSR_H+PSR_S+PSR_Z
 	bicpl t9f,t9f,#PSR_S
 	bicne t9f,t9f,#PSR_Z
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_AND_L:				;@ r0=dst, r1=src
@@ -508,7 +455,6 @@ generic_AND_L:				;@ r0=dst, r1=src
 	orr t9f,t9f,#PSR_H+PSR_S+PSR_Z
 	bicpl t9f,t9f,#PSR_S
 	bicne t9f,t9f,#PSR_Z
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_OR_B:				;@ r0=dst, r1=src
@@ -516,7 +462,6 @@ generic_OR_B:				;@ r0=dst, r1=src
 	orr r0,r0,r1
 	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_OR_W:				;@ r0=dst, r1=src
@@ -529,7 +474,6 @@ generic_OR_W:				;@ r0=dst, r1=src
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
 	orreq t9f,t9f,#PSR_Z
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_OR_L:				;@ r0=dst, r1=src
@@ -542,7 +486,6 @@ generic_OR_L:				;@ r0=dst, r1=src
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
 	orreq t9f,t9f,#PSR_Z
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_XOR_B:				;@ r0=dst, r1=src
@@ -550,7 +493,6 @@ generic_XOR_B:				;@ r0=dst, r1=src
 	eor r0,r0,r1
 	add r1,t9ptr,#tlcsPzst
 	ldrb t9f,[r1,r0]			;@ Get PZS
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_XOR_W:				;@ r0=dst, r1=src
@@ -563,7 +505,6 @@ generic_XOR_W:				;@ r0=dst, r1=src
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
 	orreq t9f,t9f,#PSR_Z
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_XOR_L:				;@ r0=dst, r1=src
@@ -576,7 +517,6 @@ generic_XOR_L:				;@ r0=dst, r1=src
 	bic t9f,t9f,#PSR_S|PSR_Z
 	orrmi t9f,t9f,#PSR_S
 	orreq t9f,t9f,#PSR_Z
-
 	bx lr
 ;@----------------------------------------------------------------------------
 generic_ADD_B:				;@ r0=dst, r1=src
@@ -698,7 +638,7 @@ generic_INC_B:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#24
 
-	and t9f,t9f,#PSR_C
+	and t9f,t9f,#PSR_C			;@ Save carry & clear n
 	mov r2,r0,lsl#4				;@ Prepare for H check
 	adds r0,r0,r1,lsl#24
 	orrmi t9f,t9f,#PSR_S
@@ -714,7 +654,7 @@ generic_INC_W:				;@ r0=dst, r1=src
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsl#16
 
-	and t9f,t9f,#PSR_C
+	and t9f,t9f,#PSR_C			;@ Save carry & clear n
 	mov r2,r0,lsl#4				;@ Prepare for H check
 	adds r0,r0,r1,lsl#16
 	orrmi t9f,t9f,#PSR_S
@@ -997,6 +937,73 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 #endif
 ;@----------------------------------------------------------------------------
 tlcs900HState:
+tlcsOpz:
+;@ 0x00
+	.long sngNOP,		sngNORMAL,	sngPUSHSR,	sngPOPSR,	sngMAX,		sngHALT,	sngEI,		sngRETI
+	.long sngLD8_8,		sngPUSH8,	sngLD8_16,	sngPUSH16,	sngINCF,	sngDECF,	sngRET,		sngRETD
+;@ 0x10
+	.long sngRCF,		sngSCF,		sngCCF,		sngZCF,		sngPUSHA,	sngPOPA,	sngEX,		sngLDF
+	.long sngPUSHF,		sngPOPF,	sngJP16,	sngJP24,	sngCALL16,	sngCALL24,	sngCALR,	asmE
+;@ 0x20
+	.long sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB
+	.long sngPUSHW,		sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW
+;@ 0x30
+	.long sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW
+	.long sngPUSHL,		sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL,	sngPUSHL
+;@ 0x40
+	.long sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL,		sngLDL
+	.long sngPOPW,		sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW,	sngPOPW
+;@ 0x50
+	.long asmE,			asmE,		asmE,		asmE,		asmE,		asmE,		asmE,		asmE
+	.long sngPOPL,		sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL,	sngPOPL
+;@ 0x60
+	.long sngJR_never,	sngJR_lt,	sngJR_le,	sngJR_ule,	sngJR_ov,	sngJR_mi,	sngJR_z,	sngJR_c
+	.long sngJR,		sngJR_ge,	sngJR_gt,	sngJR_ugt,	sngJR_nov,	sngJR_pl,	sngJR_nz,	sngJR_nc
+;@ 0x70
+	.long sngJRL_never,	sngJRL_lt,	sngJRL_le,	sngJRL_ule,	sngJRL_ov,	sngJRL_mi,	sngJRL_z,	sngJRL_c
+	.long sngJRL,		sngJRL_ge,	sngJRL_gt,	sngJRL_ugt,	sngJRL_nov,	sngJRL_pl,	sngJRL_nz,	sngJRL_nc
+;@ 0x80
+	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
+	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
+;@ 0x90
+	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
+	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
+;@ 0xA0
+	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
+	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
+;@ 0xB0
+	.long dstExXRR,		dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR
+	.long dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd
+;@ 0xC0
+	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCB
+	.long reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B
+;@ 0xD0
+	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCW
+	.long reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W
+;@ 0xE0
+	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCL
+	.long reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L
+;@ 0xF0
+	.long dstEx8,		dstEx16,	dstEx24,	dstExR32,	dstExDec,	dstExInc,	asmE,		sngLDX
+	.long sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI,		sngSWI
+// PZSTable
+	.byte PSR_Z|PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+
 	.space 4*8*4	;@ tlcsGprBanks
 	.long 0			;@ tlcsLastBank
 	.short	0		;@ tlcsF, tlcsSrB
@@ -1033,23 +1040,6 @@ tlcs900HState:
 	.long 0			;@ biosBase
 	.long 0			;@ readRomPtrLo
 	.long 0			;@ readRomPtrHi
-// PZSTable:
-	.byte PSR_Z|PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
 
 ;@----------------------------------------------------------------------------
 

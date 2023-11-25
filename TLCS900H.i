@@ -23,6 +23,8 @@ t9gprBank		.req r11
 
 	.struct 0		;@ Changes section so make sure it's set before real code.
 
+tlcsOpCodes:		.space 256*4
+tlcsPzst:			.space 256	;@ PZSTable
 tlcsStateStart:
 tlcsGprBanks:		.space 4*8*4
 tlcsLastBank:		.long 0
@@ -64,7 +66,6 @@ romBaseHi:			.long 0
 biosBase:			.long 0
 readRomPtrLo:		.long 0
 readRomPtrHi:		.long 0
-tlcsPzst:			.space 256	;@ PZSTable
 tlcsSize:
 
 ;@----------------------------------------------------------------------------
