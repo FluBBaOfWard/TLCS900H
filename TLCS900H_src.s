@@ -1206,8 +1206,7 @@ srcSUBmRB:
 	bl t9LoadB_mem
 	movs t9Reg,t9Reg,lsr#1
 	orrcc t9Reg,t9Reg,#0x40000000
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_SUB_B
+	bl generic_SUB_B_reg
 	bl t9StoreB_mem
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1222,8 +1221,7 @@ srcSUBmRW:
 srcSUBmRL:
 ;@----------------------------------------------------------------------------
 	bl t9LoadL_mem
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_SUB_L
+	bl generic_SUB_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
@@ -1276,8 +1274,7 @@ srcSBCmRB:
 	bl t9LoadB_mem
 	movs t9Reg,t9Reg,lsr#1
 	orrcc t9Reg,t9Reg,#0x40000000
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_SBC_B
+	bl generic_SBC_B_reg
 	bl t9StoreB_mem
 	t9fetch 4
 ;@----------------------------------------------------------------------------
@@ -1292,8 +1289,7 @@ srcSBCmRW:
 srcSBCmRL:
 ;@----------------------------------------------------------------------------
 	bl t9LoadL_mem
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_SBC_L
+	bl generic_SBC_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
@@ -1516,8 +1512,7 @@ srcCPmRB:
 	bl t9LoadB_mem
 	movs t9Reg,t9Reg,lsr#1
 	orrcc t9Reg,t9Reg,#0x40000000
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
-	bl generic_SUB_B
+	bl generic_SUB_B_reg
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 srcCPmRW:
@@ -1530,8 +1525,7 @@ srcCPmRW:
 srcCPmRL:
 ;@----------------------------------------------------------------------------
 	bl t9LoadL_mem
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_SUB_L
+	bl generic_SUB_L_reg
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------

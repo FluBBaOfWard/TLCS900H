@@ -325,17 +325,15 @@ regCPLW:					;@ Complement
 ;@----------------------------------------------------------------------------
 regNEGB:					;@ Negate
 ;@----------------------------------------------------------------------------
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	mov r0,#0
-	bl generic_SUB_B
+	bl generic_SUB_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 5
 ;@----------------------------------------------------------------------------
 regNEGW:					;@ Negate
 ;@----------------------------------------------------------------------------
-	ldrh r1,[t9gprBank,t9Reg]
 	mov r0,#0
-	bl generic_SUB_W
+	bl generic_SUB_W_reg
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 5
 
@@ -1366,30 +1364,27 @@ regADCL:
 regSUBB:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	bl generic_SUB_B
+	bl generic_SUB_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regSUBW:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrh r1,[t9gprBank,t9Reg]
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	bl generic_SUB_W
+	bl generic_SUB_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regSUBL:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	bl generic_SUB_L
+	bl generic_SUB_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
@@ -1397,30 +1392,27 @@ regSUBL:
 regSBCB:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	bl generic_SBC_B
+	bl generic_SBC_B_reg
 	strb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regSBCW:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrh r1,[t9gprBank,t9Reg]
 	mov t9Reg2,t9Reg2,lsl#2
 	ldrh r0,[t9gprBank,t9Reg2]	;@ Reg R
-	bl generic_SBC_W
+	bl generic_SBC_W_reg
 	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regSBCL:
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	bl generic_SBC_L
+	bl generic_SBC_L_reg
 	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 7
 
@@ -1823,27 +1815,24 @@ regCPr3W:					;@ Compare
 regCPB:						;@ Compare
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrb r1,[t9gprBank,t9Reg,ror#30]
 	movs t9Reg2,t9Reg2,lsr#1
 	orrcc t9Reg2,t9Reg2,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg2,ror#30];@ Reg R
-	bl generic_SUB_B
+	bl generic_SUB_B_reg
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regCPW:						;@ Compare
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrh r1,[t9gprBank,t9Reg]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	bl generic_SUB_W
+	bl generic_SUB_W_reg
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regCP_L:					;@ Compare long, regCPL (complement) already exists
 ;@----------------------------------------------------------------------------
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	ldr r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
-	bl generic_SUB_L
+	bl generic_SUB_L_reg
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
