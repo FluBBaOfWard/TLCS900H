@@ -49,23 +49,23 @@ reg_B:
 	.long 0
 regOpCodesB:
 ;@ 0x00
-	.long er,		er,			er,			regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
-	.long regMULiB,	regMULSiB,	regDIViB,	regDIVSiB,	er,			er,			er,			er
+	.long regError,	regError,	regError,	regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
+	.long regMULiB,	regMULSiB,	regDIViB,	regDIVSiB,	regError,	regError,	regError,	regError
 ;@ 0x10
-	.long regDAA,	er,			er,			er,			er,			er,			er,			er
-	.long er,		er,			er,			er,			regDJNZB,	er,			er,			er
+	.long regDAA,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regDJNZB,	regError,	regError,	regError
 ;@ 0x20
-	.long regANDCFiB,regORCFiB,	regXORCFiB,	regLDCFiB,	regSTCFiB,	er,			er,			er
-	.long regANDCFAB,regORCFAB,	regXORCFAB,	regLDCFAB,	regSTCFAB,	er,			regLDCcrrB,	regLDCrcrB
+	.long regANDCFiB,regORCFiB,	regXORCFiB,	regLDCFiB,	regSTCFiB,	regError,	regError,	regError
+	.long regANDCFAB,regORCFAB,	regXORCFAB,	regLDCFAB,	regSTCFAB,	regError,	regLDCcrrB,	regLDCrcrB
 ;@ 0x30
-	.long regRESB,	regSETB,	regCHGB,	regBITB,	regTSETB,	er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regRESB,	regSETB,	regCHGB,	regBITB,	regTSETB,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0x40
-	.long er,		regMULB,	er,			regMULB,	er,			regMULB,	er,			regMULB
-	.long er,		regMULSB,	er,			regMULSB,	er,			regMULSB,	er,			regMULSB
+	.long regError,	regMULB,	regError,	regMULB,	regError,	regMULB,	regError,	regMULB
+	.long regError,	regMULSB,	regError,	regMULSB,	regError,	regMULSB,	regError,	regMULSB
 ;@ 0x50
-	.long er,		regDIVB,	er,			regDIVB,	er,			regDIVB,	er,			regDIVB
-	.long er,		regDIVSB,	er,			regDIVSB,	er,			regDIVSB,	er,			regDIVSB
+	.long regError,	regDIVB,	regError,	regDIVB,	regError,	regDIVB,	regError,	regDIVB
+	.long regError,	regDIVSB,	regError,	regDIVSB,	regError,	regDIVSB,	regError,	regDIVSB
 ;@ 0x60
 	.long regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB
 	.long regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB
@@ -118,17 +118,17 @@ reg_W:
 	.long 0
 regOpCodesW:
 ;@ 0x00
-	.long er,		er,			er,			regLDiW,	regPUSHW,	regPOPW,	regCPLW,	regNEGW
-	.long regMULiW,	regMULSiW,	regDIViW,	regDIVSiW,	er,			er,			regBS1F,	regBS1B
+	.long regError,	regError,	regError,	regLDiW,	regPUSHW,	regPOPW,	regCPLW,	regNEGW
+	.long regMULiW,	regMULSiW,	regDIViW,	regDIVSiW,	regError,	regError,	regBS1F,	regBS1B
 ;@ 0x10
-	.long er,		er,			regEXTZW,	regEXTSW,	regPAAW,	er,			regMIRR,	er
-	.long er,		regMULA,	er,			er,			regDJNZW,	er,			er,			er
+	.long regError,	regError,	regEXTZW,	regEXTSW,	regPAAW,	regError,	regMIRR,	regError
+	.long regError,	regMULA,	regError,	regError,	regDJNZW,	regError,	regError,	regError
 ;@ 0x20
-	.long regANDCFiW,regORCFiW,	regXORCFiW,	regLDCFiW,	regSTCFiW,	er,			er,			er
-	.long regANDCFAW,regORCFAW,	regXORCFAW,	regLDCFAW,	regSTCFAW,	er,			regLDCcrrW,	regLDCrcrW
+	.long regANDCFiW,regORCFiW,	regXORCFiW,	regLDCFiW,	regSTCFiW,	regError,	regError,	regError
+	.long regANDCFAW,regORCFAW,	regXORCFAW,	regLDCFAW,	regSTCFAW,	regError,	regLDCcrrW,	regLDCrcrW
 ;@ 0x30
-	.long regRESW,	regSETW,	regCHGW,	regBITW,	regTSETW,	er,			er,			er
-	.long regMINC1,	regMINC2,	regMINC4,	er,			regMDEC1,	regMDEC2,	regMDEC4,	er
+	.long regRESW,	regSETW,	regCHGW,	regBITW,	regTSETW,	regError,	regError,	regError
+	.long regMINC1,	regMINC2,	regMINC4,	regError,	regMDEC1,	regMDEC2,	regMDEC4,	regError
 ;@ 0x40
 	.long regMULW,	regMULW,	regMULW,	regMULW,	regMULW,	regMULW,	regMULW,	regMULW
 	.long regMULSW,	regMULSW,	regMULSW,	regMULSW,	regMULSW,	regMULSW,	regMULSW,	regMULSW
@@ -186,29 +186,29 @@ reg_L:
 	.long 0
 regOpCodesL:
 ;@ 0x00
-	.long er,		er,			er,			regLDiL,	regPUSHL,	regPOPL,	er,			er
-	.long er,		er,			er,			er,			regLINK,	regUNLK,	er,			er
+	.long regError,	regError,	regError,	regLDiL,	regPUSHL,	regPOPL,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regLINK,	regUNLK,	regError,	regError
 ;@ 0x10
-	.long er,		er,			regEXTZL,	regEXTSL,	regPAAL,	er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regError,	regError,	regEXTZL,	regEXTSL,	regPAAL,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0x20
-	.long er,		er,			er,			er,			er,			er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			regLDCcrrL,	regLDCrcrL
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regLDCcrrL,	regLDCrcrL
 ;@ 0x30
-	.long er,		er,			er,			er,			er,			er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0x40
-	.long er,		er,			er,			er,			er,			er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0x50
-	.long er,		er,			er,			er,			er,			er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0x60
 	.long regINCL,	regINCL,	regINCL,	regINCL,	regINCL,	regINCL,	regINCL,	regINCL
 	.long regDECL,	regDECL,	regDECL,	regDECL,	regDECL,	regDECL,	regDECL,	regDECL
 ;@ 0x70
-	.long er,		er,			er,			er,			er,			er,			er,			er
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0x80
 	.long regADDL,	regADDL,	regADDL,	regADDL,	regADDL,	regADDL,	regADDL,	regADDL
 	.long regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL,	regLDRrL
@@ -226,19 +226,13 @@ regOpCodesL:
 	.long regADDiL,	regADCiL,	regSUBiL,	regSBCiL,	regANDiL,	regXORiL,	regORiL,	regCPiL
 ;@ 0xD0
 	.long regXORL,	regXORL,	regXORL,	regXORL,	regXORL,	regXORL,	regXORL,	regXORL
-	.long er,		er,			er,			er,			er,			er,			er,			er
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
 ;@ 0xE0
 	.long regORL,	regORL,		regORL,		regORL,		regORL,		regORL,		regORL,		regORL
 	.long regRLCiL,	regRRCiL,	regRLiL,	regRRiL,	regSLAiL,	regSRAiL,	regSLLiL,	regSRLiL
 ;@ 0xF0
 	.long regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L,	regCP_L
 	.long regRLCAL,	regRRCAL,	regRLAL,	regRRAL,	regSLAAL,	regSRAAL,	regSLLAL,	regSRLAL
-
-er:
-	mov r11,r11
-	mov r0,#0xE6
-	t9fetch 0
-;@----------------------------------------------------------------------------
 
 ;@----------------------------------------------------------------------------
 regLDiB:
@@ -328,14 +322,14 @@ regNEGB:					;@ Negate
 	mov r0,#0
 	bl generic_SUB_B_reg
 	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 5
+	t9fetch 4
 ;@----------------------------------------------------------------------------
 regNEGW:					;@ Negate
 ;@----------------------------------------------------------------------------
 	mov r0,#0
 	bl generic_SUB_W_reg
 	strh r0,[t9gprBank,t9Reg]
-	t9fetch 5
+	t9fetch 4
 
 ;@----------------------------------------------------------------------------
 regMULiB:
@@ -1470,18 +1464,16 @@ regEXL:
 regADDiB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	bl generic_ADD_B_reg
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,setRegBFetch4
+	b generic_ADD_B_reg
 ;@----------------------------------------------------------------------------
 regADDiW:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	bl generic_ADD_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,setRegWFetch4
+	b generic_ADD_W_reg
 ;@----------------------------------------------------------------------------
 regADDiL:
 ;@----------------------------------------------------------------------------
@@ -1492,26 +1484,23 @@ regADDiL:
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	bl generic_ADD_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	adr lr,setRegLFetch7
+	b generic_ADD_L_reg
 
 ;@----------------------------------------------------------------------------
 regADCiB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	bl generic_ADC_B_reg
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,setRegBFetch4
+	b generic_ADC_B_reg
 ;@----------------------------------------------------------------------------
 regADCiW:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	bl generic_ADC_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,setRegWFetch4
+	b generic_ADC_W_reg
 ;@----------------------------------------------------------------------------
 regADCiL:
 ;@----------------------------------------------------------------------------
@@ -1522,18 +1511,16 @@ regADCiL:
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	bl generic_ADC_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	adr lr,setRegLFetch7
+	b generic_ADC_L_reg
 
 ;@----------------------------------------------------------------------------
 regSUBiB:
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
-	bl generic_SUB_B
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,setRegBFetch4
+	b generic_SUB_B
 ;@----------------------------------------------------------------------------
 regSUBiW:
 ;@----------------------------------------------------------------------------
@@ -1541,9 +1528,8 @@ regSUBiW:
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#8
 	ldrh r0,[t9gprBank,t9Reg]
-	bl generic_SUB_W
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,setRegWFetch4
+	b generic_SUB_W
 ;@----------------------------------------------------------------------------
 regSUBiL:
 ;@----------------------------------------------------------------------------
@@ -1555,9 +1541,8 @@ regSUBiL:
 	ldrb r2,[t9pc],#1
 	orr r1,r1,r2,lsl#24
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	bl generic_SUB_L
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	adr lr,setRegLFetch7
+	b generic_SUB_L
 
 ;@----------------------------------------------------------------------------
 regSBCiB:
@@ -1565,8 +1550,9 @@ regSBCiB:
 	ldrb r1,[t9pc],#1
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_SBC_B
+setRegBFetch4:
 	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	t9fetchR 4
 ;@----------------------------------------------------------------------------
 regSBCiW:
 ;@----------------------------------------------------------------------------
@@ -1575,8 +1561,9 @@ regSBCiW:
 	orr r1,r1,r2,lsl#8
 	ldrh r0,[t9gprBank,t9Reg]
 	bl generic_SBC_W
+setRegWFetch4:
 	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	t9fetchR 4
 ;@----------------------------------------------------------------------------
 regSBCiL:
 ;@----------------------------------------------------------------------------
@@ -1589,6 +1576,7 @@ regSBCiL:
 	orr r1,r1,r2,lsl#24
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl generic_SBC_L
+setRegLFetch7:
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 7
 
@@ -1626,18 +1614,16 @@ regCPiL:
 regANDiB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	bl generic_AND_B_reg
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,setRegBFetch4
+	b generic_AND_B_reg
 ;@----------------------------------------------------------------------------
 regANDiW:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	bl generic_AND_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,setRegWFetch4
+	b generic_AND_W_reg
 ;@----------------------------------------------------------------------------
 regANDiL:
 ;@----------------------------------------------------------------------------
@@ -1648,28 +1634,25 @@ regANDiL:
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	bl generic_AND_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	adr lr,setRegLFetch7
+	b generic_AND_L_reg
 
 ;@----------------------------------------------------------------------------
-regORiB:					;@ Logical OR imidiate
+regORiB:					;@ Logical OR immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	bl generic_OR_B_reg
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,setRegBFetch4
+	b generic_OR_B_reg
 ;@----------------------------------------------------------------------------
-regORiW:					;@ Logical OR imidiate
+regORiW:					;@ Logical OR immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	bl generic_OR_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,setRegWFetch4
+	b generic_OR_W_reg
 ;@----------------------------------------------------------------------------
-regORiL:					;@ Logical OR imidiate
+regORiL:					;@ Logical OR immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
@@ -1678,28 +1661,25 @@ regORiL:					;@ Logical OR imidiate
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	bl generic_OR_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	adr lr,setRegLFetch7
+	b generic_OR_L_reg
 
 ;@----------------------------------------------------------------------------
-regXORiB:					;@ Exclusive OR imidiate
+regXORiB:					;@ Exclusive OR immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	bl generic_XOR_B_reg
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,setRegBFetch4
+	b generic_XOR_B_reg
 ;@----------------------------------------------------------------------------
-regXORiW:					;@ Exclusive OR imidiate
+regXORiW:					;@ Exclusive OR immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#8
-	bl generic_XOR_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,setRegWFetch4
+	b generic_XOR_W_reg
 ;@----------------------------------------------------------------------------
-regXORiL:					;@ Exclusive OR imidiate
+regXORiL:					;@ Exclusive OR immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
@@ -1708,9 +1688,8 @@ regXORiL:					;@ Exclusive OR imidiate
 	orr r0,r0,r1,lsl#16
 	ldrb r1,[t9pc],#1
 	orr r0,r0,r1,lsl#24
-	bl generic_XOR_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	adr lr,setRegLFetch7
+	b generic_XOR_L_reg
 
 ;@----------------------------------------------------------------------------
 regANDB:					;@ And

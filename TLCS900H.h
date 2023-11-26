@@ -14,44 +14,46 @@ extern "C" {
 #endif
 
 typedef struct {
-	u32 tlcsGprBanks[4][8];
-	u32 tlcsLastBank;
+	u32 opCodes[256];
+	u8 pzst[256];		// PZSTable
+	u32 gprBanks[4][8];
+	u32 lastBank;
 //	tlcsSrW:
-	u8 tlcsF;				// sr & f needs to be together and aligned at halfword.
-	u8 tlcsSrB;
-	u8 tlcsFDash;
-	u8 tlcsStatusRFP;		// Register File Pointer
-	u32 tlcsCycles;
-	u32 tlcsPcAsm;
-	u32 tlcsCurrentGprBank;
-	u32 tlcsCurrentMapBank;
-	u32 tlcsDMAStartVector;
-	u32 tlcsDmaS[4];
-	u32 tlcsDmaD[4];
-	u16 tlcsDmaC;
-	u8 tlcsDmaM[4*3+2];
-	u8 tlcsIPending[64];
-	u8 tlcsIntPrio[16];
-	u32 tlcsTimerClock[4];
-	u8 tlcsUpCounter[4];
-	u8 tlcsTimerCompare[4];
-	u8 tlcsTimerHInt;
-	u8 tlcsTRun;
-	u8 tlcsT01Mod;
-	u8 tlcsT23Mod;
-	u8 tlcsTrdc;
-	u8 tlcsTFFCR;
-	u8 tlcsTFF1;
-	u8 tlcsTFF3;
-	u8 tlcsCycShift;
-	u8 tlcsPadding0[3];
+	u8 f;				// sr & f needs to be together and aligned at halfword.
+	u8 srB;
+	u8 fDash;
+	u8 statusRFP;		// Register File Pointer
+	u32 cycles;
+	u32 pcAsm;
+	u32 dmaStartVector;
+	u32 currentGprBank;
+	u32 currentMapBank;
+	u32 padding1;
+	u32 dmaS[4];
+	u32 dmaD[4];
+	u16 dmaC;
+	u8 dmaM[4*3+2];
+	u8 iPending[64];
+	u8 intPrio[16];
+	u32 timerClock[4];
+	u8 upCounter[4];
+	u8 timerCompare[4];
+	u8 timerHInt;
+	u8 tRun;
+	u8 t01Mod;
+	u8 t23Mod;
+	u8 trdc;
+	u8 tFFCR;
+	u8 tFF1;
+	u8 tFF3;
+	u8 cycShift;
+	u8 padding0[3];
 	void *tff3Function;
 	void *romBaseLo;
 	void *romBaseHi;
 	void *biosBase;
 	void *readRomPtrLo;
 	void *readRomPtrHi;
-	u8 tlcsPzst[256];		// PZSTable
 
 } TLCS900HCore;
 

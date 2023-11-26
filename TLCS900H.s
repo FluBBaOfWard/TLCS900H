@@ -18,6 +18,7 @@
 	.global tlcs900HGetStateSize
 	.global tlcs900HRedirectOpcode
 	.global tlcsLoop
+	.global tlcsEnd
 	.global push8
 	.global push16
 	.global push32
@@ -81,9 +82,11 @@
 	.global setStatusIFF
 	.global encode_r0_pc
 	.global reencode_pc
-	.global decode_pc_r0
 	.global storeTLCS900
 	.global loadTLCS900
+	.global unknown_RR_Target
+	.global regError
+	.global dstError
 
 	.global tlcs900HState
 
@@ -143,13 +146,6 @@ loadTLCS900:
 	ldr t9gprBank,[t9ptr,#tlcsCurrentGprBank]
 	bx lr
 
-asmE:
-	mov r11,r11
-	ldr r0,=0xEEEEEEEE
-	sub t9pc,t9pc,#1
-	ldr r0,=debugCrashInstruction
-	mov lr,pc
-	bx r0
 ;@----------------------------------------------------------------------------
 push8:
 ;@----------------------------------------------------------------------------
@@ -847,8 +843,6 @@ statusIFF:					;@ r0 out = current IFF
 	ldrb r0,[t9ptr,#tlcsSrB]
 	mov r0,r0,lsr#4
 	and r0,r0,#0x7
-;@	cmp r0,#1
-;@	moveq r0,#0
 	bx lr
 ;@----------------------------------------------------------------------------
 setStatusIFF:				;@ r0 = new IFF
@@ -907,12 +901,6 @@ reencode_pc:
 	mov t9pc,r1
 	ldmfd sp!,{lr}
 	bx lr
-;@----------------------------------------------------------------------------
-decode_pc_r0:
-;@----------------------------------------------------------------------------
-	ldr r0,[t9ptr,#tlcsLastBank]
-	sub r0,t9pc,r0
-	bx lr
 
 ;@----------------------------------------------------------------------------
 #if GBA
@@ -920,6 +908,31 @@ decode_pc_r0:
 #else
 	.section .text						;@ For anything else
 #endif
+;@----------------------------------------------------------------------------
+unknown_RR_Target:
+	mov r11,r11
+	ldr r0,=0x0BADC0DE
+	bx lr
+;@----------------------------------------------------------------------------
+asmE:
+	mov r11,r11
+	ldr r0,=0xEEEEEEEE
+	sub t9pc,t9pc,#1
+	ldr r0,=debugCrashInstruction
+	ldr lr,=tlcsEnd
+	bx r0
+;@----------------------------------------------------------------------------
+regError:
+	mov r11,r11
+	mov r0,#0xE6
+	t9fetch 0
+;@----------------------------------------------------------------------------
+dstError:
+	mov r11,r11
+	mov r0,#0xED
+	t9fetch 0
+
+	.pool
 ;@----------------------------------------------------------------------------
 tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 ;@----------------------------------------------------------------------------

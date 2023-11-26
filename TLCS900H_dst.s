@@ -91,29 +91,29 @@ dst_asm:
 	mov r11,r11
 dstOpCodes:
 ;@ 0x00
-	.long dstLDBi,	ed,			dstLDWi,	ed,			dstPOPB,	ed,			dstPOPW,	ed
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstLDBi,	dstError,	dstLDWi,	dstError,	dstPOPB,	dstError,	dstPOPW,	dstError
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x10
-	.long ed,		ed,			ed,			ed,			dstLDBm16,	ed,			dstLDWm16,	ed
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstError,	dstError,	dstError,	dstError,	dstLDBm16,	dstError,	dstLDWm16,	dstError
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x20
 	.long dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW
-	.long dstANDCFA,dstORCFA,	dstXORCFA,	dstLDCFA,	dstSTCFA,	ed,			ed,			ed
+	.long dstANDCFA,dstORCFA,	dstXORCFA,	dstLDCFA,	dstSTCFA,	dstError,	dstError,	dstError
 ;@ 0x30
 	.long dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x40
 	.long dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x50
 	.long dstLDWR,	dstLDWR,	dstLDWR,	dstLDWR,	dstLDWR,	dstLDWR,	dstLDWR,	dstLDWR
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x60
 	.long dstLDLR,	dstLDLR,	dstLDLR,	dstLDLR,	dstLDLR,	dstLDLR,	dstLDLR,	dstLDLR
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x70
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
-	.long ed,		ed,			ed,			ed,			ed,			ed,			ed,			ed
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
+	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x80
 	.long dstANDCF,	dstANDCF,	dstANDCF,	dstANDCF,	dstANDCF,	dstANDCF,	dstANDCF,	dstANDCF
 	.long dstORCF,	dstORCF,	dstORCF,	dstORCF,	dstORCF,	dstORCF,	dstORCF,	dstORCF
@@ -138,12 +138,6 @@ dstOpCodes:
 ;@ 0xF0
 	.long dstNever,	dstRET,		dstRET,		dstRET,		dstRET,		dstRET,		dstRET,		dstRET
 	.long dstRT,	dstRET,		dstRET,		dstRET,		dstRET,		dstRET,		dstRET,		dstRET
-
-ed:
-	mov r11,r11
-	mov r0,#0xED
-	t9fetch 0
-;@----------------------------------------------------------------------------
 
 ;@----------------------------------------------------------------------------
 dstLDBi:

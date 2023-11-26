@@ -406,7 +406,7 @@ interrupt:					;@ r0 = index, r1 = int level
 	add r2,t9ptr,#tlcsIPending
 	strb r3,[r2,r0]
 ;@---------------------------------------------------------------------------
-;@TestMicroDMA:				;@ r0 = index
+;@TestMicroDMA:				;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------
 	ldr r2,[t9ptr,#tlcsDMAStartVector]
 	and r3,r2,#0xFF

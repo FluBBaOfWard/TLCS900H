@@ -115,14 +115,14 @@ sngHALT:					;@ 0x05, Halt CPU
 	bicpl t9cycles,t9cycles,r0,lsl#T9CYC_SHIFT+2	;@ Consume all cycles in steps of 4.
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-sngLD8_8:					;@ 0x08, Store imidiate byte in low memory.
+sngLD8_8:					;@ 0x08, Store immediate byte in low memory.
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	bl t9StoreB_Low
 	t9fetch 5
 ;@----------------------------------------------------------------------------
-sngLD8_16:					;@ 0x0A, Store imidiate word in low memory.
+sngLD8_16:					;@ 0x0A, Store immediate word in low memory.
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9pc],#1
 	ldrb r0,[t9pc],#1
@@ -175,13 +175,13 @@ sngJP24:					;@ 0x1B, Jump to 24bit address
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-sngPUSH8:					;@ Push imidiate byte
+sngPUSH8:					;@ Push immediate byte
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	bl push8
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngPUSH16:					;@ Push imidiate word
+sngPUSH16:					;@ Push immediate word
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
@@ -348,7 +348,7 @@ sngCALR:					;@ Call Relative PC+d16
 	t9fetch 12
 
 ;@----------------------------------------------------------------------------
-sngLDB:						;@ Load byte imidiate
+sngLDB:						;@ Load byte immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	and t9Reg,t9opCode,#0x07
@@ -357,7 +357,7 @@ sngLDB:						;@ Load byte imidiate
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
-sngLDW:						;@ Load word imidiate
+sngLDW:						;@ Load word immediate
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
 	mov t9Reg,t9Reg,lsl#2
@@ -367,7 +367,7 @@ sngLDW:						;@ Load word imidiate
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 3
 ;@----------------------------------------------------------------------------
-sngLDL:						;@ Load long imidiate
+sngLDL:						;@ Load long immediate
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
 	ldrb r0,[t9pc],#1

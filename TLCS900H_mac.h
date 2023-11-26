@@ -35,6 +35,13 @@
 	b tlcsLoop
 	.endm
 
+	.macro t9fetchR count
+	subs t9cycles,t9cycles,#(\count)*T9CYCLE
+	ldrbpl t9opCode,[t9pc],#1
+	ldrpl pc,[t9ptr,t9opCode,lsl#2]
+	b tlcsEnd
+	.endm
+
 	.macro t9eatcycles count
 	sub t9cycles,t9cycles,#(\count)*T9CYCLE
 	.endm

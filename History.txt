@@ -2,8 +2,9 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2023-11-25 (FluBBa)
+V0.4.6 - 2023-11-26 (FluBBa)
 	Fixed regTSETW opcode.
+	Fixed half carry calculation for word sized opcodes.
 	Fixed all code to use unified syntax.
 	Renamed t9optbl to t9ptr.
 	Moved IO handling to cpu core.
