@@ -86,6 +86,7 @@
 	.global loadTLCS900
 	.global unknown_RR_Target
 	.global regError
+	.global srcError
 	.global dstError
 
 	.global tlcs900HState
@@ -149,10 +150,10 @@ loadTLCS900:
 ;@----------------------------------------------------------------------------
 push8:
 ;@----------------------------------------------------------------------------
-	ldr r1,[t9gprBank,#0x1C]	;@ XSP
-	sub r1,r1,#1
-	str r1,[t9gprBank,#0x1C]
-	b t9StoreB
+	ldr t9mem,[t9gprBank,#0x1C]	;@ XSP
+	sub t9mem,t9mem,#1
+	str t9mem,[t9gprBank,#0x1C]
+	b t9StoreB_mem
 
 ;@----------------------------------------------------------------------------
 pushSR:
@@ -171,17 +172,17 @@ pushSR:
 ;@----------------------------------------------------------------------------
 push16:
 ;@----------------------------------------------------------------------------
-	ldr r1,[t9gprBank,#0x1C]	;@ XSP
-	sub r1,r1,#2
-	str r1,[t9gprBank,#0x1C]
-	b t9StoreW
+	ldr t9mem,[t9gprBank,#0x1C]	;@ XSP
+	sub t9mem,t9mem,#2
+	str t9mem,[t9gprBank,#0x1C]
+	b t9StoreW_mem
 ;@----------------------------------------------------------------------------
 push32:						;@ Also used from interrupt
 ;@----------------------------------------------------------------------------
-	ldr r1,[t9gprBank,#0x1C]	;@ XSP
-	sub r1,r1,#4
-	str r1,[t9gprBank,#0x1C]
-	b t9StoreL
+	ldr t9mem,[t9gprBank,#0x1C]	;@ XSP
+	sub t9mem,t9mem,#4
+	str t9mem,[t9gprBank,#0x1C]
+	b t9StoreL_mem
 ;@----------------------------------------------------------------------------
 pop8:
 ;@----------------------------------------------------------------------------
@@ -212,16 +213,15 @@ ExR32:
 	beq exr32_03
 	cmp r0,#0x07
 	beq exr32_07
-	cmp r0,#0x13
+	cmp r0,#0x13			;@ Undocumented. See CPU manual p43
 	beq exr32_13
 
 	ldr r2,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
 	bic t9Reg,t9Reg,#3
 	ldr t9Mem,[t9gprBank,t9Reg]
-	and r0,r0,#3
-	cmp r0,#1
-	bne exr32End
+	ands r0,r0,#3
+	beq exr32End
 	ldrb r0,[t9pc],#1
 	add t9Mem,t9Mem,r0
 	ldrsb r0,[t9pc],#1
@@ -230,7 +230,7 @@ exr32End:
 	t9eatcycles 5
 	bx lr
 
-exr32_03:
+exr32_03:					;@ r32+r8
 	ldrb r0,[t9pc],#1
 	ldr r2,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
@@ -244,7 +244,7 @@ exr32_03:
 	t9eatcycles 8
 	bx lr
 
-exr32_07:
+exr32_07:					;@ r32+r16
 	ldrb r0,[t9pc],#1
 	ldr r2,[t9ptr,#tlcsCurrentMapBank]
 	ldrsb t9Reg,[r2,r0]
@@ -259,29 +259,28 @@ exr32_07:
 	t9eatcycles 8
 	bx lr
 
-exr32_13:			;@ Used by LDAR
+exr32_13:					;@ pc+d16
 	ldrb t9Mem,[t9pc],#1
 	ldrsb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
 	ldr r0,[t9ptr,#tlcsLastBank]
 	sub r0,t9pc,r0
 	add t9Mem,t9Mem,r0
-	t9eatcycles 8				;@ Unconfirmed... doesn't make much difference
+	t9eatcycles 8
 	bx lr
 ;@----------------------------------------------------------------------------
 ExDec:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0xFC
 	ldr r2,[t9ptr,#tlcsCurrentMapBank]
-	ldrsb t9Reg,[r2,r0]
-	bic t9Reg,t9Reg,#3
+	ldrsb t9Reg,[r2,t9Reg]
 	ldr t9Mem,[t9gprBank,t9Reg]
-	mov r0,r0,ror#2
-	movs r0,r0,lsr#29
-	addeq r0,r0,#1
+	ands r0,r0,#3
+	addeq r0,r0,#0x80000000
 ;@	cmp r0,#6
 ;@	beq UnknownOpCode
-	sub t9Mem,t9Mem,r0
+	sub t9Mem,t9Mem,r0,ror#31
 	str t9Mem,[t9gprBank,t9Reg]
 
 	t9eatcycles 3
@@ -290,16 +289,15 @@ ExDec:
 ExInc:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0xFC
 	ldr r2,[t9ptr,#tlcsCurrentMapBank]
-	ldrsb t9Reg,[r2,r0]
-	bic t9Reg,t9Reg,#3
+	ldrsb t9Reg,[r2,t9Reg]
 	ldr t9Mem,[t9gprBank,t9Reg]
-	mov r0,r0,ror#2
-	movs r0,r0,lsr#29
-	addeq r0,r0,#1
+	ands r0,r0,#3
+	addeq r0,r0,#0x80000000
 ;@	cmp r0,#6
 ;@	beq UnknownOpCode
-	add r0,t9Mem,r0
+	add r0,t9Mem,r0,ror#31
 	str r0,[t9gprBank,t9Reg]
 
 	t9eatcycles 3
@@ -925,6 +923,11 @@ asmE:
 regError:
 	mov r11,r11
 	mov r0,#0xE6
+	t9fetch 0
+;@----------------------------------------------------------------------------
+srcError:
+	mov r11,r11
+	mov r0,#0xE5
 	t9fetch 0
 ;@----------------------------------------------------------------------------
 dstError:

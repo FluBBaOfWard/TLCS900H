@@ -124,11 +124,11 @@ sngLD8_8:					;@ 0x08, Store immediate byte in low memory.
 ;@----------------------------------------------------------------------------
 sngLD8_16:					;@ 0x0A, Store immediate word in low memory.
 ;@----------------------------------------------------------------------------
-	ldrb r1,[t9pc],#1
+	ldrb t9mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r0,r0,r2,lsl#8
-	bl t9StoreW
+	bl t9StoreW_mem
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------

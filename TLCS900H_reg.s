@@ -1578,7 +1578,7 @@ regSBCiL:
 	bl generic_SBC_L
 setRegLFetch7:
 	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 7
+	t9fetchR 7
 
 ;@----------------------------------------------------------------------------
 regCPiB:
