@@ -1059,25 +1059,25 @@ tlcsOpz:
 	.long sngJRL_never,	sngJRL_lt,	sngJRL_le,	sngJRL_ule,	sngJRL_ov,	sngJRL_mi,	sngJRL_z,	sngJRL_c
 	.long sngJRL,		sngJRL_ge,	sngJRL_gt,	sngJRL_ugt,	sngJRL_nov,	sngJRL_pl,	sngJRL_nz,	sngJRL_nc
 ;@ 0x80
-	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
-	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
+	.long srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB
+	.long srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB
 ;@ 0x90
-	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
-	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
+	.long srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW
+	.long srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW
 ;@ 0xA0
-	.long srcExXRR,		srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR,	srcExXRR
-	.long srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd,	srcExXRRd
+	.long srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL
+	.long srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL
 ;@ 0xB0
 	.long dstExXRR,		dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR
 	.long dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd
 ;@ 0xC0
-	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCB
+	.long srcEx8B,		srcEx16B,	srcEx24B,	srcExR32B,	srcExDecB,	srcExIncB,	asmE,		regRCB
 	.long reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B
 ;@ 0xD0
-	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCW
+	.long srcEx8W,		srcEx16W,	srcEx24W,	srcExR32W,	srcExDecW,	srcExIncW,	asmE,		regRCW
 	.long reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W
 ;@ 0xE0
-	.long srcEx8,		srcEx16,	srcEx24,	srcExR32,	srcExDec,	srcExInc,	asmE,		regRCL
+	.long srcEx8L,		srcEx16L,	srcEx24L,	srcExR32L,	srcExDecL,	srcExIncL,	asmE,		regRCL
 	.long reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L
 ;@ 0xF0
 	.long dstEx8,		dstEx16,	dstEx24,	dstExR32,	dstExDec,	dstExInc,	asmE,		sngLDX

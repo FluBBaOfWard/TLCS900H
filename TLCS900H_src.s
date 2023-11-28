@@ -10,14 +10,30 @@
 
 #include "TLCS900H_mac.h"
 
-	.global srcExXRR
-	.global srcExXRRd
-	.global srcEx8
-	.global srcEx16
-	.global srcEx24
-	.global srcExR32
-	.global srcExDec
-	.global srcExInc
+	.global srcExXRRB
+	.global srcExXRRW
+	.global srcExXRRL
+	.global srcExXRRdB
+	.global srcExXRRdW
+	.global srcExXRRdL
+	.global srcEx8B
+	.global srcEx8W
+	.global srcEx8L
+	.global srcEx16B
+	.global srcEx16W
+	.global srcEx16L
+	.global srcEx24B
+	.global srcEx24W
+	.global srcEx24L
+	.global srcExR32B
+	.global srcExR32W
+	.global srcExR32L
+	.global srcExDecB
+	.global srcExDecW
+	.global srcExDecL
+	.global srcExIncB
+	.global srcExIncW
+	.global srcExIncL
 
 	.syntax unified
 	.arm
@@ -31,126 +47,354 @@
 #endif
 	.align 2
 ;@----------------------------------------------------------------------------
-;@ 43 size checks.
-;@----------------------------------------------------------------------------
-srcExXRR:
+srcExXRRB:
+	adr r1,srcOpCodesB
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
-	ldrb r2,[t9pc],#1
-	and t9Reg,r2,#0x07
-	adr r1,srcOpCodes
-	ldr pc,[r1,r2,lsl#2]
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
-srcExXRRd:
+srcExXRRdB:
+	adr r1,srcOpCodesB
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
 	ldrsb r0,[t9pc],#1
 	add t9Mem,t9Mem,r0
 	t9eatcycles 2
-	ldrb r2,[t9pc],#1
-	and t9Reg,r2,#0x07
-	adr r1,srcOpCodes
-	ldr pc,[r1,r2,lsl#2]
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
-srcEx8:
+srcEx8B:
+	adr r1,srcOpCodesB
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
-	ldrb r2,[t9pc],#1
-	and t9Reg,r2,#0x07
-	adr r1,srcOpCodes
-	ldr pc,[r1,r2,lsl#2]
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
-srcEx24:
+srcEx24B:
+	adr r1,srcOpCodesB
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
 	ldrb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#16
 	t9eatcycles 3
-	ldrb r2,[t9pc],#1
-	and t9Reg,r2,#0x07
-	adr r1,srcOpCodes
-	ldr pc,[r1,r2,lsl#2]
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
-srcExR32:
-	adr lr,src_asm
+srcExR32B:
+	adr lr,srcAsmB
 	b ExR32
 ;@----------------------------------------------------------------------------
-srcExDec:
-	adr lr,src_asm
+srcExDecB:
+	adr lr,srcAsmB
 	b ExDec
 ;@----------------------------------------------------------------------------
-srcExInc:
-	adr lr,src_asm
+srcExIncB:
+	adr lr,srcAsmB
 	b ExInc
 ;@----------------------------------------------------------------------------
-srcEx16:
+srcEx16B:
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
 	t9eatcycles 2
 ;@----------------------------------------------------------------------------
-src_asm:
-	ldrb r2,[t9pc],#1
-	and t9Reg,r2,#0x07
-	ldr pc,[pc,r2,lsl#2]
-	mov r11,r11
-srcOpCodes:
+srcAsmB:
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[pc,r0,lsl#2]
+	b t9LoadB_mem
+srcOpCodesB:
 ;@ 0x00
-	.long srcError,	srcError,	srcError,	srcError,	srcPUSH,	srcError,	srcRLD,		srcRRD
+	.long srcError,	srcError,	srcError,	srcError,	srcPUSHB,	srcError,	srcRLD,		srcRRD
 	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
 ;@ 0x10
 	.long srcLDI,	srcLDIR,	srcLDD,		srcLDDR,	srcCPI,		srcCPIR,	srcCPD,		srcCPDR
-	.long srcError,	srcLD16m,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcLD16mB,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
 ;@ 0x20
-	.long srcLD,	srcLD,		srcLD,		srcLD,		srcLD,		srcLD,		srcLD,		srcLD
+	.long srcLDB,	srcLDB,		srcLDB,		srcLDB,		srcLDB,		srcLDB,		srcLDB,		srcLDB
 	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
 ;@ 0x30
-	.long srcEX,	srcEX,		srcEX,		srcEX,		srcEX,		srcEX,		srcEX,		srcEX
-	.long srcADDi,	srcADCi,	srcSUBi,	srcSBCi,	srcANDi,	srcXORi,	srcORi,		srcCPi
+	.long srcEXB,	srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB
+	.long srcADDiB,	srcADCiB,	srcSUBiB,	srcSBCiB,	srcANDiB,	srcXORiB,	srcORiB,	srcCPiB
 ;@ 0x40
-	.long srcMUL,	srcMUL,		srcMUL,		srcMUL,		srcMUL,		srcMUL,		srcMUL,		srcMUL
-	.long srcMULS,	srcMULS,	srcMULS,	srcMULS,	srcMULS,	srcMULS,	srcMULS,	srcMULS
+	.long srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB
+	.long srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB
 ;@ 0x50
-	.long srcDIV,	srcDIV,		srcDIV,		srcDIV,		srcDIV,		srcDIV,		srcDIV,		srcDIV
-	.long srcDIVS,	srcDIVS,	srcDIVS,	srcDIVS,	srcDIVS,	srcDIVS,	srcDIVS,	srcDIVS
+	.long srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB
+	.long srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB
 ;@ 0x60
-	.long srcINC,	srcINC,		srcINC,		srcINC,		srcINC,		srcINC,		srcINC,		srcINC
-	.long srcDEC,	srcDEC,		srcDEC,		srcDEC,		srcDEC,		srcDEC,		srcDEC,		srcDEC
+	.long srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB
+	.long srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB
 ;@ 0x70
 	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcRLC,	srcRRC,		srcRL,		srcRR,		srcSLA,		srcSRA,		srcSLL,		srcSRL
+	.long srcRLCB,	srcRRCB,	srcRLB,		srcRRB,		srcSLAB,	srcSRAB,	srcSLLB,	srcSRLB
 ;@ 0x80
-	.long srcADDRm,	srcADDRm,	srcADDRm,	srcADDRm,	srcADDRm,	srcADDRm,	srcADDRm,	srcADDRm
-	.long srcADDmR,	srcADDmR,	srcADDmR,	srcADDmR,	srcADDmR,	srcADDmR,	srcADDmR,	srcADDmR
+	.long srcADDRmB,srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB
+	.long srcADDmRB,srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB
 ;@ 0x90
-	.long srcADCRm,	srcADCRm,	srcADCRm,	srcADCRm,	srcADCRm,	srcADCRm,	srcADCRm,	srcADCRm
-	.long srcADCmR,	srcADCmR,	srcADCmR,	srcADCmR,	srcADCmR,	srcADCmR,	srcADCmR,	srcADCmR
+	.long srcADCRmB,srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB
+	.long srcADCmRB,srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB
 ;@ 0xA0
-	.long srcSUBRm,	srcSUBRm,	srcSUBRm,	srcSUBRm,	srcSUBRm,	srcSUBRm,	srcSUBRm,	srcSUBRm
-	.long srcSUBmR,	srcSUBmR,	srcSUBmR,	srcSUBmR,	srcSUBmR,	srcSUBmR,	srcSUBmR,	srcSUBmR
+	.long srcSUBRmB,srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB
+	.long srcSUBmRB,srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB
 ;@ 0xB0
-	.long srcSBCRm,	srcSBCRm,	srcSBCRm,	srcSBCRm,	srcSBCRm,	srcSBCRm,	srcSBCRm,	srcSBCRm
-	.long srcSBCmR,	srcSBCmR,	srcSBCmR,	srcSBCmR,	srcSBCmR,	srcSBCmR,	srcSBCmR,	srcSBCmR
+	.long srcSBCRmB,srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB
+	.long srcSBCmRB,srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB
 ;@ 0xC0
-	.long srcANDRm,	srcANDRm,	srcANDRm,	srcANDRm,	srcANDRm,	srcANDRm,	srcANDRm,	srcANDRm
-	.long srcANDmR,	srcANDmR,	srcANDmR,	srcANDmR,	srcANDmR,	srcANDmR,	srcANDmR,	srcANDmR
+	.long srcANDRmB,srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB
+	.long srcANDmRB,srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB
 ;@ 0xD0
-	.long srcXORRm,	srcXORRm,	srcXORRm,	srcXORRm,	srcXORRm,	srcXORRm,	srcXORRm,	srcXORRm
-	.long srcXORmR,	srcXORmR,	srcXORmR,	srcXORmR,	srcXORmR,	srcXORmR,	srcXORmR,	srcXORmR
+	.long srcXORRmB,srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB
+	.long srcXORmRB,srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB
 ;@ 0xE0
-	.long srcORRm,	srcORRm,	srcORRm,	srcORRm,	srcORRm,	srcORRm,	srcORRm,	srcORRm
-	.long srcORmR,	srcORmR,	srcORmR,	srcORmR,	srcORmR,	srcORmR,	srcORmR,	srcORmR
+	.long srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB
+	.long srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB
 ;@ 0xF0
-	.long srcCPRm,	srcCPRm,	srcCPRm,	srcCPRm,	srcCPRm,	srcCPRm,	srcCPRm,	srcCPRm
-	.long srcCPmR,	srcCPmR,	srcCPmR,	srcCPmR,	srcCPmR,	srcCPmR,	srcCPmR,	srcCPmR
+	.long srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB
+	.long srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB
+;@----------------------------------------------------------------------------
+srcExXRRW:
+	adr r1,srcOpCodesW
+	and t9Reg,t9opCode,#0x07
+	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadW_mem
+;@----------------------------------------------------------------------------
+srcExXRRdW:
+	adr r1,srcOpCodesW
+	and t9Reg,t9opCode,#0x07
+	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
+	ldrsb r0,[t9pc],#1
+	add t9Mem,t9Mem,r0
+	t9eatcycles 2
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadW_mem
+;@----------------------------------------------------------------------------
+srcEx8W:
+	adr r1,srcOpCodesW
+	ldrb t9Mem,[t9pc],#1
+	t9eatcycles 2
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadW_mem
+;@----------------------------------------------------------------------------
+srcEx24W:
+	adr r1,srcOpCodesW
+	ldrb t9Mem,[t9pc],#1
+	ldrb r0,[t9pc],#1
+	orr t9Mem,t9Mem,r0,lsl#8
+	ldrb r0,[t9pc],#1
+	orr t9Mem,t9Mem,r0,lsl#16
+	t9eatcycles 3
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[r1,r0,lsl#2]
+	b t9LoadW_mem
+;@----------------------------------------------------------------------------
+srcExR32W:
+	adr lr,srcAsmW
+	b ExR32
+;@----------------------------------------------------------------------------
+srcExDecW:
+	adr lr,srcAsmW
+	b ExDec
+;@----------------------------------------------------------------------------
+srcExIncW:
+	adr lr,srcAsmW
+	b ExInc
+;@----------------------------------------------------------------------------
+srcEx16W:
+	ldrb t9Mem,[t9pc],#1
+	ldrb r0,[t9pc],#1
+	orr t9Mem,t9Mem,r0,lsl#8
+	t9eatcycles 2
+;@----------------------------------------------------------------------------
+srcAsmW:
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr pc,[pc,r0,lsl#2]
+	b t9LoadW_mem
+srcOpCodesW:
+;@ 0x00
+	.long srcError,	srcError,	srcError,	srcError,	srcPUSHW,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x10
+	.long srcLDI,	srcLDIR,	srcLDD,		srcLDDR,	srcCPI,		srcCPIR,	srcCPD,		srcCPDR
+	.long srcError,	srcLD16mW,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x20
+	.long srcLDW,	srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x30
+	.long srcEXW,	srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW
+	.long srcADDiW,	srcADCiW,	srcSUBiW,	srcSBCiW,	srcANDiW,	srcXORiW,	srcORiW,	srcCPiW
+;@ 0x40
+	.long srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW
+	.long srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW
+;@ 0x50
+	.long srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW
+	.long srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW
+;@ 0x60
+	.long srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW
+	.long srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW
+;@ 0x70
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcRLCW,	srcRRCW,	srcRLW,		srcRRW,		srcSLAW,	srcSRAW,	srcSLLW,	srcSRLW
+;@ 0x80
+	.long srcADDRmW,srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW
+	.long srcADDmRW,srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW
+;@ 0x90
+	.long srcADCRmW,srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW
+	.long srcADCmRW,srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW
+;@ 0xA0
+	.long srcSUBRmW,srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW
+	.long srcSUBmRW,srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW
+;@ 0xB0
+	.long srcSBCRmW,srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW
+	.long srcSBCmRW,srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW
+;@ 0xC0
+	.long srcANDRmW,srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW
+	.long srcANDmRW,srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW
+;@ 0xD0
+	.long srcXORRmW,srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW
+	.long srcXORmRW,srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW
+;@ 0xE0
+	.long srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW
+	.long srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW
+;@ 0xF0
+	.long srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW
+	.long srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW
+;@----------------------------------------------------------------------------
+srcExXRRL:
+	adr r1,srcOpCodesL
+	and t9Reg,t9opCode,#0x07
+	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr lr,[r1,r0,lsl#2]
+	b t9LoadL_mem
+;@----------------------------------------------------------------------------
+srcExXRRdL:
+	adr r1,srcOpCodesL
+	and t9Reg,t9opCode,#0x07
+	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
+	ldrsb r0,[t9pc],#1
+	add t9Mem,t9Mem,r0
+	t9eatcycles 2
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr lr,[r1,r0,lsl#2]
+	b t9LoadL_mem
+;@----------------------------------------------------------------------------
+srcEx8L:
+	adr r1,srcOpCodesL
+	ldrb t9Mem,[t9pc],#1
+	t9eatcycles 2
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr lr,[r1,r0,lsl#2]
+	b t9LoadL_mem
+;@----------------------------------------------------------------------------
+srcEx24L:
+	adr r1,srcOpCodesL
+	ldrb t9Mem,[t9pc],#1
+	ldrb r0,[t9pc],#1
+	orr t9Mem,t9Mem,r0,lsl#8
+	ldrb r0,[t9pc],#1
+	orr t9Mem,t9Mem,r0,lsl#16
+	t9eatcycles 3
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr lr,[r1,r0,lsl#2]
+	b t9LoadL_mem
+;@----------------------------------------------------------------------------
+srcExR32L:
+	adr lr,srcAsmL
+	b ExR32
+;@----------------------------------------------------------------------------
+srcExDecL:
+	adr lr,srcAsmL
+	b ExDec
+;@----------------------------------------------------------------------------
+srcExIncL:
+	adr lr,srcAsmL
+	b ExInc
+;@----------------------------------------------------------------------------
+srcEx16L:
+	ldrb t9Mem,[t9pc],#1
+	ldrb r0,[t9pc],#1
+	orr t9Mem,t9Mem,r0,lsl#8
+	t9eatcycles 2
+;@----------------------------------------------------------------------------
+srcAsmL:
+	ldrb r0,[t9pc],#1
+	and t9Reg,r0,#0x07
+	ldr lr,[pc,r0,lsl#2]
+	b t9LoadL_mem
+srcOpCodesL:
+;@ 0x00
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x10
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x20
+	.long srcLDL,	srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x30
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x40
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x50
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x60
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x70
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x80
+	.long srcADDRmL,srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL
+	.long srcADDmRL,srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL
+;@ 0x90
+	.long srcADCRmL,srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL
+	.long srcADCmRL,srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL
+;@ 0xA0
+	.long srcSUBRmL,srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL
+	.long srcSUBmRL,srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL
+;@ 0xB0
+	.long srcSBCRmL,srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL
+	.long srcSBCmRL,srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL
+;@ 0xC0
+	.long srcANDRmL,srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL
+	.long srcANDmRL,srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL
+;@ 0xD0
+	.long srcXORRmL,srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL
+	.long srcXORmRL,srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL
+;@ 0xE0
+	.long srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL
+	.long srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL
+;@ 0xF0
+	.long srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL
+	.long srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL
 
-;@----------------------------------------------------------------------------
-srcPUSH:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcPUSHW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcPUSHB:
 ;@----------------------------------------------------------------------------
@@ -207,21 +451,17 @@ srcLDD:
 srcLDI_LDDdo:
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
-	tst t9Reg,#1
-	beq unknown_RR_Target
-	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]
 	movs r1,t9opCode,lsl#27		;@ Size
-	and t9opCode,r2,#0x02		;@ Increase/Decrease
+	and t9opCode,r0,#0x02		;@ Increase/Decrease
 	rsb t9opCode,t9opCode,#0x01
 	bmi srcLDI_LDDW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcLDI_LDDB:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	add r1,t9Mem,t9opCode
 	str r1,[t9gprBank,t9Reg,lsl#2]
-	sub t9Reg,t9Reg,#1
+	bic t9Reg,t9Reg,#1
 	bl t9LoadB_mem
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]
 	add r1,t9Mem,t9opCode
@@ -234,7 +474,7 @@ srcLDI_LDDW:
 	stmfd sp!,{lr}
 	add r1,t9Mem,t9opCode,lsl#1
 	str r1,[t9gprBank,t9Reg,lsl#2]
-	sub t9Reg,t9Reg,#1
+	bic t9Reg,t9Reg,#1
 	bl t9LoadW_mem
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]
 	add r1,t9Mem,t9opCode,lsl#1
@@ -272,13 +512,11 @@ srcCPD:
 ;@----------------------------------------------------------------------------
 srcCPI_CPDdo:
 ;@----------------------------------------------------------------------------
-	and r2,r2,#0x02				;@ Increase/Decrease
+	and r2,r0,#0x02				;@ Increase/Decrease
 	rsb r2,r2,#0x01
 	and t9Reg,t9opCode,#0x07
-	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]
 	movs r1,t9opCode,lsl#27		;@ Size
 	bmi srcCPI_CPDW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcCPI_CPDB:
 ;@----------------------------------------------------------------------------
@@ -327,12 +565,6 @@ CPI_CPDRret:
 	t9fetch 8
 
 ;@----------------------------------------------------------------------------
-srcLD16m:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcLD16mW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcLD16mB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -352,12 +584,6 @@ srcLD16mW:
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcLD:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcLDW
-	bcs srcLDL
-;@----------------------------------------------------------------------------
 srcLDB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -375,16 +601,9 @@ srcLDW:
 ;@----------------------------------------------------------------------------
 srcLDL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcEX:						;@ Exchange
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcEXW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcEXB:						;@ Exchange
 ;@----------------------------------------------------------------------------
@@ -407,12 +626,6 @@ srcEXW:						;@ Exchange
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcADDi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcADDiW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcADDiB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -429,12 +642,6 @@ srcADDiW:
 	adr lr,strWFetch8
 	b generic_ADD_W
 
-;@----------------------------------------------------------------------------
-srcADCi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcADCiW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcADCiB:
 ;@----------------------------------------------------------------------------
@@ -453,12 +660,6 @@ srcADCiW:
 	b generic_ADC_W
 
 ;@----------------------------------------------------------------------------
-srcSUBi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSUBiW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcSUBiB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -475,12 +676,6 @@ srcSUBiW:
 	adr lr,strWFetch8
 	b generic_SUB_W
 
-;@----------------------------------------------------------------------------
-srcSBCi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSBCiW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcSBCiB:
 ;@----------------------------------------------------------------------------
@@ -499,12 +694,6 @@ srcSBCiW:
 	b generic_SBC_W
 
 ;@----------------------------------------------------------------------------
-srcANDi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcANDiW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcANDiB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -522,12 +711,6 @@ srcANDiW:
 	b generic_AND_W
 
 ;@----------------------------------------------------------------------------
-srcXORi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcXORiW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcXORiB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -544,12 +727,6 @@ srcXORiW:
 	adr lr,strWFetch8
 	b generic_XOR_W
 
-;@----------------------------------------------------------------------------
-srcORi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcORiW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcORiB:
 ;@----------------------------------------------------------------------------
@@ -571,12 +748,6 @@ srcORiW:
 	b generic_OR_W
 
 ;@----------------------------------------------------------------------------
-srcCPi:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcCPiW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcCPiB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -593,12 +764,6 @@ srcCPiW:
 	adr lr,fetch6
 	b generic_SUB_W
 
-;@----------------------------------------------------------------------------
-srcMUL:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcMULW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcMULB:
 ;@----------------------------------------------------------------------------
@@ -620,12 +785,6 @@ srcMULW:
 	str r0,[t9gprBank,t9Reg]
 	t9fetch 26
 
-;@----------------------------------------------------------------------------
-srcMULS:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcMULSW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcMULSB:
 ;@----------------------------------------------------------------------------
@@ -652,12 +811,6 @@ srcMULSW:
 	t9fetch 26
 
 ;@----------------------------------------------------------------------------
-srcDIV:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcDIVW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcDIVB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -679,12 +832,6 @@ srcDIVW:
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 30
 
-;@----------------------------------------------------------------------------
-srcDIVS:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcDIVSW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcDIVSB:
 ;@----------------------------------------------------------------------------
@@ -713,12 +860,6 @@ strWFetch8:
 	bl t9StoreW_mem
 fetch8:
 	t9fetchR 8
-;@----------------------------------------------------------------------------
-srcINC:						;@ Increment
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcINCW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcINCB:					;@ Increment
 ;@----------------------------------------------------------------------------
@@ -750,12 +891,6 @@ srcINCW:					;@ Increment
 fetch6:
 	t9fetchR 6
 ;@----------------------------------------------------------------------------
-srcDEC:						;@ Decrement
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcDECW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcDECB:					;@ Decrement
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -786,12 +921,6 @@ srcDECW:					;@ Decrement
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcRLC:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcRLCW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcRLCB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -820,12 +949,6 @@ srcRLCW:
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcRRC:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcRRCW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcRRCB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -851,12 +974,6 @@ srcRRCW:
 	adr lr,fetch8
 	b t9StoreW_mem
 
-;@----------------------------------------------------------------------------
-srcRL:						;@ Rotate Left
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcRLW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcRLB:						;@ Rotate Left
 ;@----------------------------------------------------------------------------
@@ -886,12 +1003,6 @@ srcRLW:						;@ Rotate Left
 	adr lr,fetch8
 	b t9StoreW_mem
 
-;@----------------------------------------------------------------------------
-srcRR:						;@ Rotate Right
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcRRW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcRRB:						;@ Rotate Right
 ;@----------------------------------------------------------------------------
@@ -923,14 +1034,7 @@ srcRRW:						;@ Rotate Right
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcSLA:
-srcSLL:						;@ Should this insert 1 into bit#0 like the Z80?
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSLAW
-	bcs srcError
-;@----------------------------------------------------------------------------
-srcSLAB:
+srcSLAB:					;@ Should this insert 1 into bit#0 like the Z80?
 srcSLLB:					;@ Shift Left Logical
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -942,7 +1046,7 @@ srcSLLB:					;@ Shift Left Logical
 	adr lr,fetch8
 	b t9StoreB_mem
 ;@----------------------------------------------------------------------------
-srcSLAW:
+srcSLAW:					;@ Should this insert 1 into bit#0 like the Z80?
 srcSLLW:					;@ Shift Left Logical
 ;@----------------------------------------------------------------------------
 	bl t9LoadW_mem
@@ -958,12 +1062,6 @@ srcSLLW:					;@ Shift Left Logical
 	adr lr,fetch8
 	b t9StoreW_mem
 
-;@----------------------------------------------------------------------------
-srcSRA:						;@ Shift Right Arithmetic
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSRAW
-	bcs srcError
 ;@----------------------------------------------------------------------------
 srcSRAB:					;@ Shift Right Arithmetic
 ;@----------------------------------------------------------------------------
@@ -993,12 +1091,6 @@ srcSRAW:					;@ Shift Right Arithmetic
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcSRL:						;@ Shift Right Logical
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSRLW
-	bcs srcError
-;@----------------------------------------------------------------------------
 srcSRLB:					;@ Shift Right Logical
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -1024,12 +1116,6 @@ srcSRLW:					;@ Shift Right Logical
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcADDRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcADDRmW
-	bcs srcADDRmL
-;@----------------------------------------------------------------------------
 srcADDRmB:
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
@@ -1047,17 +1133,10 @@ srcADDRmW:
 ;@----------------------------------------------------------------------------
 srcADDRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_ADD_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcADDmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcADDmRW
-	bcs srcADDmRL
 ;@----------------------------------------------------------------------------
 srcADDmRB:
 ;@----------------------------------------------------------------------------
@@ -1076,17 +1155,10 @@ srcADDmRW:
 ;@----------------------------------------------------------------------------
 srcADDmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_ADD_L_reg
 	adr lr,fetch6
 	b t9StoreL_mem
 
-;@----------------------------------------------------------------------------
-srcADCRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcADCRmW
-	bcs srcADCRmL
 ;@----------------------------------------------------------------------------
 srcADCRmB:
 ;@----------------------------------------------------------------------------
@@ -1105,17 +1177,10 @@ srcADCRmW:
 ;@----------------------------------------------------------------------------
 srcADCRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_ADC_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcADCmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcADCmRW
-	bcs srcADCmRL
 ;@----------------------------------------------------------------------------
 srcADCmRB:
 ;@----------------------------------------------------------------------------
@@ -1134,17 +1199,10 @@ srcADCmRW:
 ;@----------------------------------------------------------------------------
 srcADCmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_ADC_L_reg
-	bl t9StoreL_mem
-	t9fetch 6
+	adr lr,fetch6
+	b t9StoreL_mem
 
-;@----------------------------------------------------------------------------
-srcSUBRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSUBRmW
-	bcs srcSUBRmL
 ;@----------------------------------------------------------------------------
 srcSUBRmB:
 ;@----------------------------------------------------------------------------
@@ -1169,19 +1227,12 @@ srcSUBRmW:
 ;@----------------------------------------------------------------------------
 srcSUBRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	mov r1,r0
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl generic_SUB_L
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcSUBmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSUBmRW
-	bcs srcSUBmRL
 ;@----------------------------------------------------------------------------
 srcSUBmRB:
 ;@----------------------------------------------------------------------------
@@ -1202,17 +1253,10 @@ srcSUBmRW:
 ;@----------------------------------------------------------------------------
 srcSUBmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_SUB_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcSBCRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSBCRmW
-	bcs srcSBCRmL
 ;@----------------------------------------------------------------------------
 srcSBCRmB:
 ;@----------------------------------------------------------------------------
@@ -1237,19 +1281,12 @@ srcSBCRmW:
 ;@----------------------------------------------------------------------------
 srcSBCRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	mov r1,r0
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl generic_SBC_L
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcSBCmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcSBCmRW
-	bcs srcSBCmRL
 ;@----------------------------------------------------------------------------
 srcSBCmRB:
 ;@----------------------------------------------------------------------------
@@ -1271,17 +1308,10 @@ srcSBCmRW:
 ;@----------------------------------------------------------------------------
 srcSBCmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_SBC_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcANDRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcANDRmW
-	bcs srcANDRmL
 ;@----------------------------------------------------------------------------
 srcANDRmB:
 ;@----------------------------------------------------------------------------
@@ -1300,17 +1330,10 @@ srcANDRmW:
 ;@----------------------------------------------------------------------------
 srcANDRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_AND_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcANDmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcANDRmW
-	bcs srcANDRmL
 ;@----------------------------------------------------------------------------
 srcANDmRB:
 ;@----------------------------------------------------------------------------
@@ -1329,17 +1352,10 @@ srcANDmRW:
 ;@----------------------------------------------------------------------------
 srcANDmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_AND_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcORRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcORRmW
-	bcs srcORRmL
 ;@----------------------------------------------------------------------------
 srcORRmB:
 ;@----------------------------------------------------------------------------
@@ -1358,17 +1374,10 @@ srcORRmW:
 ;@----------------------------------------------------------------------------
 srcORRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_OR_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcORmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcORmRW
-	bcs srcORmRL
 ;@----------------------------------------------------------------------------
 srcORmRB:
 ;@----------------------------------------------------------------------------
@@ -1387,17 +1396,10 @@ srcORmRW:
 ;@----------------------------------------------------------------------------
 srcORmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_OR_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcXORRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcXORRmW
-	bcs srcXORRmL
 ;@----------------------------------------------------------------------------
 srcXORRmB:
 ;@----------------------------------------------------------------------------
@@ -1416,17 +1418,10 @@ srcXORRmW:
 ;@----------------------------------------------------------------------------
 srcXORRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_XOR_L_reg
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcXORmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcXORmRW
-	bcs srcXORmRL
 ;@----------------------------------------------------------------------------
 srcXORmRB:
 ;@----------------------------------------------------------------------------
@@ -1445,17 +1440,10 @@ srcXORmRW:
 ;@----------------------------------------------------------------------------
 srcXORmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_XOR_L_reg
 	bl t9StoreL_mem
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcCPRm:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcCPRmW
-	bcs srcCPRmL
 ;@----------------------------------------------------------------------------
 srcCPRmB:
 ;@----------------------------------------------------------------------------
@@ -1477,18 +1465,11 @@ srcCPRmW:
 ;@----------------------------------------------------------------------------
 srcCPRmL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	mov r1,r0
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl generic_SUB_L
 	t9fetch 6
 
-;@----------------------------------------------------------------------------
-srcCPmR:
-;@----------------------------------------------------------------------------
-	movs r1,t9opCode,lsl#27		;@ Size
-	bmi srcCPmRW
-	bcs srcCPmRL
 ;@----------------------------------------------------------------------------
 srcCPmRB:
 ;@----------------------------------------------------------------------------
@@ -1507,7 +1488,6 @@ srcCPmRW:
 ;@----------------------------------------------------------------------------
 srcCPmRL:
 ;@----------------------------------------------------------------------------
-	bl t9LoadL_mem
 	bl generic_SUB_L_reg
 	t9fetch 6
 

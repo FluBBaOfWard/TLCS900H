@@ -33,30 +33,31 @@
 	.align 2
 ;@----------------------------------------------------------------------------
 dstExXRR:
+	adr r1,dstOpCodes
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
 	ldrb r0,[t9pc],#1
-	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstExXRRd:
+	adr r1,dstOpCodes
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
 	ldrsb r0,[t9pc],#1
 	add t9Mem,t9Mem,r0
 	t9eatcycles 2
 	ldrb r0,[t9pc],#1
-	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstEx8:
+	adr r1,dstOpCodes
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
 	ldrb r0,[t9pc],#1
-	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstEx24:
+	adr r1,dstOpCodes
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
@@ -64,7 +65,6 @@ dstEx24:
 	orr t9Mem,t9Mem,r0,lsl#16
 	t9eatcycles 3
 	ldrb r0,[t9pc],#1
-	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstExR32:
@@ -396,8 +396,8 @@ dstCL:
 ;@----------------------------------------------------------------------------
 	ldr r0,[t9ptr,#tlcsLastBank]
 	sub r0,t9pc,r0
-	bl push32
 	bic t9pc,t9Mem,#0xFF000000
+	bl push32
 	bl reencode_pc
 	t9fetch 12
 ;@----------------------------------------------------------------------------

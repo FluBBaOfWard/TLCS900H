@@ -2,7 +2,7 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2023-11-26 (FluBBa)
+V0.4.6 - 2023-11-28 (FluBBa)
 	Fixed regTSETW opcode.
 	Fixed half carry calculation for word sized opcodes.
 	Fixed all code to use unified syntax.

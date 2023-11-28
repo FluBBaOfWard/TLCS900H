@@ -432,7 +432,7 @@ sngRETD:					;@ Return and Deallocate
 sngJR_never:				;@ 0x60, Jump Relative never
 ;@----------------------------------------------------------------------------
 	add t9pc,t9pc,#1
-	t9fetch 4
+	t9fetchr 4
 ;@----------------------------------------------------------------------------
 sngJR_lt:					;@ 0x61, Jump Relative Less Than
 ;@----------------------------------------------------------------------------
@@ -475,7 +475,7 @@ sngJR_mi:					;@ 0x65, Jump Relative Minus
 	tst t9f,#PSR_S
 	addne t9pc,t9pc,r0
 	subne t9cycles,t9cycles,#4*T9CYCLE
-	t9fetch 4
+	t9fetchr 4
 ;@----------------------------------------------------------------------------
 sngJR_z:					;@ 0x66, Jump Relative Zero
 ;@----------------------------------------------------------------------------
@@ -483,7 +483,7 @@ sngJR_z:					;@ 0x66, Jump Relative Zero
 	tst t9f,#PSR_Z
 	addne t9pc,t9pc,r0
 	subne t9cycles,t9cycles,#4*T9CYCLE
-	t9fetch 4
+	t9fetchr 4
 ;@----------------------------------------------------------------------------
 sngJR_c:					;@ 0x67, Jump Relative Carry
 ;@----------------------------------------------------------------------------
@@ -497,7 +497,7 @@ sngJR:						;@ 0x68, Jump Relative
 ;@----------------------------------------------------------------------------
 	ldrsb r0,[t9pc],#1
 	add t9pc,t9pc,r0
-	t9fetch 8
+	t9fetchr 8
 ;@----------------------------------------------------------------------------
 sngJR_ge:					;@ 0x69, Jump Relative Greater or Equal
 ;@----------------------------------------------------------------------------
@@ -540,7 +540,7 @@ sngJR_pl:					;@ 0x6D, Jump Relative Plus
 	tst t9f,#PSR_S
 	addeq t9pc,t9pc,r0
 	subeq t9cycles,t9cycles,#4*T9CYCLE
-	t9fetch 4
+	t9fetchr 4
 ;@----------------------------------------------------------------------------
 sngJR_nz:					;@ 0x6E, Jump Relative Not Zero
 ;@----------------------------------------------------------------------------
@@ -548,7 +548,7 @@ sngJR_nz:					;@ 0x6E, Jump Relative Not Zero
 	tst t9f,#PSR_Z
 	addeq t9pc,t9pc,r0
 	subeq t9cycles,t9cycles,#4*T9CYCLE
-	t9fetch 4
+	t9fetchr 4
 ;@----------------------------------------------------------------------------
 sngJR_nc:					;@ 0x6F, Jump Relative Not Carry
 ;@----------------------------------------------------------------------------
