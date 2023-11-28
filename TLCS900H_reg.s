@@ -1167,7 +1167,7 @@ regDIVSB:					;@ Division Signed
 	mov t9Reg2,t9Reg2,lsl#1
 	ldrsb r1,[t9gprBank,t9Reg]
 	ldrsh r0,[t9gprBank,t9Reg2]	;@ reg R
-	bl generic_DIV_W
+	bl generic_DIV_B
 	strh r0,[t9gprBank,t9Reg2]	;@ reg R
 	t9fetch 18
 ;@----------------------------------------------------------------------------
