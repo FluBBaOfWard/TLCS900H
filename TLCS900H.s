@@ -150,9 +150,9 @@ loadTLCS900:
 ;@----------------------------------------------------------------------------
 push8:
 ;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#0x1C]	;@ XSP
+	ldr t9mem,[t9gprBank,#RXSP]	;@ XSP
 	sub t9mem,t9mem,#1
-	str t9mem,[t9gprBank,#0x1C]
+	str t9mem,[t9gprBank,#RXSP]
 	b t9StoreB_mem
 
 ;@----------------------------------------------------------------------------
@@ -172,37 +172,37 @@ pushSR:
 ;@----------------------------------------------------------------------------
 push16:
 ;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#0x1C]	;@ XSP
+	ldr t9mem,[t9gprBank,#RXSP]	;@ XSP
 	sub t9mem,t9mem,#2
-	str t9mem,[t9gprBank,#0x1C]
+	str t9mem,[t9gprBank,#RXSP]
 	b t9StoreW_mem
 ;@----------------------------------------------------------------------------
 push32:						;@ Also used from interrupt
 ;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#0x1C]	;@ XSP
+	ldr t9mem,[t9gprBank,#RXSP]	;@ XSP
 	sub t9mem,t9mem,#4
-	str t9mem,[t9gprBank,#0x1C]
+	str t9mem,[t9gprBank,#RXSP]
 	b t9StoreL_mem
 ;@----------------------------------------------------------------------------
 pop8:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,#0x1C]	;@ XSP
+	ldr r0,[t9gprBank,#RXSP]	;@ XSP
 	add r1,r0,#1
-	str r1,[t9gprBank,#0x1C]
+	str r1,[t9gprBank,#RXSP]
 	b t9LoadB
 ;@----------------------------------------------------------------------------
 pop16:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,#0x1C]	;@ XSP
+	ldr r0,[t9gprBank,#RXSP]	;@ XSP
 	add r1,r0,#2
-	str r1,[t9gprBank,#0x1C]
+	str r1,[t9gprBank,#RXSP]
 	b t9LoadW
 ;@----------------------------------------------------------------------------
 pop32:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,#0x1C]	;@ XSP
+	ldr r0,[t9gprBank,#RXSP]	;@ XSP
 	add r1,r0,#4
-	str r1,[t9gprBank,#0x1C]
+	str r1,[t9gprBank,#RXSP]
 	b t9LoadL
 
 ;@----------------------------------------------------------------------------
@@ -960,7 +960,7 @@ tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 	strb r0,[t9ptr,#tlcsFDash]
 	strb r0,[t9ptr,#tlcsStatusRFP]
 	mov r0,#0x100
-	str r0,[t9gprBank,#0x1C]	;@ XSP
+	str r0,[t9gprBank,#RXSP]	;@ XSP
 	mov r0,#0xF8				;@ Sys=1, IE=7, Max=1, RFP=0.
 	strb r0,[t9ptr,#tlcsSrB]
 	mov r0,#T9CYC_SHIFT

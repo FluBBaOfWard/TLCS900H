@@ -8,6 +8,8 @@
 
 #ifdef __arm__
 
+#include "TLCS900H.i"
+
 	.equ BANK0C0,  0x00
 	.equ BANK1C0,  0x20
 	.equ BANK2C0,  0x40
@@ -27,15 +29,6 @@
 	.equ BANK1C3, -0x40
 	.equ BANK2C3, -0x20
 	.equ BANK3C3,  0x00
-
-	.equ RXWA,  0x00
-	.equ RXBC,  0x04
-	.equ RXDE,  0x08
-	.equ RXHL,  0x0C
-	.equ RXIX,  0x10
-	.equ RXIY,  0x14
-	.equ RXIZ,  0x18
-	.equ RXSP,  0x1C
 
 	.equ RERR_C0,  -0x04
 	.equ RERR_C1,  -0x24

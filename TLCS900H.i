@@ -81,3 +81,17 @@ tlcsSize:
 	.equ T9_HINT_RATE,	515
 	.equ T9CYC_SHIFT,	4
 	.equ T9CYCLE,		1<<T9CYC_SHIFT
+
+	.equ RegA, 0x00
+	.equ RWA,  0x00
+	.equ RXWA, 0x00
+	.equ RBC,  0x04
+	.equ RXBC, 0x04
+	.equ RDE,  0x08
+	.equ RXDE, 0x08
+	.equ RHL,  0x0C
+	.equ RXHL, 0x0C
+	.equ RXIX, 0x10
+	.equ RXIY, 0x14
+	.equ RXIZ, 0x18
+	.equ RXSP, 0x1C

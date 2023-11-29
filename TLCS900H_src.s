@@ -408,10 +408,10 @@ srcPUSHW:
 ;@----------------------------------------------------------------------------
 srcRLD:
 ;@----------------------------------------------------------------------------
-	ldrb r2,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r2,[t9gprBank,#RegA]
 	and r1,r2,#0xF0
 	orr r0,r1,r0,ror#4
-	strb r0,[t9gprBank,#0x00]	;@ Reg A
+	strb r0,[t9gprBank,#RegA]
 	and r1,r0,#0xFF
 	and r2,r2,#0x0F
 	orr r0,r2,r0,lsr#24
@@ -424,11 +424,11 @@ srcRLD:
 ;@----------------------------------------------------------------------------
 srcRRD:
 ;@----------------------------------------------------------------------------
-	ldrb r2,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r2,[t9gprBank,#RegA]
 	and r1,r2,#0xF0
 	mov r0,r0,ror#4
 	orr r1,r1,r0,lsr#28
-	strb r1,[t9gprBank,#0x00]	;@ Reg A
+	strb r1,[t9gprBank,#RegA]
 	orr r0,r0,r2,lsl#4
 	add r2,t9ptr,#tlcsPzst
 	ldrb r1,[r2,r1]				;@ Get PZS
@@ -440,9 +440,9 @@ srcRRD:
 
 ;@----------------------------------------------------------------------------
 LDI_LDDret:
-	ldrh r0,[t9gprBank,#0x04]	;@ Reg BC
+	ldrh r0,[t9gprBank,#RBC]
 	subs r0,r0,#0x0001
-	strh r0,[t9gprBank,#0x04]	;@ Reg BC
+	strh r0,[t9gprBank,#RBC]
 	bic t9f,t9f,#PSR_H+PSR_P+PSR_n
 	orrne t9f,t9f,#PSR_P
 	t9fetch 10
@@ -500,9 +500,9 @@ srcLDDRW:
 ;@----------------------------------------------------------------------------
 	bl srcLDI_LDDdoW
 LDIR_LDDRret:
-	ldrh r0,[t9gprBank,#0x04]	;@ Reg BC
+	ldrh r0,[t9gprBank,#RBC]
 	subs r0,r0,#0x0001
-	strh r0,[t9gprBank,#0x04]	;@ Reg BC
+	strh r0,[t9gprBank,#RBC]
 	bic t9f,t9f,#PSR_H+PSR_P+PSR_n
 	orrne t9f,t9f,#PSR_P
 	subne t9pc,t9pc,#2
@@ -511,9 +511,9 @@ LDIR_LDDRret:
 
 ;@----------------------------------------------------------------------------
 CPI_CPDret:
-	ldrh r0,[t9gprBank,#0x04]	;@ Reg BC
+	ldrh r0,[t9gprBank,#RBC]
 	subs r0,r0,#0x0001
-	strh r0,[t9gprBank,#0x04]	;@ Reg BC
+	strh r0,[t9gprBank,#RBC]
 	orr t9f,t9f,#PSR_P+PSR_n
 	biceq t9f,t9f,#PSR_P
 	t9fetch 8
@@ -534,7 +534,7 @@ srcCPI_CPDB:
 	add r1,t9Mem,t9Reg
 	str r1,[t9gprBank,t9opCode,lsl#2]
 	mov r1,r0
-	ldrb r0,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r0,[t9gprBank,#RegA]
 	b generic_SUB_B
 ;@----------------------------------------------------------------------------
 srcCPIW:
@@ -553,7 +553,7 @@ srcCPI_CPDW:
 	add r1,t9Mem,t9Reg,lsl#1
 	str r1,[t9gprBank,t9opCode,lsl#2]
 	mov r1,r0
-	ldrh r0,[t9gprBank,#0x00]	;@ Reg WA
+	ldrh r0,[t9gprBank,#RWA]
 	b generic_SUB_W
 ;@----------------------------------------------------------------------------
 srcCPIRB:
@@ -567,9 +567,9 @@ srcCPDRW:
 ;@----------------------------------------------------------------------------
 	bl srcCPI_CPDdoW
 CPIR_CPDRret:
-	ldrh r0,[t9gprBank,#0x04]	;@ Reg BC
+	ldrh r0,[t9gprBank,#RBC]
 	subs r0,r0,#0x0001
-	strh r0,[t9gprBank,#0x04]	;@ Reg BC
+	strh r0,[t9gprBank,#RBC]
 	orr t9f,t9f,#PSR_P+PSR_n
 	biceq t9f,t9f,#PSR_P
 	eor r0,t9f,#PSR_Z

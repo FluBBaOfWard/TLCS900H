@@ -191,7 +191,7 @@ sngPUSH16:					;@ Push immediate word
 ;@----------------------------------------------------------------------------
 sngPUSHA:					;@ Push register A
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r0,[t9gprBank,#RegA]
 	bl push8
 	t9fetch 3
 ;@----------------------------------------------------------------------------
@@ -216,7 +216,7 @@ sngPUSHSR:					;@ Push Status Register
 sngPOPA:					;@ Pop register A
 ;@----------------------------------------------------------------------------
 	bl pop8
-	strb r0,[t9gprBank,#0x00]	;@ Reg A
+	strb r0,[t9gprBank,#RegA]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 sngPOPF:					;@ Pop Flag register
@@ -422,9 +422,9 @@ sngRETD:					;@ Return and Deallocate
 	orr t9pc,r0,r1,lsl#8		;@ Use t9pc as temp register.
 	bl pop32
 
-	ldr r1,[t9gprBank,#0x1C]	;@ XSP
+	ldr r1,[t9gprBank,#RXSP]	;@ XSP
 	add r1,r1,t9pc
-	str r1,[t9gprBank,#0x1C]
+	str r1,[t9gprBank,#RXSP]
 	bl encode_r0_pc
 
 	t9fetch 9

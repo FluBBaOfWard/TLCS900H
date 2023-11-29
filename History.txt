@@ -2,7 +2,7 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2023-11-28 (FluBBa)
+V0.4.6 - 2023-11-29 (FluBBa)
 	Fixed regTSETW opcode.
 	Fixed half carry calculation for word sized opcodes.
 	Fixed reg DIVSB.
@@ -11,7 +11,7 @@ V0.4.6 - 2023-11-28 (FluBBa)
 	Moved IO handling to cpu core.
 	Removed C cpu register macros.
 	Optimized register opcodes.
-	Optimized size check of opcodes.
+	Optimized source opcodes.
 
 V0.4.5 - 2022-10-30 (FluBBa)
 	Fixed timer flip flop.

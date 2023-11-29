@@ -68,15 +68,15 @@ dstEx24:
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstExR32:
-	adr lr,dst_asm
+	adr lr,dstAsm
 	b ExR32
 ;@----------------------------------------------------------------------------
 dstExDec:
-	adr lr,dst_asm
+	adr lr,dstAsm
 	b ExDec
 ;@----------------------------------------------------------------------------
 dstExInc:
-	adr lr,dst_asm
+	adr lr,dstAsm
 	b ExInc
 ;@----------------------------------------------------------------------------
 dstEx16:
@@ -85,7 +85,7 @@ dstEx16:
 	orr t9Mem,t9Mem,r0,lsl#8
 	t9eatcycles 2
 ;@----------------------------------------------------------------------------
-dst_asm:
+dstAsm:
 	ldrb r0,[t9pc],#1
 	ldr pc,[pc,r0,lsl#2]
 	mov r11,r11
@@ -200,18 +200,23 @@ dstLDAL:
 dstANDCFA:					;@ And Carry Flag
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldrb r1,[t9gprBank,#0x00]	;@ Reg A
-	tst r1,#0x08
+	ldrb r1,[t9gprBank,#RegA]
+//	tst r1,#0x08				;@ Undefined
 	and r1,r1,#0x0F
 	mov r2,#1
-	tsteq r0,r2,lsl r1
+	tst r0,r2,lsl r1
 	biceq t9f,t9f,#PSR_C
 	t9fetch 8
+;@----------------------------------------------------------------------------
+dstLDCFA:					;@ Load Carry Flag
+;@----------------------------------------------------------------------------
+	bic t9f,t9f,#PSR_C
 ;@----------------------------------------------------------------------------
 dstORCFA:					;@ Or Carry Flag
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldrb r1,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r1,[t9gprBank,#RegA]
+//	tst r1,#0x08				;@ Undefined
 	and r1,r1,#0x0F
 	mov r2,#1
 	tst r0,r2,lsl r1
@@ -221,29 +226,17 @@ dstORCFA:					;@ Or Carry Flag
 dstXORCFA:					;@ Xor Carry Flag
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldrb r1,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r1,[t9gprBank,#RegA]
 	and r1,r1,#0x0F
 	mov r2,#1
 	tst r0,r2,lsl r1
 	eorne t9f,t9f,#PSR_C
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-dstLDCFA:					;@ Load Carry Flag
-;@----------------------------------------------------------------------------
-	bl t9LoadB_mem
-	ldrb r1,[t9gprBank,#0x00]	;@ Reg A
-	tst r1,#0x08
-	and r1,r1,#0x0F
-	mov r2,#1
-	biceq t9f,t9f,#PSR_C
-	tst r0,r2,lsl r1
-	orrne t9f,t9f,#PSR_C
-	t9fetch 8
-;@----------------------------------------------------------------------------
 dstSTCFA:					;@ Store Carry Flag
 ;@----------------------------------------------------------------------------
 	bl t9LoadB_mem
-	ldrb r1,[t9gprBank,#0x00]	;@ Reg A
+	ldrb r1,[t9gprBank,#RegA]
 	and r1,r1,#0x0F
 	mov r2,#1
 	tst t9f,#PSR_C
@@ -284,6 +277,10 @@ dstANDCF:					;@ And Carry Flag
 	biceq t9f,t9f,#PSR_C
 	t9fetch 8
 ;@----------------------------------------------------------------------------
+dstLDCF:					;@ Load Carry Flag
+;@----------------------------------------------------------------------------
+	bic t9f,t9f,#PSR_C
+;@----------------------------------------------------------------------------
 dstORCF:					;@ Or Carry Flag
 ;@----------------------------------------------------------------------------
 	and t9Reg,r0,#7
@@ -300,16 +297,6 @@ dstXORCF:					;@ Xor Carry Flag
 	mov r1,#1
 	tst r0,r1,lsl t9Reg
 	eorne t9f,t9f,#PSR_C
-	t9fetch 8
-;@----------------------------------------------------------------------------
-dstLDCF:					;@ Load Carry Flag
-;@----------------------------------------------------------------------------
-	and t9Reg,r0,#7
-	bl t9LoadB_mem
-	mov r1,#1
-	tst r0,r1,lsl t9Reg
-	biceq t9f,t9f,#PSR_C
-	orrne t9f,t9f,#PSR_C
 	t9fetch 8
 ;@----------------------------------------------------------------------------
 dstSTCF:					;@ Store Carry Flag
