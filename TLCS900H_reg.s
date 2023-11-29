@@ -102,8 +102,8 @@ regRCW:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldr r1,[t9ptr,#tlcsCurrentMapBank]
+	bic r0,r0,#1
 	ldrsb t9Reg,[r1,r0]
-	bic t9Reg,t9Reg,#1
 	t9eatcycles 1
 	ldrb r0,[t9pc],#1
 	adr r1,regOpCodesW

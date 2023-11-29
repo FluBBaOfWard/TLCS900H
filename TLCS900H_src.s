@@ -1083,82 +1083,70 @@ srcSRLW:					;@ Shift Right Logical
 ;@----------------------------------------------------------------------------
 srcADDRmB:
 ;@----------------------------------------------------------------------------
-	bl generic_ADD_B_mem
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,regBFetch4
+	b generic_ADD_B_mem
 ;@----------------------------------------------------------------------------
 srcADDRmW:
 ;@----------------------------------------------------------------------------
 	mov t9Reg,t9Reg,lsl#2
-	bl generic_ADD_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,regWFetch4
+	b generic_ADD_W_reg
 ;@----------------------------------------------------------------------------
 srcADDRmL:
 ;@----------------------------------------------------------------------------
-	bl generic_ADD_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	adr lr,regLFetch6
+	b generic_ADD_L_reg
 
 ;@----------------------------------------------------------------------------
 srcADDmRB:
 ;@----------------------------------------------------------------------------
-	bl generic_ADD_B_mem
-	adr lr,fetch4
-	b t9StoreB_mem
+	adr lr,strBFetch4
+	b generic_ADD_B_mem
 ;@----------------------------------------------------------------------------
 srcADDmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_ADD_W
-	adr lr,fetch4
-	b t9StoreW_mem
+	adr lr,strWFetch4
+	b generic_ADD_W
 ;@----------------------------------------------------------------------------
 srcADDmRL:
 ;@----------------------------------------------------------------------------
-	bl generic_ADD_L_reg
-	adr lr,fetch6
-	b t9StoreL_mem
+	adr lr,strLFetch6
+	b generic_ADD_L_reg
 
 ;@----------------------------------------------------------------------------
 srcADCRmB:
 ;@----------------------------------------------------------------------------
-	bl generic_ADC_B_mem
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,regBFetch4
+	b generic_ADC_B_mem
 ;@----------------------------------------------------------------------------
 srcADCRmW:
 ;@----------------------------------------------------------------------------
 	mov t9Reg,t9Reg,lsl#2
-	bl generic_ADC_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,regWFetch4
+	b generic_ADC_W_reg
 ;@----------------------------------------------------------------------------
 srcADCRmL:
 ;@----------------------------------------------------------------------------
-	bl generic_ADC_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	adr lr,regLFetch6
+	b generic_ADC_L_reg
 
 ;@----------------------------------------------------------------------------
 srcADCmRB:
 ;@----------------------------------------------------------------------------
-	bl generic_ADC_B_mem
-	adr lr,fetch4
-	b t9StoreB_mem
+	adr lr,strBFetch4
+	b generic_ADC_B_mem
 ;@----------------------------------------------------------------------------
 srcADCmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_ADC_W
-	adr lr,fetch4
-	b t9StoreW_mem
+	adr lr,strWFetch4
+	b generic_ADC_W
 ;@----------------------------------------------------------------------------
 srcADCmRL:
 ;@----------------------------------------------------------------------------
-	bl generic_ADC_L_reg
-	adr lr,fetch6
-	b t9StoreL_mem
+	adr lr,strLFetch6
+	b generic_ADC_L_reg
 
 ;@----------------------------------------------------------------------------
 srcSUBRmB:
@@ -1167,48 +1155,40 @@ srcSUBRmB:
 	movs t9Reg,t9Reg,lsr#1
 	orrcc t9Reg,t9Reg,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
-	bl generic_SUB_B
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,regBFetch4
+	b generic_SUB_B
 ;@----------------------------------------------------------------------------
 srcSUBRmW:
 ;@----------------------------------------------------------------------------
 	mov r1,r0
 	mov t9Reg,t9Reg,lsl#2
 	ldrh r0,[t9gprBank,t9Reg]
-	bl generic_SUB_W
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,regWFetch4
+	b generic_SUB_W
 ;@----------------------------------------------------------------------------
 srcSUBRmL:
 ;@----------------------------------------------------------------------------
 	mov r1,r0
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	bl generic_SUB_L
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	adr lr,regLFetch6
+	b generic_SUB_L
 
 ;@----------------------------------------------------------------------------
 srcSUBmRB:
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	orrcc t9Reg,t9Reg,#0x40000000
-	bl generic_SUB_B_reg
-	adr lr,fetch4
-	b t9StoreB_mem
+	adr lr,strBFetch4
+	b generic_SUB_B_mem
 ;@----------------------------------------------------------------------------
 srcSUBmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_SUB_W
-	adr lr,fetch4
-	b t9StoreW_mem
+	adr lr,strWFetch4
+	b generic_SUB_W
 ;@----------------------------------------------------------------------------
 srcSUBmRL:
 ;@----------------------------------------------------------------------------
-	bl generic_SUB_L_reg
-	adr lr,fetch6
-	b t9StoreL_mem
+	adr lr,strLFetch6
+	b generic_SUB_L_reg
 
 ;@----------------------------------------------------------------------------
 srcSBCRmB:
@@ -1218,8 +1198,9 @@ srcSBCRmB:
 	orrcc t9Reg,t9Reg,#0x40000000
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
 	bl generic_SBC_B
+regBFetch4:
 	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	t9fetchR 4
 ;@----------------------------------------------------------------------------
 srcSBCRmW:
 ;@----------------------------------------------------------------------------
@@ -1227,16 +1208,18 @@ srcSBCRmW:
 	mov t9Reg,t9Reg,lsl#2
 	ldrh r0,[t9gprBank,t9Reg]
 	bl generic_SBC_W
+regWFetch4:
 	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	t9fetchR 4
 ;@----------------------------------------------------------------------------
 srcSBCRmL:
 ;@----------------------------------------------------------------------------
 	mov r1,r0
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl generic_SBC_L
+regLFetch6:
 	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	t9fetchR 6
 
 ;@----------------------------------------------------------------------------
 srcSBCmRB:
@@ -1244,6 +1227,7 @@ srcSBCmRB:
 	movs t9Reg,t9Reg,lsr#1
 	orrcc t9Reg,t9Reg,#0x40000000
 	bl generic_SBC_B_reg
+strBFetch4:
 	bl t9StoreB_mem
 fetch4:
 	t9fetchR 4
@@ -1252,134 +1236,118 @@ srcSBCmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	bl generic_SBC_W
-	adr lr,fetch4
-	b t9StoreW_mem
+strWFetch4:
+	bl t9StoreW_mem
+	t9fetchR 4
 ;@----------------------------------------------------------------------------
 srcSBCmRL:
 ;@----------------------------------------------------------------------------
 	bl generic_SBC_L_reg
-	adr lr,fetch6
-	b t9StoreL_mem
+strLFetch6:
+	bl t9StoreL_mem
+	t9fetchR 6
 
 ;@----------------------------------------------------------------------------
 srcANDRmB:
 ;@----------------------------------------------------------------------------
-	bl generic_AND_B_mem
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,regBFetch4
+	b generic_AND_B_mem
 ;@----------------------------------------------------------------------------
 srcANDRmW:
 ;@----------------------------------------------------------------------------
 	mov t9Reg,t9Reg,lsl#2
-	bl generic_AND_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,regWFetch4
+	b generic_AND_W_reg
 ;@----------------------------------------------------------------------------
 srcANDRmL:
 ;@----------------------------------------------------------------------------
-	bl generic_AND_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	adr lr,regLFetch6
+	b generic_AND_L_reg
 
 ;@----------------------------------------------------------------------------
 srcANDmRB:
 ;@----------------------------------------------------------------------------
-	bl generic_AND_B_mem
-	adr lr,fetch4
-	b t9StoreB_mem
+	adr lr,strBFetch4
+	b generic_AND_B_mem
 ;@----------------------------------------------------------------------------
 srcANDmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_AND_W
-	adr lr,fetch4
-	b t9StoreW_mem
+	adr lr,strWFetch4
+	b generic_AND_W
 ;@----------------------------------------------------------------------------
 srcANDmRL:
 ;@----------------------------------------------------------------------------
-	bl generic_AND_L_reg
-	bl t9StoreL_mem
-	t9fetch 6
+	adr lr,strLFetch6
+	b generic_AND_L_reg
 
 ;@----------------------------------------------------------------------------
 srcORRmB:
 ;@----------------------------------------------------------------------------
-	bl generic_OR_B_mem
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,regBFetch4
+	b generic_OR_B_mem
 ;@----------------------------------------------------------------------------
 srcORRmW:
 ;@----------------------------------------------------------------------------
 	mov t9Reg,t9Reg,lsl#2
-	bl generic_OR_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,regWFetch4
+	b generic_OR_W_reg
 ;@----------------------------------------------------------------------------
 srcORRmL:
 ;@----------------------------------------------------------------------------
-	bl generic_OR_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	adr lr,regLFetch6
+	b generic_OR_L_reg
 
 ;@----------------------------------------------------------------------------
 srcORmRB:
 ;@----------------------------------------------------------------------------
-	bl generic_OR_B_mem
-	adr lr,fetch4
-	b t9StoreB_mem
+	adr lr,strBFetch4
+	b generic_OR_B_mem
 ;@----------------------------------------------------------------------------
 srcORmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_OR_W
-	adr lr,fetch4
-	b t9StoreW_mem
+	adr lr,strWFetch4
+	b generic_OR_W
 ;@----------------------------------------------------------------------------
 srcORmRL:
 ;@----------------------------------------------------------------------------
-	bl generic_OR_L_reg
-	bl t9StoreL_mem
-	t9fetch 6
+	adr lr,strLFetch6
+	b generic_OR_L_reg
 
 ;@----------------------------------------------------------------------------
 srcXORRmB:
 ;@----------------------------------------------------------------------------
-	bl generic_XOR_B_mem
-	strb r0,[t9gprBank,t9Reg,ror#30]
-	t9fetch 4
+	adr lr,regBFetch4
+	b generic_XOR_B_mem
 ;@----------------------------------------------------------------------------
 srcXORRmW:
 ;@----------------------------------------------------------------------------
 	mov t9Reg,t9Reg,lsl#2
-	bl generic_XOR_W_reg
-	strh r0,[t9gprBank,t9Reg]
-	t9fetch 4
+	adr lr,regWFetch4
+	b generic_XOR_W_reg
 ;@----------------------------------------------------------------------------
 srcXORRmL:
 ;@----------------------------------------------------------------------------
-	bl generic_XOR_L_reg
-	str r0,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 6
+	adr lr,regLFetch6
+	b generic_XOR_L_reg
 
 ;@----------------------------------------------------------------------------
 srcXORmRB:
 ;@----------------------------------------------------------------------------
+	adr lr,strBFetch4
 	bl generic_XOR_B_mem
-	adr lr,fetch4
-	b t9StoreB_mem
 ;@----------------------------------------------------------------------------
 srcXORmRW:
 ;@----------------------------------------------------------------------------
 	ldr r1,[t9gprBank,t9Reg,lsl#2]
-	bl generic_XOR_W
-	adr lr,fetch4
-	b t9StoreW_mem
+	adr lr,strWFetch4
+	b generic_XOR_W
 ;@----------------------------------------------------------------------------
 srcXORmRL:
 ;@----------------------------------------------------------------------------
-	bl generic_XOR_L_reg
-	bl t9StoreL_mem
-	t9fetch 6
+	adr lr,strLFetch6
+	b generic_XOR_L_reg
 
 ;@----------------------------------------------------------------------------
 srcCPRmB:
@@ -1408,10 +1376,8 @@ srcCPRmL:
 ;@----------------------------------------------------------------------------
 srcCPmRB:
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	orrcc t9Reg,t9Reg,#0x40000000
 	adr lr,fetch4
-	b generic_SUB_B_reg
+	b generic_SUB_B_mem
 ;@----------------------------------------------------------------------------
 srcCPmRW:
 ;@----------------------------------------------------------------------------

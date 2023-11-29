@@ -65,6 +65,7 @@
 	.global generic_SBC_L_reg
 	.global generic_SUB_B
 	.global generic_SUB_B_reg
+	.global generic_SUB_B_mem
 	.global generic_SUB_W
 	.global generic_SUB_W_reg
 	.global generic_SUB_L
@@ -716,6 +717,11 @@ generic_INC_B:				;@ r0=dst, r1=src
 
 	mov r0,r0,lsr#24
 	bx lr
+;@----------------------------------------------------------------------------
+generic_SUB_B_mem:			;@ r0=dst
+;@----------------------------------------------------------------------------
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
 ;@----------------------------------------------------------------------------
 generic_SUB_B_reg:			;@ r0=dst
 ;@----------------------------------------------------------------------------
