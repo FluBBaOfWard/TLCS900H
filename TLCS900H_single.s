@@ -42,6 +42,7 @@
 	.global sngCALL24
 	.global sngCALR
 	.global sngLDB
+	.global sngLDB_A
 	.global sngLDW
 	.global sngLDL
 	.global sngPUSHW
@@ -357,6 +358,12 @@ sngLDB:						;@ Load byte immediate
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
+sngLDB_A:					;@ Load byte to A immediate
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1
+	strb r0,[t9gprBank,#RegA]
+	t9fetch 2
+;@----------------------------------------------------------------------------
 sngLDW:						;@ Load word immediate
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
@@ -422,7 +429,7 @@ sngRETD:					;@ Return and Deallocate
 	orr t9pc,r0,r1,lsl#8		;@ Use t9pc as temp register.
 	bl pop32
 
-	ldr r1,[t9gprBank,#RXSP]	;@ XSP
+	ldr r1,[t9gprBank,#RXSP]
 	add r1,r1,t9pc
 	str r1,[t9gprBank,#RXSP]
 	bl encode_r0_pc

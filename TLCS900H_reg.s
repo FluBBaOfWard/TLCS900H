@@ -10,18 +10,100 @@
 
 #include "TLCS900H_mac.h"
 
-	.global reg_B
+	.global regB_W
+	.global regB_A
+	.global regB_B
+	.global regB_C
+	.global regB_D
+	.global regB_E
+	.global regB_H
+	.global regB_L
 	.global reg_W
 	.global reg_L
 	.global regRCB
 	.global regRCW
 	.global regRCL
 
+	.global regLDiB
+	.global regPUSHB
+	.global regPOPB
+	.global regCPLB
+	.global regNEGB
+	.global regMULiB
+	.global regMULSiB
+	.global regDIViB
+	.global regDIVSiB
+	.global regDAA
+	.global regDJNZB
+	.global regANDCFiB
+	.global regORCFiB
+	.global regXORCFiB
+	.global regLDCFiB
+	.global regSTCFiB
+	.global regANDCFAB
+	.global regORCFAB
+	.global regXORCFAB
+	.global regLDCFAB
+	.global regSTCFAB
+	.global regLDCcrrB
+	.global regLDCrcrB
+	.global regRESB
+	.global regSETB
+	.global regCHGB
+	.global regBITB
+	.global regTSETB
+	.global regMULB
+	.global regMULSB
+	.global regDIVB
+	.global regDIVSB
+	.global regINCB
+	.global regDECB
+	.global regSCCB
+	.global regADDB
+	.global regLDRrB
+	.global regADCB
+	.global regLDrRB
+	.global regSUBB
+	.global regLDr3B
+	.global regSBCB
+	.global regEXB
+	.global regANDB
+	.global regADDiB
+	.global regADCiB
+	.global regSUBiB
+	.global regSBCiB
+	.global regANDiB
+	.global regXORiB
+	.global regORiB
+	.global regCPiB
+	.global regXORB
+	.global regCPr3B
+	.global regORB
+	.global regRLCiB
+	.global regRRCiB
+	.global regRLiB
+	.global regRRiB
+	.global regSLAiB
+	.global regSRAiB
+	.global regSLLiB
+	.global regSRLiB
+	.global regCPB
+	.global regRLCAB
+	.global regRRCAB
+	.global regRLAB
+	.global regRRAB
+	.global regSLAAB
+	.global regSRAAB
+	.global regSLLAB
+	.global regSRLAB
+
 
 	.syntax unified
 	.arm
 
-#ifdef GBA
+#ifdef NDS
+	.section .itcm						;@ For the NDS ARM9
+#elif GBA
 	.section .iwram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text				;@ For everything else
@@ -36,66 +118,64 @@ regRCB:
 	mov t9Reg,t9Reg,ror#2
 	t9eatcycles 1
 	ldrb r0,[t9pc],#1
-	adr r1,regOpCodesB
+	add r1,t9ptr,#tlcsRegOpCodesB
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
-reg_B:
+regB_W:
 ;@----------------------------------------------------------------------------
-	and t9Reg,t9opCode,#0x07
-	movs t9Reg,t9Reg,lsr#1
-	orrcc t9Reg,t9Reg,#0x40000000
+	mov t9Reg,#0x40000000
 	ldrb r0,[t9pc],#1
-	ldr pc,[pc,r0,lsl#2]
-	.long 0
-regOpCodesB:
-;@ 0x00
-	.long regError,	regError,	regError,	regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
-	.long regMULiB,	regMULSiB,	regDIViB,	regDIVSiB,	regError,	regError,	regError,	regError
-;@ 0x10
-	.long regDAA,	regError,	regError,	regError,	regError,	regError,	regError,	regError
-	.long regError,	regError,	regError,	regError,	regDJNZB,	regError,	regError,	regError
-;@ 0x20
-	.long regANDCFiB,regORCFiB,	regXORCFiB,	regLDCFiB,	regSTCFiB,	regError,	regError,	regError
-	.long regANDCFAB,regORCFAB,	regXORCFAB,	regLDCFAB,	regSTCFAB,	regError,	regLDCcrrB,	regLDCrcrB
-;@ 0x30
-	.long regRESB,	regSETB,	regCHGB,	regBITB,	regTSETB,	regError,	regError,	regError
-	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
-;@ 0x40
-	.long regError,	regMULB,	regError,	regMULB,	regError,	regMULB,	regError,	regMULB
-	.long regError,	regMULSB,	regError,	regMULSB,	regError,	regMULSB,	regError,	regMULSB
-;@ 0x50
-	.long regError,	regDIVB,	regError,	regDIVB,	regError,	regDIVB,	regError,	regDIVB
-	.long regError,	regDIVSB,	regError,	regDIVSB,	regError,	regDIVSB,	regError,	regDIVSB
-;@ 0x60
-	.long regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB
-	.long regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB
-;@ 0x70
-	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
-	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
-;@ 0x80
-	.long regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB
-	.long regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB
-;@ 0x90
-	.long regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB
-	.long regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB
-;@ 0xA0
-	.long regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB
-	.long regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B
-;@ 0xB0
-	.long regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB
-	.long regEXB,	regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB
-;@ 0xC0
-	.long regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB
-	.long regADDiB,	regADCiB,	regSUBiB,	regSBCiB,	regANDiB,	regXORiB,	regORiB,	regCPiB
-;@ 0xD0
-	.long regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB
-	.long regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B
-;@ 0xE0
-	.long regORB,	regORB,		regORB,		regORB,		regORB,		regORB,		regORB,		regORB
-	.long regRLCiB,	regRRCiB,	regRLiB,	regRRiB,	regSLAiB,	regSRAiB,	regSLLiB,	regSRLiB
-;@ 0xF0
-	.long regCPB,	regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB
-	.long regRLCAB,	regRRCAB,	regRLAB,	regRRAB,	regSLAAB,	regSRAAB,	regSLLAB,	regSRLAB
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_A:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x00000000
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_B:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x40000001
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_C:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x00000001
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_D:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x40000002
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_E:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x00000002
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_H:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x40000003
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+regB_L:
+;@----------------------------------------------------------------------------
+	mov t9Reg,#0x00000003
+	ldrb r0,[t9pc],#1
+	add r1,t9ptr,#tlcsRegOpCodesB
+	ldr pc,[r1,r0,lsl#2]
 
 ;@----------------------------------------------------------------------------
 regRCW:

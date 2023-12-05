@@ -21,8 +21,8 @@ t9gprBank		.req r11
 				;@ r14=LR
 				;@ r15=PC
 
-	.struct 0		;@ Changes section so make sure it's set before real code.
-
+	.struct -256*4		;@ Changes section so make sure it's set before real code.
+tlcsRegOpCodesB:	.space 256*4
 tlcsOpCodes:		.space 256*4
 tlcsPzst:			.space 256	;@ PZSTable
 tlcsStateStart:
@@ -82,7 +82,14 @@ tlcsSize:
 	.equ T9CYC_SHIFT,	4
 	.equ T9CYCLE,		1<<T9CYC_SHIFT
 
+	.equ RegW, 0x01
 	.equ RegA, 0x00
+	.equ RegB, 0x05
+	.equ RegC, 0x04
+	.equ RegD, 0x09
+	.equ RegE, 0x08
+	.equ RegH, 0x0D
+	.equ RegL, 0x0C
 	.equ RWA,  0x00
 	.equ RXWA, 0x00
 	.equ RBC,  0x04

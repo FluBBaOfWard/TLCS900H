@@ -121,7 +121,7 @@ srcOpCodesB:
 	.long srcLDIB,	srcLDIRB,	srcLDDB,	srcLDDRB,	srcCPIB,	srcCPIRB,	srcCPDB,	srcCPDRB
 	.long srcError,	srcLD16mB,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
 ;@ 0x20
-	.long srcLDB,	srcLDB,		srcLDB,		srcLDB,		srcLDB,		srcLDB,		srcLDB,		srcLDB
+	.long srcLDB_W,	srcLDB_A,	srcLDB_B,	srcLDB_C,	srcLDB_D,	srcLDB_E,	srcLDB_H,	srcLDB_L
 	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
 ;@ 0x30
 	.long srcEXB,	srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB
@@ -596,11 +596,44 @@ srcLD16mW:
 	b t9StoreW_mem
 
 ;@----------------------------------------------------------------------------
-srcLDB:
+srcLDB_W:
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	orrcc t9Reg,t9Reg,#0x40000000
-	strb r0,[t9gprBank,t9Reg,ror#30]
+	strb r0,[t9gprBank,#RegW]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+srcLDB_A:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegA]
+	t9fetchR 4
+;@----------------------------------------------------------------------------
+srcLDB_B:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegB]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+srcLDB_C:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegC]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+srcLDB_D:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegD]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+srcLDB_E:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegE]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+srcLDB_H:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegH]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+srcLDB_L:
+;@----------------------------------------------------------------------------
+	strb r0,[t9gprBank,#RegL]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 srcLDW:

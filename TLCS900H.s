@@ -151,7 +151,7 @@ loadTLCS900:
 ;@----------------------------------------------------------------------------
 push8:
 ;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#RXSP]	;@ XSP
+	ldr t9mem,[t9gprBank,#RXSP]
 	sub t9mem,t9mem,#1
 	str t9mem,[t9gprBank,#RXSP]
 	b t9StoreB_mem
@@ -173,35 +173,35 @@ pushSR:
 ;@----------------------------------------------------------------------------
 push16:
 ;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#RXSP]	;@ XSP
+	ldr t9mem,[t9gprBank,#RXSP]
 	sub t9mem,t9mem,#2
 	str t9mem,[t9gprBank,#RXSP]
 	b t9StoreW_mem
 ;@----------------------------------------------------------------------------
 push32:						;@ Also used from interrupt
 ;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#RXSP]	;@ XSP
+	ldr t9mem,[t9gprBank,#RXSP]
 	sub t9mem,t9mem,#4
 	str t9mem,[t9gprBank,#RXSP]
 	b t9StoreL_mem
 ;@----------------------------------------------------------------------------
 pop8:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,#RXSP]	;@ XSP
+	ldr r0,[t9gprBank,#RXSP]
 	add r1,r0,#1
 	str r1,[t9gprBank,#RXSP]
 	b t9LoadB
 ;@----------------------------------------------------------------------------
 pop16:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,#RXSP]	;@ XSP
+	ldr r0,[t9gprBank,#RXSP]
 	add r1,r0,#2
 	str r1,[t9gprBank,#RXSP]
 	b t9LoadW
 ;@----------------------------------------------------------------------------
 pop32:
 ;@----------------------------------------------------------------------------
-	ldr r0,[t9gprBank,#RXSP]	;@ XSP
+	ldr r0,[t9gprBank,#RXSP]
 	add r1,r0,#4
 	str r1,[t9gprBank,#RXSP]
 	b t9LoadL
@@ -966,7 +966,7 @@ tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 	strb r0,[t9ptr,#tlcsFDash]
 	strb r0,[t9ptr,#tlcsStatusRFP]
 	mov r0,#0x100
-	str r0,[t9gprBank,#RXSP]	;@ XSP
+	str r0,[t9gprBank,#RXSP]
 	mov r0,#0xF8				;@ Sys=1, IE=7, Max=1, RFP=0.
 	strb r0,[t9ptr,#tlcsSrB]
 	mov r0,#T9CYC_SHIFT
@@ -1038,6 +1038,55 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 	.section .text
 #endif
 ;@----------------------------------------------------------------------------
+//regOpCodesB:
+;@ 0x00
+	.long regError,	regError,	regError,	regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
+	.long regMULiB,	regMULSiB,	regDIViB,	regDIVSiB,	regError,	regError,	regError,	regError
+;@ 0x10
+	.long regDAA,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regDJNZB,	regError,	regError,	regError
+;@ 0x20
+	.long regANDCFiB,regORCFiB,	regXORCFiB,	regLDCFiB,	regSTCFiB,	regError,	regError,	regError
+	.long regANDCFAB,regORCFAB,	regXORCFAB,	regLDCFAB,	regSTCFAB,	regError,	regLDCcrrB,	regLDCrcrB
+;@ 0x30
+	.long regRESB,	regSETB,	regCHGB,	regBITB,	regTSETB,	regError,	regError,	regError
+	.long regError,	regError,	regError,	regError,	regError,	regError,	regError,	regError
+;@ 0x40
+	.long regError,	regMULB,	regError,	regMULB,	regError,	regMULB,	regError,	regMULB
+	.long regError,	regMULSB,	regError,	regMULSB,	regError,	regMULSB,	regError,	regMULSB
+;@ 0x50
+	.long regError,	regDIVB,	regError,	regDIVB,	regError,	regDIVB,	regError,	regDIVB
+	.long regError,	regDIVSB,	regError,	regDIVSB,	regError,	regDIVSB,	regError,	regDIVSB
+;@ 0x60
+	.long regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB,	regINCB
+	.long regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB,	regDECB
+;@ 0x70
+	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
+	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
+;@ 0x80
+	.long regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB
+	.long regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB
+;@ 0x90
+	.long regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB
+	.long regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB
+;@ 0xA0
+	.long regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB
+	.long regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B
+;@ 0xB0
+	.long regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB
+	.long regEXB,	regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB
+;@ 0xC0
+	.long regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB
+	.long regADDiB,	regADCiB,	regSUBiB,	regSBCiB,	regANDiB,	regXORiB,	regORiB,	regCPiB
+;@ 0xD0
+	.long regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB
+	.long regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B
+;@ 0xE0
+	.long regORB,	regORB,		regORB,		regORB,		regORB,		regORB,		regORB,		regORB
+	.long regRLCiB,	regRRCiB,	regRLiB,	regRRiB,	regSLAiB,	regSRAiB,	regSLLiB,	regSRLiB
+;@ 0xF0
+	.long regCPB,	regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB
+	.long regRLCAB,	regRRCAB,	regRLAB,	regRRAB,	regSLAAB,	regSRAAB,	regSLLAB,	regSRLAB
 tlcs900HState:
 tlcsOpz:
 ;@ 0x00
@@ -1047,7 +1096,7 @@ tlcsOpz:
 	.long sngRCF,		sngSCF,		sngCCF,		sngZCF,		sngPUSHA,	sngPOPA,	sngEX,		sngLDF
 	.long sngPUSHF,		sngPOPF,	sngJP16,	sngJP24,	sngCALL16,	sngCALL24,	sngCALR,	asmE
 ;@ 0x20
-	.long sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB
+	.long sngLDB,		sngLDB_A,	sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB
 	.long sngPUSHW,		sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW
 ;@ 0x30
 	.long sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW
@@ -1078,7 +1127,7 @@ tlcsOpz:
 	.long dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd
 ;@ 0xC0
 	.long srcEx8B,		srcEx16B,	srcEx24B,	srcExR32B,	srcExDecB,	srcExIncB,	asmE,		regRCB
-	.long reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B,		reg_B
+	.long regB_W,		regB_A,		regB_B,		regB_C,		regB_D,		regB_E,		regB_H,		regB_L
 ;@ 0xD0
 	.long srcEx8W,		srcEx16W,	srcEx24W,	srcExR32W,	srcExDecW,	srcExIncW,	asmE,		regRCW
 	.long reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W
