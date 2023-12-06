@@ -1064,28 +1064,28 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
 	.long regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB,	regSCCB
 ;@ 0x80
-	.long regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB,	regADDB
-	.long regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB,	regLDRrB
+	.long regADDBW,	regADDBA,	regADDBB,	regADDBC,	regADDBD,	regADDBE,	regADDBH,	regADDBL
+	.long regLDRrBW,regLDRrBA,	regLDRrBB,	regLDRrBC,	regLDRrBD,	regLDRrBE,	regLDRrBH,	regLDRrBL
 ;@ 0x90
-	.long regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB,	regADCB
-	.long regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB,	regLDrRB
+	.long regADCBW,	regADCBA,	regADCBB,	regADCBC,	regADCBD,	regADCBE,	regADCBH,	regADCBL
+	.long regLDrRBW,regLDrRBA,	regLDrRBB,	regLDrRBC,	regLDrRBD,	regLDrRBE,	regLDrRBH,	regLDrRBL
 ;@ 0xA0
-	.long regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB,	regSUBB
+	.long regSUBBW,	regSUBBA,	regSUBBB,	regSUBBC,	regSUBBD,	regSUBBE,	regSUBBH,	regSUBBL
 	.long regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B
 ;@ 0xB0
-	.long regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB,	regSBCB
+	.long regSBCBW,	regSBCBA,	regSBCBB,	regSBCBC,	regSBCBD,	regSBCBE,	regSBCBH,	regSBCBL
 	.long regEXB,	regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB,		regEXB
 ;@ 0xC0
-	.long regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB,	regANDB
+	.long regANDBW,	regANDBA,	regANDBB,	regANDBC,	regANDBD,	regANDBE,	regANDBH,	regANDBL
 	.long regADDiB,	regADCiB,	regSUBiB,	regSBCiB,	regANDiB,	regXORiB,	regORiB,	regCPiB
 ;@ 0xD0
-	.long regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB,	regXORB
+	.long regXORBW,	regXORBA,	regXORBB,	regXORBC,	regXORBD,	regXORBE,	regXORBH,	regXORBL
 	.long regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B,	regCPr3B
 ;@ 0xE0
-	.long regORB,	regORB,		regORB,		regORB,		regORB,		regORB,		regORB,		regORB
+	.long regORBW,	regORBA,	regORBB,	regORBC,	regORBD,	regORBE,	regORBH,	regORBL
 	.long regRLCiB,	regRRCiB,	regRLiB,	regRRiB,	regSLAiB,	regSRAiB,	regSLLiB,	regSRLiB
 ;@ 0xF0
-	.long regCPB,	regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB,		regCPB
+	.long regCPBW,	regCPBA,	regCPBB,	regCPBC,	regCPBD,	regCPBE,	regCPBH,	regCPBL
 	.long regRLCAB,	regRRCAB,	regRLAB,	regRRAB,	regSLAAB,	regSRAAB,	regSLLAB,	regSRLAB
 tlcs900HState:
 tlcsOpz:
@@ -1096,7 +1096,7 @@ tlcsOpz:
 	.long sngRCF,		sngSCF,		sngCCF,		sngZCF,		sngPUSHA,	sngPOPA,	sngEX,		sngLDF
 	.long sngPUSHF,		sngPOPF,	sngJP16,	sngJP24,	sngCALL16,	sngCALL24,	sngCALR,	asmE
 ;@ 0x20
-	.long sngLDB,		sngLDB_A,	sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB,		sngLDB
+	.long sngLDB_W,		sngLDB_A,	sngLDB_B,	sngLDB_C,	sngLDB_D,	sngLDB_E,	sngLDB_H,	sngLDB_L
 	.long sngPUSHW,		sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW
 ;@ 0x30
 	.long sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW

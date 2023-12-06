@@ -127,11 +127,11 @@ srcOpCodesB:
 	.long srcEXB,	srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB
 	.long srcADDiB,	srcADCiB,	srcSUBiB,	srcSBCiB,	srcANDiB,	srcXORiB,	srcORiB,	srcCPiB
 ;@ 0x40
-	.long srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB,	srcMULB
-	.long srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB,	srcMULSB
+	.long srcError,	srcMULB,	srcError,	srcMULB,	srcError,	srcMULB,	srcError,	srcMULB
+	.long srcError,	srcMULSB,	srcError,	srcMULSB,	srcError,	srcMULSB,	srcError,	srcMULSB
 ;@ 0x50
-	.long srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB,	srcDIVB
-	.long srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB,	srcDIVSB
+	.long srcError,	srcDIVB,	srcError,	srcDIVB,	srcError,	srcDIVB,	srcError,	srcDIVB
+	.long srcError,	srcDIVSB,	srcError,	srcDIVSB,	srcError,	srcDIVSB,	srcError,	srcDIVSB
 ;@ 0x60
 	.long srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB
 	.long srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB
@@ -789,11 +789,10 @@ srcCPiW:
 	b generic_SUB_W
 
 ;@----------------------------------------------------------------------------
-srcMULB:
+srcMULB:					;@ Multiply
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	bcc unknown_RR_Target
-	mov t9Reg,t9Reg,lsl#2
+	and t9Reg,t9Reg,#0x06
+	mov t9Reg,t9Reg,lsl#1
 	ldrb r1,[t9gprBank,t9Reg]
 	mul r0,r1,r0
 	strh r0,[t9gprBank,t9Reg]
@@ -810,11 +809,10 @@ srcMULW:
 ;@----------------------------------------------------------------------------
 srcMULSB:
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	bcc unknown_RR_Target
+	and t9Reg,t9Reg,#0x06
+	mov t9Reg,t9Reg,lsl#1
 	mov r0,r0,lsl#24
 	mov r0,r0,asr#24
-	mov t9Reg,t9Reg,lsl#2
 	ldrsb r1,[t9gprBank,t9Reg]
 	mul r0,r1,r0
 	strh r0,[t9gprBank,t9Reg]
@@ -833,10 +831,9 @@ srcMULSW:
 ;@----------------------------------------------------------------------------
 srcDIVB:
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	bcc unknown_RR_Target
+	and t9Reg,t9Reg,#0x06
+	mov t9Reg,t9Reg,lsl#1
 	mov r1,r0
-	mov t9Reg,t9Reg,lsl#2
 	ldrh r0,[t9gprBank,t9Reg]
 	bl generic_DIV_B
 	strh r0,[t9gprBank,t9Reg]
@@ -853,11 +850,10 @@ srcDIVW:
 ;@----------------------------------------------------------------------------
 srcDIVSB:
 ;@----------------------------------------------------------------------------
-	movs t9Reg,t9Reg,lsr#1
-	bcc unknown_RR_Target
+	and t9Reg,t9Reg,#0x06
+	mov t9Reg,t9Reg,lsl#1
 	mov r1,r0,lsl#24
 	mov r1,r1,asr#24
-	mov t9Reg,t9Reg,lsl#2
 	ldrsh r0,[t9gprBank,t9Reg]
 	bl generic_DIV_B
 	strh r0,[t9gprBank,t9Reg]
