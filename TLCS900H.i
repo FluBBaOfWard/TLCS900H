@@ -98,7 +98,11 @@ tlcsSize:
 	.equ RXDE, 0x08
 	.equ RHL,  0x0C
 	.equ RXHL, 0x0C
+	.equ RIX,  0x10
 	.equ RXIX, 0x10
+	.equ RIY,  0x14
 	.equ RXIY, 0x14
+	.equ RIZ, 0x18
 	.equ RXIZ, 0x18
+	.equ RSP, 0x1C
 	.equ RXSP, 0x1C

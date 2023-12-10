@@ -10,10 +10,24 @@
 
 #include "TLCS900H_mac.h"
 
-	.global srcExXRRB
+	.global srcExXWAB
+	.global srcExXBCB
+	.global srcExXDEB
+	.global srcExXHLB
+	.global srcExXIXB
+	.global srcExXIYB
+	.global srcExXIZB
+	.global srcExXSPB
 	.global srcExXRRW
 	.global srcExXRRL
-	.global srcExXRRdB
+	.global srcExXWAdB
+	.global srcExXBCdB
+	.global srcExXDEdB
+	.global srcExXHLdB
+	.global srcExXIXdB
+	.global srcExXIYdB
+	.global srcExXIZdB
+	.global srcExXSPdB
 	.global srcExXRRdW
 	.global srcExXRRdL
 	.global srcEx8B
@@ -47,38 +61,51 @@
 #endif
 	.align 2
 ;@----------------------------------------------------------------------------
-srcExXRRB:
-	adr r1,srcOpCodesB
+srcExXWAB:
+srcExXBCB:
+srcExXDEB:
+srcExXHLB:
+srcExXIXB:
+srcExXIYB:
+srcExXIZB:
+srcExXSPB:
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
 	ldrb r0,[t9pc],#1
+	adr r1,srcOpCodesB
 	and t9Reg,r0,#0x07
 	ldr lr,[r1,r0,lsl#2]
 	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
-srcExXRRdB:
-	adr r1,srcOpCodesB
+srcExXWAdB:
+srcExXBCdB:
+srcExXDEdB:
+srcExXHLdB:
+srcExXIXdB:
+srcExXIYdB:
+srcExXIZdB:
+srcExXSPdB:
+	ldrsb r0,[t9pc],#1
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
-	ldrsb r0,[t9pc],#1
-	add t9Mem,t9Mem,r0
 	t9eatcycles 2
+	add t9Mem,t9Mem,r0
 	ldrb r0,[t9pc],#1
+	adr r1,srcOpCodesB
 	and t9Reg,r0,#0x07
 	ldr lr,[r1,r0,lsl#2]
 	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
 srcEx8B:
-	adr r1,srcOpCodesB
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
 	ldrb r0,[t9pc],#1
+	adr r1,srcOpCodesB
 	and t9Reg,r0,#0x07
 	ldr lr,[r1,r0,lsl#2]
 	b t9LoadB_mem
 ;@----------------------------------------------------------------------------
 srcEx24B:
-	adr r1,srcOpCodesB
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
@@ -86,6 +113,7 @@ srcEx24B:
 	orr t9Mem,t9Mem,r0,lsl#16
 	t9eatcycles 3
 	ldrb r0,[t9pc],#1
+	adr r1,srcOpCodesB
 	and t9Reg,r0,#0x07
 	ldr lr,[r1,r0,lsl#2]
 	b t9LoadB_mem
@@ -161,7 +189,7 @@ srcOpCodesB:
 	.long srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB
 ;@ 0xF0
 	.long srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB
-	.long srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB,	srcCPmRB
+	.long srcCPmRBW,srcCPmRBA,	srcCPmRBB,	srcCPmRBC,	srcCPmRBD,	srcCPmRBE,	srcCPmRBH,	srcCPmRBL
 ;@----------------------------------------------------------------------------
 srcExXRRW:
 	adr r1,srcOpCodesW
@@ -1403,10 +1431,22 @@ srcCPRmL:
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------
-srcCPmRB:
+srcCPmRBW:
+srcCPmRBB:
+srcCPmRBC:
+srcCPmRBD:
+srcCPmRBE:
+srcCPmRBH:
+srcCPmRBL:
 ;@----------------------------------------------------------------------------
 	adr lr,fetch4
 	b generic_SUB_B_mem
+;@----------------------------------------------------------------------------
+srcCPmRBA:
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9gprBank,#RegA]
+	adr lr,fetch4
+	b generic_SUB_B
 ;@----------------------------------------------------------------------------
 srcCPmRW:
 ;@----------------------------------------------------------------------------

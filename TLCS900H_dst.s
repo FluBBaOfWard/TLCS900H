@@ -10,8 +10,22 @@
 
 #include "TLCS900H_mac.h"
 
-	.global dstExXRR
-	.global dstExXRRd
+	.global dstExXWA
+	.global dstExXBC
+	.global dstExXDE
+	.global dstExXHL
+	.global dstExXIX
+	.global dstExXIY
+	.global dstExXIZ
+	.global dstExXSP
+	.global dstExXWAd
+	.global dstExXBCd
+	.global dstExXDEd
+	.global dstExXHLd
+	.global dstExXIXd
+	.global dstExXIYd
+	.global dstExXIZd
+	.global dstExXSPd
 	.global dstEx8
 	.global dstEx16
 	.global dstEx24
@@ -32,28 +46,48 @@
 #endif
 	.align 2
 ;@----------------------------------------------------------------------------
-dstExXRR:
-	adr r1,dstOpCodes
+dstExXBC:
+dstExXDE:
+dstExXHL:
+dstExXIX:
+dstExXIY:
+dstExXIZ:
+dstExXSP:
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
 	ldrb r0,[t9pc],#1
+	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
-dstExXRRd:
+dstExXWA:
+;@----------------------------------------------------------------------------
+	ldr t9Mem,[t9gprBank,#RXWA]
+	ldrb r0,[t9pc],#1
 	adr r1,dstOpCodes
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
+dstExXWAd:
+dstExXBCd:
+dstExXDEd:
+dstExXHLd:
+dstExXIXd:
+dstExXIYd:
+dstExXIZd:
+dstExXSPd:
 	and t9Reg,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9Reg,lsl#2]	;@ XRR
 	ldrsb r0,[t9pc],#1
-	add t9Mem,t9Mem,r0
 	t9eatcycles 2
+	add t9Mem,t9Mem,r0
 	ldrb r0,[t9pc],#1
+	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstEx8:
-	adr r1,dstOpCodes
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
 	ldrb r0,[t9pc],#1
+	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstEx24:
@@ -100,7 +134,7 @@ dstOpCodes:
 	.long dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW
 	.long dstANDCFA,dstORCFA,	dstXORCFA,	dstLDCFA,	dstSTCFA,	dstError,	dstError,	dstError
 ;@ 0x30
-	.long dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL,	dstLDAL
+	.long dstLDAXWA,dstLDAXBC,	dstLDAXDE,	dstLDAXHL,	dstLDAXIX,	dstLDAXIY,	dstLDAXIZ,	dstLDAXSP
 	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x40
 	.long dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR,	dstLDBR
@@ -191,10 +225,21 @@ dstLDAW:
 	strh t9Mem,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-dstLDAL:
+dstLDAXBC:
+dstLDAXDE:
+dstLDAXHL:
+dstLDAXIX:
+dstLDAXIY:
+dstLDAXIZ:
+dstLDAXSP:
 ;@----------------------------------------------------------------------------
 	and t9Reg,r0,#0x07
 	str t9Mem,[t9gprBank,t9Reg,lsl#2]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+dstLDAXWA:
+;@----------------------------------------------------------------------------
+	str t9Mem,[t9gprBank,#RXWA]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 dstANDCFA:					;@ And Carry Flag

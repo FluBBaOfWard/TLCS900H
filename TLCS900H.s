@@ -1070,7 +1070,7 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 	.long regADCBW,	regADCBA,	regADCBB,	regADCBC,	regADCBD,	regADCBE,	regADCBH,	regADCBL
 	.long regLDrRBW,regLDrRBA,	regLDrRBB,	regLDrRBC,	regLDrRBD,	regLDrRBE,	regLDrRBH,	regLDrRBL
 ;@ 0xA0
-	.long regSUBBW,	regSUBBA,	regSUBBB,	regSUBBC,	regSUBBD,	regSUBBE,	regSUBBH,	regSUBBL
+	.long regSUBRW,	regSUBRA,	regSUBRB,	regSUBRC,	regSUBRD,	regSUBRE,	regSUBRH,	regSUBRL
 	.long regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B,	regLDr3B
 ;@ 0xB0
 	.long regSBCBW,	regSBCBA,	regSBCBB,	regSBCBC,	regSBCBD,	regSBCBE,	regSBCBH,	regSBCBL
@@ -1114,8 +1114,8 @@ tlcsOpz:
 	.long sngJRL_never,	sngJRL_lt,	sngJRL_le,	sngJRL_ule,	sngJRL_ov,	sngJRL_mi,	sngJRL_z,	sngJRL_c
 	.long sngJRL,		sngJRL_ge,	sngJRL_gt,	sngJRL_ugt,	sngJRL_nov,	sngJRL_pl,	sngJRL_nz,	sngJRL_nc
 ;@ 0x80
-	.long srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB,	srcExXRRB
-	.long srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB,	srcExXRRdB
+	.long srcExXWAB,	srcExXBCB,	srcExXDEB,	srcExXHLB,	srcExXIXB,	srcExXIYB,	srcExXIZB,	srcExXSPB
+	.long srcExXWAdB,	srcExXBCdB,	srcExXDEdB,	srcExXHLdB,	srcExXIXdB,	srcExXIYdB,	srcExXIZdB,	srcExXSPdB
 ;@ 0x90
 	.long srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW,	srcExXRRW
 	.long srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW,	srcExXRRdW
@@ -1123,14 +1123,14 @@ tlcsOpz:
 	.long srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL,	srcExXRRL
 	.long srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL,	srcExXRRdL
 ;@ 0xB0
-	.long dstExXRR,		dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR,	dstExXRR
-	.long dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd,	dstExXRRd
+	.long dstExXWA,		dstExXBC,	dstExXDE,	dstExXHL,	dstExXIX,	dstExXIY,	dstExXIZ,	dstExXSP
+	.long dstExXWAd,	dstExXBCd,	dstExXDEd,	dstExXHLd,	dstExXIXd,	dstExXIYd,	dstExXIZd,	dstExXSPd
 ;@ 0xC0
 	.long srcEx8B,		srcEx16B,	srcEx24B,	srcExR32B,	srcExDecB,	srcExIncB,	asmE,		regRCB
 	.long regB_W,		regB_A,		regB_B,		regB_C,		regB_D,		regB_E,		regB_H,		regB_L
 ;@ 0xD0
 	.long srcEx8W,		srcEx16W,	srcEx24W,	srcExR32W,	srcExDecW,	srcExIncW,	asmE,		regRCW
-	.long reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W,		reg_W
+	.long regWA,		regBC,		regDE,		regHL,		regIX,		regIY,		regIZ,		regSP
 ;@ 0xE0
 	.long srcEx8L,		srcEx16L,	srcEx24L,	srcExR32L,	srcExDecL,	srcExIncL,	asmE,		regRCL
 	.long reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L,		reg_L

@@ -356,51 +356,24 @@ sngCALR:					;@ Call Relative PC+d16
 
 ;@----------------------------------------------------------------------------
 sngLDB_W:					;@ Load byte to W immediate
+sngLDB_B:					;@ Load byte to B immediate
+sngLDB_C:					;@ Load byte to C immediate
+sngLDB_D:					;@ Load byte to D immediate
+sngLDB_E:					;@ Load byte to E immediate
+sngLDB_H:					;@ Load byte to H immediate
+sngLDB_L:					;@ Load byte to L immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegW]
+	and t9Reg,t9opCode,#0x07
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
+	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
 sngLDB_A:					;@ Load byte to A immediate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	strb r0,[t9gprBank,#RegA]
-	t9fetch 2
-;@----------------------------------------------------------------------------
-sngLDB_B:					;@ Load byte to B immediate
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegB]
-	t9fetch 2
-;@----------------------------------------------------------------------------
-sngLDB_C:					;@ Load byte to C immediate
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegC]
-	t9fetch 2
-;@----------------------------------------------------------------------------
-sngLDB_D:					;@ Load byte to D immediate
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegD]
-	t9fetch 2
-;@----------------------------------------------------------------------------
-sngLDB_E:					;@ Load byte to E immediate
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegE]
-	t9fetch 2
-;@----------------------------------------------------------------------------
-sngLDB_H:					;@ Load byte to H immediate
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegH]
-	t9fetch 2
-;@----------------------------------------------------------------------------
-sngLDB_L:					;@ Load byte to L immediate
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	strb r0,[t9gprBank,#RegL]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
 sngLDW:						;@ Load word immediate
