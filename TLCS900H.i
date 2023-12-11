@@ -21,7 +21,10 @@ t9gprBank		.req r11
 				;@ r14=LR
 				;@ r15=PC
 
-	.struct -256*4		;@ Changes section so make sure it's set before real code.
+	.struct -1024*4		;@ Changes section so make sure it's set before real code.
+tlcsSrcOpCodesB:	.space 256*4
+tlcsSrcOpCodesW:	.space 256*4
+tlcsSrcOpCodesL:	.space 256*4
 tlcsRegOpCodesB:	.space 256*4
 tlcsOpCodes:		.space 256*4
 tlcsPzst:			.space 256	;@ PZSTable

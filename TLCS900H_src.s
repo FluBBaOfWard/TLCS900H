@@ -49,6 +49,146 @@
 	.global srcExIncW
 	.global srcExIncL
 
+// Byte opcodes for src
+	.global srcPUSHB
+	.global srcRLD
+	.global srcRRD
+	.global srcLDIB
+	.global srcLDIRB
+	.global srcLDDB
+	.global srcLDDRB
+	.global srcCPIB
+	.global srcCPIRB
+	.global srcCPDB
+	.global srcCPDRB
+	.global srcLD16mB
+	.global srcLDB_W
+	.global srcLDB_A
+	.global srcLDB_B
+	.global srcLDB_C
+	.global srcLDB_D
+	.global srcLDB_E
+	.global srcLDB_H
+	.global srcLDB_L
+	.global srcEXB
+	.global srcADDiB
+	.global srcADCiB
+	.global srcSUBiB
+	.global srcSBCiB
+	.global srcANDiB
+	.global srcXORiB
+	.global srcORiB
+	.global srcCPiB
+	.global srcMULB
+	.global srcMULSB
+	.global srcDIVB
+	.global srcDIVSB
+	.global srcINCB
+	.global srcDECB
+	.global srcRLCB
+	.global srcRRCB
+	.global srcRLB
+	.global srcRRB
+	.global srcSLAB
+	.global srcSRAB
+	.global srcSLLB
+	.global srcSRLB
+	.global srcADDRmB
+	.global srcADDmRB
+	.global srcADCRmB
+	.global srcADCmRB
+	.global srcSUBRmB
+	.global srcSUBmRB
+	.global srcSBCRmB
+	.global srcSBCmRB
+	.global srcANDRmB
+	.global srcANDmRB
+	.global srcXORRmB
+	.global srcXORmRB
+	.global srcORRmB
+	.global srcORmRB
+	.global srcCPRmB
+	.global srcCPmRWB
+	.global srcCPmRAB
+	.global srcCPmRBB
+	.global srcCPmRCB
+	.global srcCPmRDB
+	.global srcCPmREB
+	.global srcCPmRHB
+	.global srcCPmRLB
+
+// Word opcodes for src
+	.global srcPUSHW
+	.global srcLDIW
+	.global srcLDIRW
+	.global srcLDDW
+	.global srcLDDRW
+	.global srcCPIW
+	.global srcCPIRW
+	.global srcCPDW
+	.global srcCPDRW
+	.global srcLD16mW
+	.global srcLDW
+	.global srcEXW
+	.global srcADDiW
+	.global srcADCiW
+	.global srcSUBiW
+	.global srcSBCiW
+	.global srcANDiW
+	.global srcXORiW
+	.global srcORiW
+	.global srcCPiW
+	.global srcMULW
+	.global srcMULSW
+	.global srcDIVW
+	.global srcDIVSW
+	.global srcINCW
+	.global srcDECW
+	.global srcRLCW
+	.global srcRRCW
+	.global srcRLW
+	.global srcRRW
+	.global srcSLAW
+	.global srcSRAW
+	.global srcSLLW
+	.global srcSRLW
+	.global srcADDRmW
+	.global srcADDmRW
+	.global srcADCRmW
+	.global srcADCmRW
+	.global srcSUBRmW
+	.global srcSUBmRW
+	.global srcSBCRmW
+	.global srcSBCmRW
+	.global srcANDRmW
+	.global srcANDmRW
+	.global srcXORRmW
+	.global srcXORmRW
+	.global srcORRmW
+	.global srcORmRW
+	.global srcCPRmW
+	.global srcCPmRW
+
+// Long word opcodes for src
+srcOpCodesL:
+	.global srcLDL
+	.global srcADDRmL
+	.global srcADDmRL
+	.global srcADCRmL
+	.global srcADCmRL
+	.global srcSUBRmL
+	.global srcSUBmRL
+	.global srcSBCRmL
+	.global srcSBCmRL
+	.global srcANDRmL
+	.global srcANDmRL
+	.global srcXORRmL
+	.global srcXORmRL
+	.global srcORRmL
+	.global srcORmRL
+	.global srcCPRmL
+	.global srcCPmRL
+
 	.syntax unified
 	.arm
 
@@ -71,11 +211,7 @@ srcExXIZB:
 srcExXSPB:
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
-	ldrb r0,[t9pc],#1
-	adr r1,srcOpCodesB
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadB_mem
+	b srcExB
 ;@----------------------------------------------------------------------------
 srcExXWAdB:
 srcExXBCdB:
@@ -85,344 +221,143 @@ srcExXIXdB:
 srcExXIYdB:
 srcExXIZdB:
 srcExXSPdB:
-	ldrsb r0,[t9pc],#1
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
+	ldrsb r0,[t9pc],#1
 	t9eatcycles 2
 	add t9Mem,t9Mem,r0
-	ldrb r0,[t9pc],#1
-	adr r1,srcOpCodesB
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadB_mem
+	b srcExB
 ;@----------------------------------------------------------------------------
 srcEx8B:
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	adr r1,srcOpCodesB
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadB_mem
-;@----------------------------------------------------------------------------
-srcEx24B:
-	ldrb t9Mem,[t9pc],#1
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#16
-	t9eatcycles 3
-	ldrb r0,[t9pc],#1
-	adr r1,srcOpCodesB
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadB_mem
-;@----------------------------------------------------------------------------
-srcExR32B:
-	adr lr,srcAsmB
-	b ExR32
-;@----------------------------------------------------------------------------
-srcExDecB:
-	adr lr,srcAsmB
-	b ExDec
-;@----------------------------------------------------------------------------
-srcExIncB:
-	adr lr,srcAsmB
-	b ExInc
+	b srcExB
 ;@----------------------------------------------------------------------------
 srcEx16B:
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
 	t9eatcycles 2
+	orr t9Mem,t9Mem,r0,lsl#8
+	b srcExB
 ;@----------------------------------------------------------------------------
-srcAsmB:
+srcEx24B:
+	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[pc,r0,lsl#2]
-	b t9LoadB_mem
-srcOpCodesB:
-;@ 0x00
-	.long srcError,	srcError,	srcError,	srcError,	srcPUSHB,	srcError,	srcRLD,		srcRRD
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x10
-	.long srcLDIB,	srcLDIRB,	srcLDDB,	srcLDDRB,	srcCPIB,	srcCPIRB,	srcCPDB,	srcCPDRB
-	.long srcError,	srcLD16mB,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x20
-	.long srcLDB_W,	srcLDB_A,	srcLDB_B,	srcLDB_C,	srcLDB_D,	srcLDB_E,	srcLDB_H,	srcLDB_L
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x30
-	.long srcEXB,	srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB
-	.long srcADDiB,	srcADCiB,	srcSUBiB,	srcSBCiB,	srcANDiB,	srcXORiB,	srcORiB,	srcCPiB
-;@ 0x40
-	.long srcError,	srcMULB,	srcError,	srcMULB,	srcError,	srcMULB,	srcError,	srcMULB
-	.long srcError,	srcMULSB,	srcError,	srcMULSB,	srcError,	srcMULSB,	srcError,	srcMULSB
-;@ 0x50
-	.long srcError,	srcDIVB,	srcError,	srcDIVB,	srcError,	srcDIVB,	srcError,	srcDIVB
-	.long srcError,	srcDIVSB,	srcError,	srcDIVSB,	srcError,	srcDIVSB,	srcError,	srcDIVSB
-;@ 0x60
-	.long srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB
-	.long srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB
-;@ 0x70
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcRLCB,	srcRRCB,	srcRLB,		srcRRB,		srcSLAB,	srcSRAB,	srcSLLB,	srcSRLB
-;@ 0x80
-	.long srcADDRmB,srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB
-	.long srcADDmRB,srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB
-;@ 0x90
-	.long srcADCRmB,srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB
-	.long srcADCmRB,srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB
-;@ 0xA0
-	.long srcSUBRmB,srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB
-	.long srcSUBmRB,srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB
-;@ 0xB0
-	.long srcSBCRmB,srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB
-	.long srcSBCmRB,srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB
-;@ 0xC0
-	.long srcANDRmB,srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB
-	.long srcANDmRB,srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB
-;@ 0xD0
-	.long srcXORRmB,srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB
-	.long srcXORmRB,srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB
-;@ 0xE0
-	.long srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB
-	.long srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB
-;@ 0xF0
-	.long srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB
-	.long srcCPmRBW,srcCPmRBA,	srcCPmRBB,	srcCPmRBC,	srcCPmRBD,	srcCPmRBE,	srcCPmRBH,	srcCPmRBL
+	ldrb r1,[t9pc],#1
+	t9eatcycles 3
+	orr t9Mem,t9Mem,r0,lsl#8
+	orr t9Mem,t9Mem,r1,lsl#16
+	b srcExB
+;@----------------------------------------------------------------------------
+srcExR32B:
+	ldr lr,=srcExB
+	b ExR32
+;@----------------------------------------------------------------------------
+srcExDecB:
+	ldr lr,=srcExB
+	b ExDec
+;@----------------------------------------------------------------------------
+srcExIncB:
+	ldr lr,=srcExB
+	b ExInc
+
 ;@----------------------------------------------------------------------------
 srcExXRRW:
-	adr r1,srcOpCodesW
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadW_mem
+	b srcExW
 ;@----------------------------------------------------------------------------
 srcExXRRdW:
-	adr r1,srcOpCodesW
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
 	ldrsb r0,[t9pc],#1
-	add t9Mem,t9Mem,r0
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadW_mem
+	add t9Mem,t9Mem,r0
+	b srcExW
 ;@----------------------------------------------------------------------------
 srcEx8W:
-	adr r1,srcOpCodesW
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadW_mem
-;@----------------------------------------------------------------------------
-srcEx24W:
-	adr r1,srcOpCodesW
-	ldrb t9Mem,[t9pc],#1
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#16
-	t9eatcycles 3
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadW_mem
-;@----------------------------------------------------------------------------
-srcExR32W:
-	adr lr,srcAsmW
-	b ExR32
-;@----------------------------------------------------------------------------
-srcExDecW:
-	adr lr,srcAsmW
-	b ExDec
-;@----------------------------------------------------------------------------
-srcExIncW:
-	adr lr,srcAsmW
-	b ExInc
+	b srcExW
 ;@----------------------------------------------------------------------------
 srcEx16W:
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
 	t9eatcycles 2
+	orr t9Mem,t9Mem,r0,lsl#8
+	b srcExW
 ;@----------------------------------------------------------------------------
-srcAsmW:
+srcEx24W:
+	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[pc,r0,lsl#2]
-	b t9LoadW_mem
-srcOpCodesW:
-;@ 0x00
-	.long srcError,	srcError,	srcError,	srcError,	srcPUSHW,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x10
-	.long srcLDIW,	srcLDIRW,	srcLDDW,	srcLDDRW,	srcCPIW,	srcCPIRW,	srcCPDW,	srcCPDRW
-	.long srcError,	srcLD16mW,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x20
-	.long srcLDW,	srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x30
-	.long srcEXW,	srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW
-	.long srcADDiW,	srcADCiW,	srcSUBiW,	srcSBCiW,	srcANDiW,	srcXORiW,	srcORiW,	srcCPiW
-;@ 0x40
-	.long srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW
-	.long srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW
-;@ 0x50
-	.long srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW
-	.long srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW
-;@ 0x60
-	.long srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW
-	.long srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW
-;@ 0x70
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcRLCW,	srcRRCW,	srcRLW,		srcRRW,		srcSLAW,	srcSRAW,	srcSLLW,	srcSRLW
-;@ 0x80
-	.long srcADDRmW,srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW
-	.long srcADDmRW,srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW
-;@ 0x90
-	.long srcADCRmW,srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW
-	.long srcADCmRW,srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW
-;@ 0xA0
-	.long srcSUBRmW,srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW
-	.long srcSUBmRW,srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW
-;@ 0xB0
-	.long srcSBCRmW,srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW
-	.long srcSBCmRW,srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW
-;@ 0xC0
-	.long srcANDRmW,srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW
-	.long srcANDmRW,srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW
-;@ 0xD0
-	.long srcXORRmW,srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW
-	.long srcXORmRW,srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW
-;@ 0xE0
-	.long srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW
-	.long srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW
-;@ 0xF0
-	.long srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW
-	.long srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW
+	ldrb r1,[t9pc],#1
+	t9eatcycles 3
+	orr t9Mem,t9Mem,r0,lsl#8
+	orr t9Mem,t9Mem,r1,lsl#16
+	b srcExW
+;@----------------------------------------------------------------------------
+srcExR32W:
+	ldr lr,=srcExW
+	b ExR32
+;@----------------------------------------------------------------------------
+srcExDecW:
+	ldr lr,=srcExW
+	b ExDec
+;@----------------------------------------------------------------------------
+srcExIncW:
+	ldr lr,=srcExW
+	b ExInc
+;@----------------------------------------------------------------------------
+
 ;@----------------------------------------------------------------------------
 srcExXRRL:
-	adr r1,srcOpCodesL
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadL_mem
+	b srcExL
 ;@----------------------------------------------------------------------------
 srcExXRRdL:
-	adr r1,srcOpCodesL
 	and t9opCode,t9opCode,#0x07
 	ldr t9Mem,[t9gprBank,t9opCode,lsl#2]	;@ XRR
 	ldrsb r0,[t9pc],#1
-	add t9Mem,t9Mem,r0
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadL_mem
+	add t9Mem,t9Mem,r0
+	b srcExL
 ;@----------------------------------------------------------------------------
 srcEx8L:
-	adr r1,srcOpCodesL
 	ldrb t9Mem,[t9pc],#1
 	t9eatcycles 2
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadL_mem
-;@----------------------------------------------------------------------------
-srcEx24L:
-	adr r1,srcOpCodesL
-	ldrb t9Mem,[t9pc],#1
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#16
-	t9eatcycles 3
-	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[r1,r0,lsl#2]
-	b t9LoadL_mem
-;@----------------------------------------------------------------------------
-srcExR32L:
-	adr lr,srcAsmL
-	b ExR32
-;@----------------------------------------------------------------------------
-srcExDecL:
-	adr lr,srcAsmL
-	b ExDec
-;@----------------------------------------------------------------------------
-srcExIncL:
-	adr lr,srcAsmL
-	b ExInc
+	b srcExL
 ;@----------------------------------------------------------------------------
 srcEx16L:
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
 	t9eatcycles 2
+	orr t9Mem,t9Mem,r0,lsl#8
+	b srcExL
 ;@----------------------------------------------------------------------------
-srcAsmL:
+srcEx24L:
+	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	and t9Reg,r0,#0x07
-	ldr lr,[pc,r0,lsl#2]
-	b t9LoadL_mem
-srcOpCodesL:
-;@ 0x00
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x10
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x20
-	.long srcLDL,	srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x30
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x40
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x50
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x60
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x70
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
-;@ 0x80
-	.long srcADDRmL,srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL
-	.long srcADDmRL,srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL
-;@ 0x90
-	.long srcADCRmL,srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL
-	.long srcADCmRL,srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL
-;@ 0xA0
-	.long srcSUBRmL,srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL
-	.long srcSUBmRL,srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL
-;@ 0xB0
-	.long srcSBCRmL,srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL
-	.long srcSBCmRL,srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL
-;@ 0xC0
-	.long srcANDRmL,srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL
-	.long srcANDmRL,srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL
-;@ 0xD0
-	.long srcXORRmL,srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL
-	.long srcXORmRL,srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL
-;@ 0xE0
-	.long srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL
-	.long srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL
-;@ 0xF0
-	.long srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL
-	.long srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL
+	ldrb r1,[t9pc],#1
+	t9eatcycles 3
+	orr t9Mem,t9Mem,r0,lsl#8
+	orr t9Mem,t9Mem,r1,lsl#16
+	b srcExL
+;@----------------------------------------------------------------------------
+srcExR32L:
+	ldr lr,=srcExL
+	b ExR32
+;@----------------------------------------------------------------------------
+srcExDecL:
+	ldr lr,=srcExL
+	b ExDec
+;@----------------------------------------------------------------------------
+srcExIncL:
+	ldr lr,=srcExL
+	b ExInc
+;@----------------------------------------------------------------------------
 
+	.pool
 ;@----------------------------------------------------------------------------
 srcPUSHB:
 ;@----------------------------------------------------------------------------
@@ -1431,18 +1366,18 @@ srcCPRmL:
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------
-srcCPmRBW:
+srcCPmRWB:
 srcCPmRBB:
-srcCPmRBC:
-srcCPmRBD:
-srcCPmRBE:
-srcCPmRBH:
-srcCPmRBL:
+srcCPmRCB:
+srcCPmRDB:
+srcCPmREB:
+srcCPmRHB:
+srcCPmRLB:
 ;@----------------------------------------------------------------------------
 	adr lr,fetch4
 	b generic_SUB_B_mem
 ;@----------------------------------------------------------------------------
-srcCPmRBA:
+srcCPmRAB:
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9gprBank,#RegA]
 	adr lr,fetch4

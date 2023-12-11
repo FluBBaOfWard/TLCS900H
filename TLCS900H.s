@@ -1038,6 +1038,156 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 	.section .text
 #endif
 ;@----------------------------------------------------------------------------
+//srcOpCodesB:
+;@ 0x00
+	.long srcError,	srcError,	srcError,	srcError,	srcPUSHB,	srcError,	srcRLD,		srcRRD
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x10
+	.long srcLDIB,	srcLDIRB,	srcLDDB,	srcLDDRB,	srcCPIB,	srcCPIRB,	srcCPDB,	srcCPDRB
+	.long srcError,	srcLD16mB,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x20
+	.long srcLDB_W,	srcLDB_A,	srcLDB_B,	srcLDB_C,	srcLDB_D,	srcLDB_E,	srcLDB_H,	srcLDB_L
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x30
+	.long srcEXB,	srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB,		srcEXB
+	.long srcADDiB,	srcADCiB,	srcSUBiB,	srcSBCiB,	srcANDiB,	srcXORiB,	srcORiB,	srcCPiB
+;@ 0x40
+	.long srcError,	srcMULB,	srcError,	srcMULB,	srcError,	srcMULB,	srcError,	srcMULB
+	.long srcError,	srcMULSB,	srcError,	srcMULSB,	srcError,	srcMULSB,	srcError,	srcMULSB
+;@ 0x50
+	.long srcError,	srcDIVB,	srcError,	srcDIVB,	srcError,	srcDIVB,	srcError,	srcDIVB
+	.long srcError,	srcDIVSB,	srcError,	srcDIVSB,	srcError,	srcDIVSB,	srcError,	srcDIVSB
+;@ 0x60
+	.long srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB,	srcINCB
+	.long srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB,	srcDECB
+;@ 0x70
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcRLCB,	srcRRCB,	srcRLB,		srcRRB,		srcSLAB,	srcSRAB,	srcSLLB,	srcSRLB
+;@ 0x80
+	.long srcADDRmB,srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB,	srcADDRmB
+	.long srcADDmRB,srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB,	srcADDmRB
+;@ 0x90
+	.long srcADCRmB,srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB,	srcADCRmB
+	.long srcADCmRB,srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB,	srcADCmRB
+;@ 0xA0
+	.long srcSUBRmB,srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB,	srcSUBRmB
+	.long srcSUBmRB,srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB,	srcSUBmRB
+;@ 0xB0
+	.long srcSBCRmB,srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB,	srcSBCRmB
+	.long srcSBCmRB,srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB,	srcSBCmRB
+;@ 0xC0
+	.long srcANDRmB,srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB,	srcANDRmB
+	.long srcANDmRB,srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB,	srcANDmRB
+;@ 0xD0
+	.long srcXORRmB,srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB,	srcXORRmB
+	.long srcXORmRB,srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB,	srcXORmRB
+;@ 0xE0
+	.long srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB,	srcORRmB
+	.long srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB,	srcORmRB
+;@ 0xF0
+	.long srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB,	srcCPRmB
+	.long srcCPmRWB,srcCPmRAB,	srcCPmRBB,	srcCPmRCB,	srcCPmRDB,	srcCPmREB,	srcCPmRHB,	srcCPmRLB
+;@----------------------------------------------------------------------------
+//srcOpCodesW:
+;@ 0x00
+	.long srcError,	srcError,	srcError,	srcError,	srcPUSHW,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x10
+	.long srcLDIW,	srcLDIRW,	srcLDDW,	srcLDDRW,	srcCPIW,	srcCPIRW,	srcCPDW,	srcCPDRW
+	.long srcError,	srcLD16mW,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x20
+	.long srcLDW,	srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW,		srcLDW
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x30
+	.long srcEXW,	srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW,		srcEXW
+	.long srcADDiW,	srcADCiW,	srcSUBiW,	srcSBCiW,	srcANDiW,	srcXORiW,	srcORiW,	srcCPiW
+;@ 0x40
+	.long srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW,	srcMULW
+	.long srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW,	srcMULSW
+;@ 0x50
+	.long srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW,	srcDIVW
+	.long srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW,	srcDIVSW
+;@ 0x60
+	.long srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW,	srcINCW
+	.long srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW,	srcDECW
+;@ 0x70
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcRLCW,	srcRRCW,	srcRLW,		srcRRW,		srcSLAW,	srcSRAW,	srcSLLW,	srcSRLW
+;@ 0x80
+	.long srcADDRmW,srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW,	srcADDRmW
+	.long srcADDmRW,srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW,	srcADDmRW
+;@ 0x90
+	.long srcADCRmW,srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW,	srcADCRmW
+	.long srcADCmRW,srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW,	srcADCmRW
+;@ 0xA0
+	.long srcSUBRmW,srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW,	srcSUBRmW
+	.long srcSUBmRW,srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW,	srcSUBmRW
+;@ 0xB0
+	.long srcSBCRmW,srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW,	srcSBCRmW
+	.long srcSBCmRW,srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW,	srcSBCmRW
+;@ 0xC0
+	.long srcANDRmW,srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW,	srcANDRmW
+	.long srcANDmRW,srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW,	srcANDmRW
+;@ 0xD0
+	.long srcXORRmW,srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW,	srcXORRmW
+	.long srcXORmRW,srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW,	srcXORmRW
+;@ 0xE0
+	.long srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW,	srcORRmW
+	.long srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW,	srcORmRW
+;@ 0xF0
+	.long srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW,	srcCPRmW
+	.long srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW,	srcCPmRW
+;@----------------------------------------------------------------------------
+//srcOpCodesL:
+;@ 0x00
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x10
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x20
+	.long srcLDL,	srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL,		srcLDL
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x30
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x40
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x50
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x60
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x70
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+	.long srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError,	srcError
+;@ 0x80
+	.long srcADDRmL,srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL,	srcADDRmL
+	.long srcADDmRL,srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL,	srcADDmRL
+;@ 0x90
+	.long srcADCRmL,srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL,	srcADCRmL
+	.long srcADCmRL,srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL,	srcADCmRL
+;@ 0xA0
+	.long srcSUBRmL,srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL,	srcSUBRmL
+	.long srcSUBmRL,srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL,	srcSUBmRL
+;@ 0xB0
+	.long srcSBCRmL,srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL,	srcSBCRmL
+	.long srcSBCmRL,srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL,	srcSBCmRL
+;@ 0xC0
+	.long srcANDRmL,srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL,	srcANDRmL
+	.long srcANDmRL,srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL,	srcANDmRL
+;@ 0xD0
+	.long srcXORRmL,srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL,	srcXORRmL
+	.long srcXORmRL,srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL,	srcXORmRL
+;@ 0xE0
+	.long srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL,	srcORRmL
+	.long srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL,	srcORmRL
+;@ 0xF0
+	.long srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL,	srcCPRmL
+	.long srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL,	srcCPmRL
+;@----------------------------------------------------------------------------
 //regOpCodesB:
 ;@ 0x00
 	.long regError,	regError,	regError,	regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
@@ -1087,6 +1237,7 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 ;@ 0xF0
 	.long regCPBW,	regCPBA,	regCPBB,	regCPBC,	regCPBD,	regCPBE,	regCPBH,	regCPBL
 	.long regRLCAB,	regRRCAB,	regRLAB,	regRRAB,	regSLAAB,	regSRAAB,	regSLLAB,	regSRLAB
+;@----------------------------------------------------------------------------
 tlcs900HState:
 tlcsOpz:
 ;@ 0x00
