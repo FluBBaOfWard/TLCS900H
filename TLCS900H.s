@@ -19,9 +19,6 @@
 	.global tlcs900HRedirectOpcode
 	.global tlcsLoop
 	.global tlcsEnd
-	.global push8
-	.global push16
-	.global push32
 	.global pushSR
 	.global pop8
 	.global pop16
@@ -149,14 +146,6 @@ loadTLCS900:
 	bx lr
 
 ;@----------------------------------------------------------------------------
-push8:
-;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#RXSP]
-	sub t9mem,t9mem,#1
-	str t9mem,[t9gprBank,#RXSP]
-	b t9StoreB_mem
-
-;@----------------------------------------------------------------------------
 pushSR:
 ;@----------------------------------------------------------------------------
 	and r0,t9f,#PSR_H
@@ -170,20 +159,7 @@ pushSR:
 	ldrb r1,[t9ptr,#tlcsSrB]
 	orr r1,r1,#0x88				;@ System and Maximum always set.
 	orr r0,r0,r1,lsl#8
-;@----------------------------------------------------------------------------
-push16:
-;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#RXSP]
-	sub t9mem,t9mem,#2
-	str t9mem,[t9gprBank,#RXSP]
-	b t9StoreW_mem
-;@----------------------------------------------------------------------------
-push32:						;@ Also used from interrupt
-;@----------------------------------------------------------------------------
-	ldr t9mem,[t9gprBank,#RXSP]
-	sub t9mem,t9mem,#4
-	str t9mem,[t9gprBank,#RXSP]
-	b t9StoreL_mem
+	b push16
 ;@----------------------------------------------------------------------------
 pop8:
 ;@----------------------------------------------------------------------------
@@ -1190,7 +1166,7 @@ tlcs900HRedirectOpcode:		;@ In r0=opcode, r1=address.
 ;@----------------------------------------------------------------------------
 //regOpCodesB:
 ;@ 0x00
-	.long regError,	regError,	regError,	regLDiB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
+	.long regError,	regError,	regError,	regLDirB,	regPUSHB,	regPOPB,	regCPLB,	regNEGB
 	.long regMULiB,	regMULSiB,	regDIViB,	regDIVSiB,	regError,	regError,	regError,	regError
 ;@ 0x10
 	.long regDAA,	regError,	regError,	regError,	regError,	regError,	regError,	regError
@@ -1247,7 +1223,7 @@ tlcsOpz:
 	.long sngRCF,		sngSCF,		sngCCF,		sngZCF,		sngPUSHA,	sngPOPA,	sngEX,		sngLDF
 	.long sngPUSHF,		sngPOPF,	sngJP16,	sngJP24,	sngCALL16,	sngCALL24,	sngCALR,	asmE
 ;@ 0x20
-	.long sngLDB_W,		sngLDB_A,	sngLDB_B,	sngLDB_C,	sngLDB_D,	sngLDB_E,	sngLDB_H,	sngLDB_L
+	.long sngLDiRW,		sngLDiRA,	sngLDiRB,	sngLDiRC,	sngLDiRD,	sngLDiRE,	sngLDiRH,	sngLDiRL
 	.long sngPUSHW,		sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW,	sngPUSHW
 ;@ 0x30
 	.long sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW,		sngLDW

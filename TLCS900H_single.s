@@ -41,14 +41,14 @@
 	.global sngCALL16
 	.global sngCALL24
 	.global sngCALR
-	.global sngLDB_W
-	.global sngLDB_A
-	.global sngLDB_B
-	.global sngLDB_C
-	.global sngLDB_D
-	.global sngLDB_E
-	.global sngLDB_H
-	.global sngLDB_L
+	.global sngLDiRW
+	.global sngLDiRA
+	.global sngLDiRB
+	.global sngLDiRC
+	.global sngLDiRD
+	.global sngLDiRE
+	.global sngLDiRH
+	.global sngLDiRL
 	.global sngLDW
 	.global sngLDL
 	.global sngPUSHW
@@ -182,13 +182,13 @@ sngJP24:					;@ 0x1B, Jump to 24bit address
 	t9fetch 7
 
 ;@----------------------------------------------------------------------------
-sngPUSH8:					;@ Push immediate byte
+sngPUSH8:					;@ 0x09 Push immediate byte
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	bl push8
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngPUSH16:					;@ Push immediate word
+sngPUSH16:					;@ 0x0B Push immediate word
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
@@ -196,13 +196,13 @@ sngPUSH16:					;@ Push immediate word
 	bl push16
 	t9fetch 5
 ;@----------------------------------------------------------------------------
-sngPUSHA:					;@ Push register A
+sngPUSHA:					;@ 0x14 Push register A
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9gprBank,#RegA]
 	bl push8
 	t9fetch 3
 ;@----------------------------------------------------------------------------
-sngPUSHF:					;@ Push Flag register
+sngPUSHF:					;@ 0x18 Push Flag register
 ;@----------------------------------------------------------------------------
 	and r0,t9f,#PSR_H
 	and r1,t9f,#PSR_S|PSR_Z
@@ -215,18 +215,18 @@ sngPUSHF:					;@ Push Flag register
 	bl push8
 	t9fetch 3
 ;@----------------------------------------------------------------------------
-sngPUSHSR:					;@ Push Status Register
+sngPUSHSR:					;@ 0x02 Push Status Register
 ;@----------------------------------------------------------------------------
 	bl pushSR
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngPOPA:					;@ Pop register A
+sngPOPA:					;@ 0x15 Pop register A
 ;@----------------------------------------------------------------------------
 	bl pop8
 	strb r0,[t9gprBank,#RegA]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngPOPF:					;@ Pop Flag register
+sngPOPF:					;@ 0x19 Pop Flag register
 ;@----------------------------------------------------------------------------
 	bl pop8
 
@@ -240,7 +240,7 @@ sngPOPF:					;@ Pop Flag register
 
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngPOPSR:					;@ Pop Status Register
+sngPOPSR:					;@ 0x03 Pop Status Register
 ;@----------------------------------------------------------------------------
 	bl pop16
 
@@ -261,7 +261,7 @@ sngPOPSR:					;@ Pop Status Register
 	t9fetch 6
 
 ;@----------------------------------------------------------------------------
-sngRETI:					;@ Return from Interrupt
+sngRETI:					;@ 0x07 Return from Interrupt
 ;@----------------------------------------------------------------------------
 	bl pop16
 
@@ -284,34 +284,34 @@ sngRETI:					;@ Return from Interrupt
 
 	t9fetch 12
 ;@----------------------------------------------------------------------------
-sngINCF:					;@ Increment Register File Pointer
+sngINCF:					;@ 0x0C Increment Register File Pointer
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9ptr,#tlcsSrB]
 	add r0,r0,#1
 	bl setStatusRFP
 	t9fetch 2
 ;@----------------------------------------------------------------------------
-sngDECF:					;@ Decrement Register File Pointer
+sngDECF:					;@ 0x0D Decrement Register File Pointer
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9ptr,#tlcsSrB]
 	sub r0,r0,#1
 	bl setStatusRFP
 	t9fetch 2
 ;@----------------------------------------------------------------------------
-sngLDF:						;@ Load Register File Pointer
+sngLDF:						;@ 0x17 Load Register File Pointer
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	bl setStatusRFP
 	t9fetch 2
 ;@----------------------------------------------------------------------------
-sngEI:						;@ Enable Interrupt
+sngEI:						;@ 0x06 Enable Interrupt
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	bl setStatusIFF
 	bl intCheckPending
 	t9fetch 5
 ;@----------------------------------------------------------------------------
-sngEX:						;@ Exchange F & F'
+sngEX:						;@ 0x16 Exchange F & F'
 ;@----------------------------------------------------------------------------
 	mov r0,t9f
 	ldrb t9f,[t9ptr,#tlcsFDash]
@@ -319,7 +319,7 @@ sngEX:						;@ Exchange F & F'
 	t9fetch 2
 
 ;@----------------------------------------------------------------------------
-sngCALL16:					;@ Call 16bit address
+sngCALL16:					;@ 0x1C Call 16bit address
 ;@----------------------------------------------------------------------------
 	ldr r0,[t9ptr,#tlcsLastBank]
 	ldrb r1,[t9pc],#1
@@ -330,90 +330,95 @@ sngCALL16:					;@ Call 16bit address
 	bl reencode_pc
 	t9fetch 12
 ;@----------------------------------------------------------------------------
-sngCALL24:					;@ Call 24bit address
+sngCALL24:					;@ 0x1D Call 24bit address
 ;@----------------------------------------------------------------------------
+	ldr r0,[t9ptr,#tlcsLastBank]
 	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
-	orr r1,r1,r2,lsl#8
-	ldrb r2,[t9pc],#1
-	ldr r0,[t9ptr,#tlcsLastBank]
+	ldrb r3,[t9pc],#1
 	sub r0,t9pc,r0
-	orr t9pc,r1,r2,lsl#16		;@ New pc
+	orr r1,r1,r2,lsl#8
+	orr t9pc,r1,r3,lsl#16		;@ New pc
 	bl push32					;@ Push old pc
 	bl reencode_pc
 	t9fetch 12
 ;@----------------------------------------------------------------------------
-sngCALR:					;@ Call Relative PC+d16
+sngCALR:					;@ 0x1E Call Relative PC+d16
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9pc],#1
-	ldrsb r1,[t9pc],#1
-	orr r1,r0,r1,lsl#8			;@ Offset
 	ldr r0,[t9ptr,#tlcsLastBank]
+	ldrb r1,[t9pc],#1
+	ldrsb r2,[t9pc],#1
+	orr r2,r1,r2,lsl#8			;@ Offset
 	sub r0,t9pc,r0				;@ New pc
-	add t9pc,t9pc,r1
+	add t9pc,t9pc,r2
 	bl push32					;@ Push old pc
 	t9fetch 12
 
 ;@----------------------------------------------------------------------------
-sngLDB_W:					;@ Load byte to W immediate
-sngLDB_B:					;@ Load byte to B immediate
-sngLDB_C:					;@ Load byte to C immediate
-sngLDB_D:					;@ Load byte to D immediate
-sngLDB_E:					;@ Load byte to E immediate
-sngLDB_H:					;@ Load byte to H immediate
-sngLDB_L:					;@ Load byte to L immediate
+sngLDiRW:					;@ 0x20 Load immediate byte to W
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
-	and t9Reg,t9opCode,#0x07
-	movs t9Reg,t9Reg,lsr#1
-	orrcc t9Reg,t9Reg,#0x40000000
-	strb r0,[t9gprBank,t9Reg,ror#30]
+	strb r0,[t9gprBank,#RegW]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
-sngLDB_A:					;@ Load byte to A immediate
+sngLDiRA:					;@ 0x21 Load immediate byte to A
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	strb r0,[t9gprBank,#RegA]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
-sngLDW:						;@ Load word immediate
+sngLDiRB:					;@ 0x22 Load immediate byte to B
+sngLDiRC:					;@ 0x23 Load immediate byte to C
+sngLDiRD:					;@ 0x24 Load immediate byte to D
+sngLDiRE:					;@ 0x25 Load immediate byte to E
+sngLDiRH:					;@ 0x26 Load immediate byte to H
+sngLDiRL:					;@ 0x27 Load immediate byte to L
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
-	mov t9Reg,t9Reg,lsl#2
+	movs t9Reg,t9Reg,lsr#1
+	orrcc t9Reg,t9Reg,#0x40000000
 	ldrb r0,[t9pc],#1
-	ldrb r2,[t9pc],#1
-	orr r0,r0,r2,lsl#8
+	strb r0,[t9gprBank,t9Reg,ror#30]
+	t9fetch 2
+;@----------------------------------------------------------------------------
+sngLDW:						;@ 0x30-0x37 Load immediate word to reg
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1
+	ldrb r1,[t9pc],#1
+	and t9Reg,t9opCode,#0x07
+	mov t9Reg,t9Reg,lsl#2
+	orr r0,r0,r1,lsl#8
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 3
 ;@----------------------------------------------------------------------------
-sngLDL:						;@ Load long immediate
+sngLDL:						;@ 0x40-0x47 Load immediate long to reg
 ;@----------------------------------------------------------------------------
-	and t9Reg,t9opCode,#0x07
 	ldrb r0,[t9pc],#1
+	ldrb r1,[t9pc],#1
 	ldrb r2,[t9pc],#1
-	orr r0,r0,r2,lsl#8
-	ldrb r2,[t9pc],#1
+	ldrb r3,[t9pc],#1
+	and t9Reg,t9opCode,#0x07
+	orr r0,r0,r1,lsl#8
 	orr r0,r0,r2,lsl#16
-	ldrb r2,[t9pc],#1
-	orr r0,r0,r2,lsl#24
+	orr r0,r0,r3,lsl#24
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 5
 ;@----------------------------------------------------------------------------
-sngPUSHW:					;@ Push word
+sngPUSHW:					;@ 0x28-0x2F Push word
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl push16
 	t9fetch 3
 ;@----------------------------------------------------------------------------
-sngPUSHL:					;@ Push long
+sngPUSHL:					;@ 0x38-0x3F Push long
 ;@----------------------------------------------------------------------------
 	and t9Reg,t9opCode,#0x07
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
 	bl push32
 	t9fetch 5
 ;@----------------------------------------------------------------------------
-sngPOPW:					;@ Pop word
+sngPOPW:					;@ 0x48-0x4F Pop word
 ;@----------------------------------------------------------------------------
 	bl pop16
 	and t9Reg,t9opCode,#0x07
@@ -421,20 +426,20 @@ sngPOPW:					;@ Pop word
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngPOPL:					;@ Pop long
+sngPOPL:					;@ 0x58-0x5F Pop long
 ;@----------------------------------------------------------------------------
 	bl pop32
 	and t9Reg,t9opCode,#0x07
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 6
 ;@----------------------------------------------------------------------------
-sngRET:						;@ Return
+sngRET:						;@ 0x0E Return
 ;@----------------------------------------------------------------------------
 	bl pop32
 	bl encode_r0_pc
 	t9fetch 9
 ;@----------------------------------------------------------------------------
-sngRETD:					;@ Return and Deallocate
+sngRETD:					;@ 0x0F Return and Deallocate
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrb r1,[t9pc],#1
@@ -578,12 +583,12 @@ sngJR_nc:					;@ 0x6F, Jump Relative Not Carry
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-sngJRL_never:				;@ Jump Relative Long, Never
+sngJRL_never:				;@ 0x70 Jump Relative Long, Never
 ;@----------------------------------------------------------------------------
 	add t9pc,t9pc,#2
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_lt:					;@ Jump Relative Long, Less Than
+sngJRL_lt:					;@ 0x71 Jump Relative Long, Less Than
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -594,7 +599,7 @@ sngJRL_lt:					;@ Jump Relative Long, Less Than
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_le:					;@ Jump Relative Long, Less or Equal
+sngJRL_le:					;@ 0x72 Jump Relative Long, Less or Equal
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -605,7 +610,7 @@ sngJRL_le:					;@ Jump Relative Long, Less or Equal
 	suble t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_ule:					;@ Jump Relative Long, Unsigned Less or Equal
+sngJRL_ule:					;@ 0x73 Jump Relative Long, Unsigned Less or Equal
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -616,7 +621,7 @@ sngJRL_ule:					;@ Jump Relative Long, Unsigned Less or Equal
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_ov:					;@ Jump Relative Long, Overflow
+sngJRL_ov:					;@ 0x74 Jump Relative Long, Overflow
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -626,7 +631,7 @@ sngJRL_ov:					;@ Jump Relative Long, Overflow
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_mi:					;@ Jump Relative Long, Minus
+sngJRL_mi:					;@ 0x75 Jump Relative Long, Minus
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -636,7 +641,7 @@ sngJRL_mi:					;@ Jump Relative Long, Minus
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_z:					;@ Jump Relative Long, Zero
+sngJRL_z:					;@ 0x76 Jump Relative Long, Zero
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -646,7 +651,7 @@ sngJRL_z:					;@ Jump Relative Long, Zero
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_c:					;@ Jump Relative Long, Carry
+sngJRL_c:					;@ 0x77 Jump Relative Long, Carry
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -656,7 +661,7 @@ sngJRL_c:					;@ Jump Relative Long, Carry
 	subne t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL:						;@ Jump Relative Long
+sngJRL:						;@ 0x78 Jump Relative Long
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -664,7 +669,7 @@ sngJRL:						;@ Jump Relative Long
 	add t9pc,t9pc,r0
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-sngJRL_ge:					;@ Jump Relative Long, Greater or Equal
+sngJRL_ge:					;@ 0x79 Jump Relative Long, Greater or Equal
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -675,7 +680,7 @@ sngJRL_ge:					;@ Jump Relative Long, Greater or Equal
 	subeq t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_gt:					;@ Jump Relative Long, Greater Than
+sngJRL_gt:					;@ 0x7A Jump Relative Long, Greater Than
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -686,7 +691,7 @@ sngJRL_gt:					;@ Jump Relative Long, Greater Than
 	subgt t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_ugt:					;@ Jump Relative Long, Unsigned Greater
+sngJRL_ugt:					;@ 0x7B Jump Relative Long, Unsigned Greater
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -697,7 +702,7 @@ sngJRL_ugt:					;@ Jump Relative Long, Unsigned Greater
 	subeq t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_nov:					;@ Jump Relative Long, Not Overflow
+sngJRL_nov:					;@ 0x7C Jump Relative Long, Not Overflow
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -707,7 +712,7 @@ sngJRL_nov:					;@ Jump Relative Long, Not Overflow
 	subeq t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_pl:					;@ Jump Relative Long, Plus
+sngJRL_pl:					;@ 0x7D Jump Relative Long, Plus
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -717,7 +722,7 @@ sngJRL_pl:					;@ Jump Relative Long, Plus
 	subeq t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_nz:					;@ Jump Relative Long, Not Zero
+sngJRL_nz:					;@ 0x7E Jump Relative Long, Not Zero
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -727,7 +732,7 @@ sngJRL_nz:					;@ Jump Relative Long, Not Zero
 	subeq t9cycles,t9cycles,#4*T9CYCLE
 	t9fetch 4
 ;@----------------------------------------------------------------------------
-sngJRL_nc:					;@ Jump Relative Long, Not Carry
+sngJRL_nc:					;@ 0x7F Jump Relative Long, Not Carry
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldrsb r1,[t9pc],#1
@@ -738,7 +743,7 @@ sngJRL_nc:					;@ Jump Relative Long, Not Carry
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-sngLDX:						;@ Load eXtract
+sngLDX:						;@ 0xF7 Load eXtract
 ;@----------------------------------------------------------------------------
 	add t9pc,t9pc,#1			;@ Skip 1 byte
 	ldrb r1,[t9pc],#2			;@ Skip more
@@ -746,23 +751,23 @@ sngLDX:						;@ Load eXtract
 	bl t9StoreB_Low
 	t9fetch 9
 ;@----------------------------------------------------------------------------
-;@sngSWI_0:					;@ Reset.
+;@sngSWI_0:					;@ 0xF8 Reset.
 ;@----------------------------------------------------------------------------
-;@sngSWI_1:					;@ System call handler/Default interrupt.
+;@sngSWI_1:					;@ 0xF9 System call handler/Default interrupt.
 ;@----------------------------------------------------------------------------
-sngSWI2:					;@ Illegal instruction interrupt.
+sngSWI2:					;@ 0xFA Illegal instruction interrupt.
 ;@----------------------------------------------------------------------------
 	mov t9opCode,#2
 ;@----------------------------------------------------------------------------
-;@sngSWI_3:					;@ User SWI.
+;@sngSWI_3:					;@ 0xFB User SWI.
 ;@----------------------------------------------------------------------------
-;@sngSWI_4:					;@ User SWI.
+;@sngSWI_4:					;@ 0xFC User SWI.
 ;@----------------------------------------------------------------------------
-;@sngSWI_5:					;@ User SWI.
+;@sngSWI_5:					;@ 0xFD User SWI.
 ;@----------------------------------------------------------------------------
-;@sngSWI_6:					;@ User SWI.
+;@sngSWI_6:					;@ 0xFE User SWI.
 ;@----------------------------------------------------------------------------
-;@sngSWI_7:					;@ Unknown
+;@sngSWI_7:					;@ 0xFF Unknown
 ;@----------------------------------------------------------------------------
 sngSWI:
 ;@----------------------------------------------------------------------------

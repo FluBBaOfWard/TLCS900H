@@ -31,7 +31,7 @@
 	.global regRCW
 	.global regRCL
 
-	.global regLDiB
+	.global regLDirB
 	.global regPUSHB
 	.global regPOPB
 	.global regCPLB
@@ -365,7 +365,7 @@ regOpCodesL:
 	.long regRLCAL,	regRRCAL,	regRLAL,	regRRAL,	regSLAAL,	regSRAAL,	regSLLAL,	regSRLAL
 
 ;@----------------------------------------------------------------------------
-regLDiB:
+regLDirB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	strb r0,[t9gprBank,t9Reg,ror#30]

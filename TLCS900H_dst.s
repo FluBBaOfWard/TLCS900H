@@ -131,7 +131,7 @@ dstOpCodes:
 	.long dstError,	dstError,	dstError,	dstError,	dstLDBm16,	dstError,	dstLDWm16,	dstError
 	.long dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError,	dstError
 ;@ 0x20
-	.long dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW,	dstLDAW
+	.long dstLDAWA,	dstLDABC,	dstLDADE,	dstLDAHL,	dstLDAIX,	dstLDAIY,	dstLDAIZ,	dstLDASP
 	.long dstANDCFA,dstORCFA,	dstXORCFA,	dstLDCFA,	dstSTCFA,	dstError,	dstError,	dstError
 ;@ 0x30
 	.long dstLDAXWA,dstLDAXBC,	dstLDAXDE,	dstLDAXHL,	dstLDAXIX,	dstLDAXIY,	dstLDAXIZ,	dstLDAXSP
@@ -218,11 +218,23 @@ dstLDWm16:
 	bl t9StoreW_mem
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-dstLDAW:
+dstLDAWA:
+dstLDABC:
+dstLDADE:
+dstLDAHL:
+dstLDAIX:
+dstLDAIY:
+dstLDAIZ:
+dstLDASP:
 ;@----------------------------------------------------------------------------
 	and t9Reg,r0,#0x07
 	mov t9Reg,t9Reg,lsl#2
 	strh t9Mem,[t9gprBank,t9Reg]
+	t9fetch 4
+;@----------------------------------------------------------------------------
+dstLDAXWA:
+;@----------------------------------------------------------------------------
+	str t9Mem,[t9gprBank,#RXWA]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 dstLDAXBC:
@@ -235,11 +247,6 @@ dstLDAXSP:
 ;@----------------------------------------------------------------------------
 	and t9Reg,r0,#0x07
 	str t9Mem,[t9gprBank,t9Reg,lsl#2]
-	t9fetch 4
-;@----------------------------------------------------------------------------
-dstLDAXWA:
-;@----------------------------------------------------------------------------
-	str t9Mem,[t9gprBank,#RXWA]
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 dstANDCFA:					;@ And Carry Flag
