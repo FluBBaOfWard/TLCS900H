@@ -1113,7 +1113,7 @@ regTSETW:					;@ Test and Set
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
-regMINC1:					;@ Modulo Increment 1
+regMINC1:					;@ 0x38 Modulo Increment 1
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -1126,7 +1126,7 @@ regMINC1:					;@ Modulo Increment 1
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-regMINC2:					;@ Modulo Increment 2
+regMINC2:					;@ 0x39 Modulo Increment 2
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -1139,7 +1139,7 @@ regMINC2:					;@ Modulo Increment 2
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-regMINC4:					;@ Modulo Increment 4
+regMINC4:					;@ 0x3A Modulo Increment 4
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -1153,7 +1153,7 @@ regMINC4:					;@ Modulo Increment 4
 	t9fetch 8
 
 ;@----------------------------------------------------------------------------
-regMDEC1:					;@ Modulo Decrement 1
+regMDEC1:					;@ 0x3C Modulo Decrement 1
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -1166,7 +1166,7 @@ regMDEC1:					;@ Modulo Decrement 1
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-regMDEC2:					;@ Modulo Decrement 2
+regMDEC2:					;@ 0x3D Modulo Decrement 2
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
@@ -1179,7 +1179,7 @@ regMDEC2:					;@ Modulo Decrement 2
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
-regMDEC4:					;@ Modulo Decrement 4
+regMDEC4:					;@ 0x3E Modulo Decrement 4
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	ldrb r1,[t9pc],#1
