@@ -67,8 +67,6 @@ tff3Function:		.long 0
 romBaseLo:			.long 0
 romBaseHi:			.long 0
 biosBase:			.long 0
-readRomPtrLo:		.long 0
-readRomPtrHi:		.long 0
 tlcsSize:
 
 ;@----------------------------------------------------------------------------

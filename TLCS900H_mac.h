@@ -31,17 +31,16 @@
 
 
 	.macro t9fetch count
-	subs t9cycles,t9cycles,#(\count)*T9CYCLE
 #ifdef GBA
+	subs t9cycles,t9cycles,#(\count)*T9CYCLE
 	b tlcsLoop
 #else
-	ldrbpl t9opCode,[t9pc],#1
-	ldrpl pc,[t9ptr,t9opCode,lsl#2]
-	b tlcsEnd
+	t9fetchR \count
 #endif
 	.endm
 
 	.macro t9fetchR count
+//	t9fetch \count
 	subs t9cycles,t9cycles,#(\count)*T9CYCLE
 	ldrbpl t9opCode,[t9pc],#1
 	ldrpl pc,[t9ptr,t9opCode,lsl#2]

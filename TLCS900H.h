@@ -52,8 +52,6 @@ typedef struct {
 	void *romBaseLo;
 	void *romBaseHi;
 	void *biosBase;
-	void *readRomPtrLo;
-	void *readRomPtrHi;
 
 } TLCS900HCore;
 

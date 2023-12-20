@@ -93,6 +93,10 @@
 	.syntax unified
 	.arm
 
+	.section .bss
+opcodeCounter:
+	.space 256*4
+
 #ifdef NDS
 	.section .itcm						;@ For the NDS ARM9
 #elif GBA
@@ -124,6 +128,16 @@ tlcsLoop:
 	.string "PC %r12%"
 	.align 2
 debugContinue:
+#endif
+#ifdef COUNT_OP_CODES
+	ldrb r0,[t9pc]
+	ldr r1,=opcodeCounter
+	ldr r0,[r1,r0,lsl#2]!
+	add r0,r0,#1
+	cmp r0,#0x1000000
+	bpl dumpOpCodes
+	str r0,[r1]
+	cmp t9cycles,#0
 #endif
 	ldrbpl t9opCode,[t9pc],#1
 	ldrpl pc,[t9ptr,t9opCode,lsl#2]
@@ -917,6 +931,26 @@ dstError:
 	mov r0,#0xED
 	t9fetch 0
 
+
+;@----------------------------------------------------------------------------
+dumpOpCodes:
+;@----------------------------------------------------------------------------
+	mov r0,#0
+	ldr r2,=opcodeCounter
+dumpLoop:
+	ldr r1,[r2,r0,lsl#2]
+	mov r12,r12
+	b dumpContinue
+	.short 0x6464,0x0000
+	.string "%r1%\n"
+	.align 2
+dumpContinue:
+	add r0,r0,#1
+	cmp r0,#0x100
+	bne dumpLoop
+die:
+	b die
+
 	.pool
 ;@----------------------------------------------------------------------------
 tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
@@ -932,6 +966,9 @@ tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 	// Reset registers
 	add r0,t9ptr,#tlcsGprBanks
 	mov r1,#8*4
+	bl memclr_
+	ldr r0,=opcodeCounter
+	mov r1,#256
 	bl memclr_
 
 	add t9gprBank,t9ptr,#tlcsGprBanks
@@ -1316,8 +1353,6 @@ tlcsOpz:
 	.long 0			;@ romBaseLo
 	.long 0			;@ romBaseHi
 	.long 0			;@ biosBase
-	.long 0			;@ readRomPtrLo
-	.long 0			;@ readRomPtrHi
 
 ;@----------------------------------------------------------------------------
 
