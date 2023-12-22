@@ -85,20 +85,20 @@ dstExXSPd:
 ;@----------------------------------------------------------------------------
 dstEx8:
 	ldrb t9Mem,[t9pc],#1
-	t9eatcycles 2
 	ldrb r0,[t9pc],#1
+	t9eatcycles 2
 	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstEx24:
-	adr r1,dstOpCodes
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
+	ldrb r1,[t9pc],#1
 	orr t9Mem,t9Mem,r0,lsl#8
-	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#16
+	orr t9Mem,t9Mem,r1,lsl#16
 	t9eatcycles 3
 	ldrb r0,[t9pc],#1
+	adr r1,dstOpCodes
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 dstExR32:
@@ -116,8 +116,8 @@ dstExInc:
 dstEx16:
 	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
-	orr t9Mem,t9Mem,r0,lsl#8
 	t9eatcycles 2
+	orr t9Mem,t9Mem,r0,lsl#8
 ;@----------------------------------------------------------------------------
 dstAsm:
 	ldrb r0,[t9pc],#1

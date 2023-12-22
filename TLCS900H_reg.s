@@ -1369,17 +1369,17 @@ regLDRrBA:
 ;@----------------------------------------------------------------------------
 regLDRrW:
 ;@----------------------------------------------------------------------------
+	ldrh r1,[t9gprBank,t9Reg]
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldrh r0,[t9gprBank,t9Reg]
 	mov t9Reg2,t9Reg2,lsl#2
-	strh r0,[t9gprBank,t9Reg2]	;@ Reg R
+	strh r1,[t9gprBank,t9Reg2]	;@ Reg R
 	t9fetch 4
 ;@----------------------------------------------------------------------------
 regLDRrL:
 ;@----------------------------------------------------------------------------
+	ldr r1,[t9gprBank,t9Reg,lsl#2]
 	and t9Reg2,r0,#0x07			;@ From Second
-	ldr r0,[t9gprBank,t9Reg,lsl#2]
-	str r0,[t9gprBank,t9Reg2,lsl#2];@ Reg R
+	str r1,[t9gprBank,t9Reg2,lsl#2];@ Reg R
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
