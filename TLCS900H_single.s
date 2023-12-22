@@ -124,14 +124,14 @@ sngHALT:					;@ 0x05, Halt CPU
 ;@----------------------------------------------------------------------------
 sngLD8_8:					;@ 0x08, Store immediate byte in low memory.
 ;@----------------------------------------------------------------------------
-	ldrb t9mem,[t9pc],#1
+	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	bl t9StoreB_Low
 	t9fetch 5
 ;@----------------------------------------------------------------------------
 sngLD8_16:					;@ 0x0A, Store immediate word in low memory.
 ;@----------------------------------------------------------------------------
-	ldrb t9mem,[t9pc],#1
+	ldrb t9Mem,[t9pc],#1
 	ldrb r0,[t9pc],#1
 	ldrb r2,[t9pc],#1
 	orr r0,r0,r2,lsl#8
@@ -746,7 +746,7 @@ sngJRL_nc:					;@ 0x7F Jump Relative Long, Not Carry
 sngLDX:						;@ 0xF7 Load eXtract
 ;@----------------------------------------------------------------------------
 	add t9pc,t9pc,#1			;@ Skip 1 byte
-	ldrb t9mem,[t9pc],#2		;@ Skip more
+	ldrb t9Mem,[t9pc],#2		;@ Skip more
 	ldrb r0,[t9pc],#2			;@ Skip even more
 	bl t9StoreB_Low
 	t9fetch 9

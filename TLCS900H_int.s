@@ -126,7 +126,7 @@ intReadLUT:
 ;@----------------------------------------------------------------------------
 t9StoreB_Low:
 ;@----------------------------------------------------------------------------
-	and r1,t9mem,#0xff
+	and r1,t9Mem,#0xff
 	ldr r2,=systemMemory
 	ldrb r3,[r2,r1]
 	strb r0,[r2,r1]
@@ -1055,7 +1055,7 @@ DMA_Finnish:
 	bne dmaEnd
 	add r0,r5,#0x1D
 	bl setInterrupt
-	add t9mem,r5,#0x7C			;@ Clear old vector.
+	add t9Mem,r5,#0x7C			;@ Clear old vector.
 	mov r0,#0
 	bl t9StoreB_Low
 dmaEnd:
