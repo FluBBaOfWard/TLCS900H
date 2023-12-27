@@ -66,6 +66,10 @@ t9LoadB_Low:
 ;@----------------------------------------------------------------------------
 	and r1,r0,#0xF0
 
+	cmp r0,#0x50				;@ Serial Data
+	moveq r2,#0
+	strbeq r2,[t9ptr,#tlcsIPending+0x18]
+
 	cmp r1,#0x70
 	beq intRead8
 
@@ -284,8 +288,8 @@ intWr75:
 intWr76:
 	b intCheckPending
 intWr77:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x18]
+;@	tst r0,#0x08
+;@	strbeq r1,[t9ptr,#tlcsIPending+0x18]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x19]
 intWr78:
@@ -308,7 +312,6 @@ intWr7C:
 intWr7D:
 intWr7E:
 intWr7F:
-	and r0,r0,#0x3F
 	and r1,r1,#0x30000000
 	add r2,t9ptr,#tlcsDMAStartVector
 	strb r0,[r2,r1,lsr#28]
@@ -646,8 +649,10 @@ clockTimer0:
 	tst r0,#0x03
 	bxne lr
 	ldrb r0,[t9ptr,#tlcsTRun]
-	ands r0,r0,#0x01
-	strbne r0,[t9ptr,#tlcsTimerHInt]
+	tst r0,#0x01
+	ldrbne r0,[t9ptr,#tlcsUpCounter]
+	addne r0,r0,#1
+	strbne r0,[t9ptr,#tlcsUpCounter]
 	bx lr
 ;@----------------------------------------------------------------------------
 updateTimers:				;@ r0 = cputicks (515)
@@ -666,14 +671,8 @@ updateTimers:				;@ r0 = cputicks (515)
 	ldrb r2,[t9ptr,#tlcsUpCounter]
 	ldrb r1,[t9ptr,#tlcsT01Mod]
 	ands r1,r1,#0x03
-	bne t0c2
+	beq timer0End
 t0c0:							;@ TIMER0 case 0
-		ldrb r0,[t9ptr,#tlcsTimerHInt]
-		add r2,r2,r0
-		mov r0,#0
-		strb r0,[t9ptr,#tlcsTimerHInt]
-		b timer0End
-
 t0c2:
 	cmp r1,#0x02
 	ldrmi r0,=TIMER_T1_RATE		;@ TIMER0 case 1
@@ -707,10 +706,10 @@ noTimer0:
 	ldrb r2,[t9ptr,#tlcsUpCounter+1]
 	ldrb r1,[t9ptr,#tlcsT01Mod]
 	ands r1,r1,#0x0C
-	bne t1c2
+;@	bne t1c2
 t1c0:							;@ TIMER1 case 0
-		add r2,r2,r5			;@ Timer0 chain
-		b timer1End
+		addeq r2,r2,r5			;@ Timer0 chain
+		beq timer1End
 
 t1c2:
 	cmp r1,#0x08
@@ -1163,7 +1162,7 @@ timerTffcrW:				;@ 0x25
 	mov r0,r0,lsr#6
 	and r0,r0,#1
 	b setFlipFlop3
-	
+
 ;@----------------------------------------------------------------------------
 timer2W:					;@ 0x26
 ;@----------------------------------------------------------------------------

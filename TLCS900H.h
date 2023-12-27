@@ -38,7 +38,6 @@ typedef struct {
 	u32 timerClock[4];
 	u8 upCounter[4];
 	u8 timerCompare[4];
-	u8 timerHInt;
 	u8 tRun;
 	u8 t01Mod;
 	u8 t23Mod;
@@ -47,6 +46,7 @@ typedef struct {
 	u8 tFF1;
 	u8 tFF3;
 	u8 cycShift;
+	u8 timerHInt;
 	u8 padding0[3];
 	void *tff3Function;
 	void *romBaseLo;

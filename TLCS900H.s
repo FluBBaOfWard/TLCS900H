@@ -74,10 +74,10 @@
 	.global generic_XOR_W_reg
 	.global generic_XOR_L_reg
 	.global conditionCode
-	.global setStatusRFP
-	.global changedSR
 	.global statusIFF
+	.global setStatusReg
 	.global setStatusIFF
+	.global setStatusRFP
 	.global encode_r0_pc
 	.global reencode_pc
 	.global storeTLCS900
@@ -171,7 +171,6 @@ pushSR:
 	adc r0,r0,r1,lsr#6			;@ NF & CF
 
 	ldrb r1,[t9ptr,#tlcsSrB]
-	orr r1,r1,#0x88				;@ System and Maximum always set.
 	orr r0,r0,r1,lsl#8
 	b push16
 ;@----------------------------------------------------------------------------
@@ -839,26 +838,32 @@ statusIFF:					;@ r0 out = current IFF
 	and r0,r0,#0x7
 	bx lr
 ;@----------------------------------------------------------------------------
-setStatusIFF:				;@ r0 = new IFF
+setStatusReg:				;@ r0 bit 0,1 = new Register File Pointer, 4-6 = new IFF
 ;@----------------------------------------------------------------------------
-	and r1,r0,#0x07
-	ldrb r0,[t9ptr,#tlcsSrB]
-	bic r0,r0,#0x70
-	orr r0,r0,r1,lsl#4
-	strb r0,[t9ptr,#tlcsSrB]
+	and r0,r0,#0xFB				;@ RFP bit 2 always 0
+	orr r0,r0,#0x88				;@ System and Maximum always set.
+	b setSR
+;@----------------------------------------------------------------------------
+setStatusIFF:				;@ r0 bit 0-2 = new IFF
+;@----------------------------------------------------------------------------
+	ldrb r1,[t9ptr,#tlcsSrB]
+	bic r1,r1,#0x70
+	orr r1,r1,r0,lsl#4
+	strb r1,[t9ptr,#tlcsSrB]
 	bx lr
 ;@----------------------------------------------------------------------------
-setStatusRFP:				;@ r0 = new Register File Pointer
+setStatusRFP:				;@ r0 bit 0,1 = new Register File Pointer
 ;@----------------------------------------------------------------------------
-	and r1,r0,#0x07
-	ldrb r0,[t9ptr,#tlcsSrB]
-	bic r0,r0,#0x07
-	orr r0,r0,r1
+	and r0,r0,#0x03
+	ldrb r1,[t9ptr,#tlcsSrB]
+	bic r1,r1,#0x07
+	orr r0,r1,r0
+setSR:
 	strb r0,[t9ptr,#tlcsSrB]
 ;@----------------------------------------------------------------------------
-changedSR:
+;@changedSR:
 ;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsSrB]
+;@	ldrb r0,[t9ptr,#tlcsSrB]
 	ldrb r1,[t9ptr,#tlcsStatusRFP]
 	and r0,r0,#0x03
 	cmp r0,r1
@@ -869,14 +874,14 @@ changedSR:
 	add r1,r1,r0,lsl#8					;@ x256
 	str r1,[t9ptr,#tlcsCurrentMapBank]
 
-	stmfd sp!,{r1-r4}
+	stmfd sp!,{r4}
 	add t9gprBank,t9gprBank,#4*4
 	ldmia t9gprBank,{r1-r4}				;@ Move IX, IY, IZ & SP to new location.
 	add t9gprBank,t9ptr,#tlcsGprBanks
 	add t9gprBank,t9gprBank,r0,lsl#5	;@ gprBank size = 4*8
 	add r0,t9gprBank,#4*4
 	stmia r0,{r1-r4}
-	ldmfd sp!,{r1-r4}
+	ldmfd sp!,{r4}
 
 	str t9gprBank,[t9ptr,#tlcsCurrentGprBank]
 	bx lr
@@ -1338,7 +1343,6 @@ tlcsOpz:
 	.space 4*4		;@ tlcsTimerClock
 	.space 4		;@ tlcsUpCounter
 	.space 4		;@ tlcsTimerCompare
-	.byte 0			;@ tlcsTimerHInt
 	.byte 0			;@ tlcsTRun
 	.byte 0			;@ tlcsT01Mod
 	.byte 0			;@ tlcsT23Mod
@@ -1347,6 +1351,7 @@ tlcsOpz:
 	.byte 0			;@ tlcsTFF1
 	.byte 0			;@ tlcsTFF3
 	.byte 0			;@ tlcsCycShift
+	.byte 0			;@ tlcsTimerHInt_
 	.space 3		;@ tlcsPadding0
 
 	.long 0			;@ tff3Function

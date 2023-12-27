@@ -253,9 +253,7 @@ sngPOPSR:					;@ 0x03 Pop Status Register
 	orrmi t9f,t9f,#PSR_n
 
 	mov r0,r0,lsr#8
-	strb r0,[t9ptr,#tlcsSrB]
-
-	bl changedSR
+	bl setStatusReg
 	bl intCheckPending
 
 	t9fetch 6
@@ -274,12 +272,11 @@ sngRETI:					;@ 0x07 Return from Interrupt
 	orrmi t9f,t9f,#PSR_n
 
 	mov r0,r0,lsr#8
-	strb r0,[t9ptr,#tlcsSrB]
+	bl setStatusReg
 
 	bl pop32
 	bl encode_r0_pc
 
-	bl changedSR
 	bl intCheckPending
 
 	t9fetch 12
@@ -374,10 +371,10 @@ sngLDiRE:					;@ 0x25 Load immediate byte to E
 sngLDiRH:					;@ 0x26 Load immediate byte to H
 sngLDiRL:					;@ 0x27 Load immediate byte to L
 ;@----------------------------------------------------------------------------
+	ldrb r0,[t9pc],#1
 	and t9Reg,t9opCode,#0x07
 	movs t9Reg,t9Reg,lsr#1
 	orrcc t9Reg,t9Reg,#0x40000000
-	ldrb r0,[t9pc],#1
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 2
 ;@----------------------------------------------------------------------------
