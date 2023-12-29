@@ -866,13 +866,13 @@ setSR:
 ;@	ldrb r0,[t9ptr,#tlcsSrB]
 	ldrb r1,[t9ptr,#tlcsStatusRFP]
 	and r0,r0,#0x03
-	cmp r0,r1
+	subs r1,r0,r1
 	bxeq lr
 	strb r0,[t9ptr,#tlcsStatusRFP]
 
-	ldr r1,=registersOfsMap
-	add r1,r1,r0,lsl#8					;@ x256
-	str r1,[t9ptr,#tlcsCurrentMapBank]
+	ldr r2,=registersOfsMap
+	add r2,r2,r0,lsl#8					;@ x256
+	str r2,[t9ptr,#tlcsCurrentMapBank]
 
 	stmfd sp!,{r4}
 	add t9gprBank,t9gprBank,#4*4

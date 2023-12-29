@@ -1,10 +1,11 @@
 TLCS900H To do
 --------------
 
+	Use one LUT for IO access.
+	Move memory area 0x00-0xFF from io.s to cpu core.
 	Timers; 16bit, PWM and more are not supported.
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Better loading/saving of register state
-	Move memory area 0x00-0xFF from io.s to cpu core.
 	Push instructions might write to 32bit address.
 	Optimize dst opcodes, "and r12,r0,#0x07" in fetch.
 	Timers? http://forum.fobby.net/index.php?t=msg&th=796&start=0&

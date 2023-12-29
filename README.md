@@ -1,6 +1,6 @@
 # TLCS900H V0.4.7
 
-Toshiba TLCS-900H cpu emulator for ARM32.
+Toshiba TLCS-900H cpu / TMP95C061 SOC emulator for ARM32.
 
 ## How to use:
 

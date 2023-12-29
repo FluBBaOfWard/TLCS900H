@@ -48,17 +48,16 @@ resetTimers:
 ;@---------------------------------------------------------------------------
 resetInterrupts:
 ;@---------------------------------------------------------------------------
-	mov r0,#0
-	strb r0,[t9ptr,#tlcsTRun]
-	strb r0,[t9ptr,#tlcsT01Mod]
-	strb r0,[t9ptr,#tlcsT23Mod]
-	strb r0,[t9ptr,#tlcsTrdc]
-	strb r0,[t9ptr,#tlcsTFFCR]
-	str r0,[t9ptr,#tlcsDMAStartVector]
+	mov r1,#0
+	strb r1,[t9ptr,#tlcsTRun]
+	strb r1,[t9ptr,#tlcsT01Mod]
+	strb r1,[t9ptr,#tlcsT23Mod]
+	strb r1,[t9ptr,#tlcsTrdc]
+	strb r1,[t9ptr,#tlcsTFFCR]
+	str r1,[t9ptr,#tlcsDMAStartVector]
 
 	add r0,t9ptr,#tlcsIPending
-	mov r1,#0
-	mov r2,#16					;@ 16*4
+	mov r2,#10					;@ 10*4
 	b memset_					;@ Clear INT regs
 
 ;@----------------------------------------------------------------------------
@@ -66,9 +65,11 @@ t9LoadB_Low:
 ;@----------------------------------------------------------------------------
 	and r1,r0,#0xF0
 
+	mov r2,#0
 	cmp r0,#0x50				;@ Serial Data
-	moveq r2,#0
 	strbeq r2,[t9ptr,#tlcsIPending+0x18]
+	cmp r0,#0x60				;@ AD Data
+	strbeq r2,[t9ptr,#tlcsIPending+0x1C]
 
 	cmp r1,#0x70
 	beq intRead8
@@ -205,8 +206,8 @@ setCommStatus:				;@ 0xB2
 ;@----------------------------------------------------------------------------
 timerWrite8:				;@ 0x20-0x2F, r0 = value, r1 = address
 ;@----------------------------------------------------------------------------
-	and r1,r1,#0x0F
-	ldr pc,[pc,r1,lsl#2]
+	and r2,r1,#0x0F
+	ldr pc,[pc,r2,lsl#2]
 	.long 0
 	.long timerRunW				;@ 0x20
 	.long timerBadW				;@ 0x21
@@ -312,6 +313,7 @@ intWr7C:
 intWr7D:
 intWr7E:
 intWr7F:
+	and r0,r0,#0x1F
 	and r1,r1,#0x30000000
 	add r2,t9ptr,#tlcsDMAStartVector
 	strb r0,[r2,r1,lsr#28]
@@ -478,165 +480,154 @@ intCheckPending:
 	stmfd sp!,{lr}
 	bl statusIFF
 	ldmfd sp!,{lr}
-	add r2,t9ptr,#tlcsIPending
-	add r3,t9ptr,#tlcsIntPrio
 
-	ldrb r1,[r2,#0x0B]			;@ VBlank
+	ldrb r1,[t9ptr,#tlcsIPending+0x0B]	;@ VBlank
 	cmp r1,#0
 	beq intDontCheck0x0B
-	ldrb r1,[r3,#0x1]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x0B
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x1]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x0B
+	bpl interrupt
 intDontCheck0x0B:
 
-	ldrb r1,[r2,#0x0C]			;@ Z80
+	ldrb r1,[t9ptr,#tlcsIPending+0x0C]	;@ Z80
 	cmp r1,#0
 	beq intDontCheck0x0C
-	ldrb r1,[r3,#0x1]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x0C
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x1]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x0C
+	bpl interrupt
 intDontCheck0x0C:
 
-	ldrb r1,[r2,#0x10]			;@ Timer0
+	ldrb r1,[t9ptr,#tlcsIPending+0x10]	;@ Timer0
 	cmp r1,#0
 	beq intDontCheck0x10
-	ldrb r1,[r3,#0x3]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x10
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x3]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x10
+	bpl interrupt
 intDontCheck0x10:
 
-	ldrb r1,[r2,#0x11]			;@ Timer1
+	ldrb r1,[t9ptr,#tlcsIPending+0x11]	;@ Timer1
 	cmp r1,#0
 	beq intDontCheck0x11
-	ldrb r1,[r3,#0x3]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x11
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x3]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x11
+	bpl interrupt
 intDontCheck0x11:
 
-	ldrb r1,[r2,#0x12]			;@ Timer2
+	ldrb r1,[t9ptr,#tlcsIPending+0x12]	;@ Timer2
 	cmp r1,#0
 	beq intDontCheck0x12
-	ldrb r1,[r3,#0x4]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x12
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x4]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x12
+	bpl interrupt
 intDontCheck0x12:
 
-	ldrb r1,[r2,#0x13]			;@ Timer3
+	ldrb r1,[t9ptr,#tlcsIPending+0x13]	;@ Timer3
 	cmp r1,#0
 	beq intDontCheck0x13
-	ldrb r1,[r3,#0x4]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x13
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x4]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x13
+	bpl interrupt
 intDontCheck0x13:
 
-	ldrb r1,[r2,#0x18]			;@ Serial TX 0
+	ldrb r1,[t9ptr,#tlcsIPending+0x18]	;@ Serial TX 0
 	cmp r1,#0
 	beq intDontCheck0x18
-	ldrb r1,[r3,#0x7]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x18
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x7]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x18
+	bpl interrupt
 intDontCheck0x18:
 
-	ldrb r1,[r2,#0x19]			;@ Serial RX 0
+	ldrb r1,[t9ptr,#tlcsIPending+0x19]	;@ Serial RX 0
 	cmp r1,#0
 	beq intDontCheck0x19
-	ldrb r1,[r3,#0x7]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x19
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x7]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x19
+	bpl interrupt
 intDontCheck0x19:
 
-	ldrb r1,[r2,#0x1C]			;@ D/A conversion finnished
+	ldrb r1,[t9ptr,#tlcsIPending+0x1C]	;@ D/A conversion finnished
 	cmp r1,#0
 	beq intDontCheck0x1C
-	ldrb r1,[r3,#0x0]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x1C
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x0]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x1C
+	bpl interrupt
 intDontCheck0x1C:
 
-	ldrb r1,[r2,#0x1D]			;@ DMA0 END
+	ldrb r1,[t9ptr,#tlcsIPending+0x1D]	;@ DMA0 END
 	cmp r1,#0
 	beq intDontCheck0x1D
-	ldrb r1,[r3,#0x9]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x1D
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x9]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x1D
+	bpl interrupt
 intDontCheck0x1D:
 
-	ldrb r1,[r2,#0x1E]			;@ DMA1 END
+	ldrb r1,[t9ptr,#tlcsIPending+0x1E]	;@ DMA1 END
 	cmp r1,#0
 	beq intDontCheck0x1E
-	ldrb r1,[r3,#0x9]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x1E
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x9]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x1E
+	bpl interrupt
 intDontCheck0x1E:
 
-	ldrb r1,[r2,#0x1F]			;@ DMA2 END
+	ldrb r1,[t9ptr,#tlcsIPending+0x1F]	;@ DMA2 END
 	cmp r1,#0
 	beq intDontCheck0x1F
-	ldrb r1,[r3,#0xA]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x1F
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0xA]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x1F
+	bpl interrupt
 intDontCheck0x1F:
 
-	ldrb r1,[r2,#0x20]			;@ DMA3 END
+	ldrb r1,[t9ptr,#tlcsIPending+0x20]	;@ DMA3 END
 	cmp r1,#0
 	beq intDontCheck0x20
-	ldrb r1,[r3,#0xA]
-	mov r1,r1,lsr#4
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x20
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0xA]
+	and r1,r1,r2,lsr#4
+	cmp r1,r0
+	movpl r0,#0x20
+	bpl interrupt
 intDontCheck0x20:
 
-	ldrb r1,[r2,#0x0A]			;@ RTC Alarm IRQ
+	ldrb r1,[t9ptr,#tlcsIPending+0x0A]	;@ RTC Alarm IRQ
 	cmp r1,#0
 	beq intDontCheck0x0A
-	ldrb r1,[r3,#0x0]
-	and r1,r1,#0x07
-	cmp r0,r1
-	movle r0,#0x0A
-	ble interrupt
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x0]
+	and r1,r1,r2
+	cmp r1,r0
+	movpl r0,#0x0A
+	bpl interrupt
 intDontCheck0x0A:
 
-	ldrb r1,[r2,#0x08]			;@ Power button, NMI?
-	cmp r1,#0
-	movne r1,#0x06
+	ldrb r1,[t9ptr,#tlcsIPending+0x08]	;@ Power button, NMI.
+	ands r1,r1,#0x07
 	movne r0,#0x08
 	bne interrupt
 
-	ldrb r1,[r2,#0x09]			;@ Watch dog timer, NMI?
-	cmp r1,#0
-	movne r1,#0x06
+	ldrb r1,[t9ptr,#tlcsIPending+0x09]	;@ Watch dog timer, NMI.
+	ands r1,r1,#0x07
 	movne r0,#0x09
 	bne interrupt
 
@@ -1052,11 +1043,13 @@ DMA_Finnish:
 	subs r0,r0,#1				;@ Check if we're done.
 	strh r0,[r6,#0x20]
 	bne dmaEnd
-	add r0,r5,#0x1D
-	bl setInterrupt
 	add t9Mem,r5,#0x7C			;@ Clear old vector.
 	mov r0,#0
 	bl t9StoreB_Low
+	add r0,r5,#0x1D
+	bl setInterrupt
+	ldmfd sp!,{r5,r6,lr}
+	b intCheckPending
 dmaEnd:
 	ldmfd sp!,{r5,r6,lr}
 	bx lr
@@ -1113,7 +1106,7 @@ timerBadR:					;@ 0x2X
 	mov r0,#0
 	bx lr
 ;@----------------------------------------------------------------------------
-timerRunW:						;@ 0x20
+timerRunW:					;@ 0x20
 ;@----------------------------------------------------------------------------
 	strb r0,[t9ptr,#tlcsTRun]
 	tst r0,#0x80
@@ -1193,6 +1186,8 @@ timerTrdcW:					;@ 0x29
 ;@----------------------------------------------------------------------------
 timerBadW:					;@ 0x2X
 ;@----------------------------------------------------------------------------
+	mov r11,r11					;@ No$GBA breakpoint
+	ldr r2,=debugIOUnimplW
 	bx lr
 
 ;@----------------------------------------------------------------------------
