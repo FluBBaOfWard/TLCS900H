@@ -415,24 +415,9 @@ interrupt:					;@ r0 = index, r1 = int level
 ;@TestMicroDMA:				;@ r0 = index, r1 = int level
 ;@---------------------------------------------------------------------------
 	ldr r2,[t9ptr,#tlcsDMAStartVector]
-	and r3,r2,#0xFF
-	cmp r3,r0
-	moveq r0,#0
-	beq DMA_update
-
-	and r3,r2,#0xFF00
-	cmp r3,r0,lsl#8
-	moveq r0,#1
-	beq DMA_update
-
-	and r3,r2,#0xFF0000
-	cmp r3,r0,lsl#16
-	moveq r0,#2
-	beq DMA_update
-
-	cmp r0,r2,lsr#24
-	moveq r0,#3
-	beq DMA_update
+	cmp r2,#0
+	bne DMATest
+takeInterrupt:
 ;@---------------------------------------------------------------------------
 	stmfd sp!,{r0,r1,lr}
 
@@ -481,145 +466,120 @@ intCheckPending:
 	bl statusIFF
 	ldmfd sp!,{lr}
 
+	ldr r2,[t9ptr,#tlcsIntPrio+0x0]	;@ Prio for RTC/DA, Vbl/Z80, INT6/INT7 & Timter 0/1.
+	ldrb r1,[t9ptr,#tlcsIPending+0x0A]	;@ RTC Alarm IRQ
+	ands r1,r1,r2
+	beq intDontCheck0x0A
+	cmp r1,r0
+	movpl r0,#0x0A
+	bpl interrupt
+intDontCheck0x0A:
+
+	ldrb r1,[t9ptr,#tlcsIPending+0x1C]	;@ D/A conversion finnished
+	ands r1,r1,r2,lsr#4
+	beq intDontCheck0x1C
+	cmp r1,r0
+	movpl r0,#0x1C
+	bpl interrupt
+intDontCheck0x1C:
+
 	ldrb r1,[t9ptr,#tlcsIPending+0x0B]	;@ VBlank
-	cmp r1,#0
+	ands r1,r1,r2,lsr#8
 	beq intDontCheck0x0B
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x1]
-	and r1,r1,r2
 	cmp r1,r0
 	movpl r0,#0x0B
 	bpl interrupt
 intDontCheck0x0B:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x0C]	;@ Z80
-	cmp r1,#0
+	ands r1,r1,r2,lsr#12
 	beq intDontCheck0x0C
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x1]
-	and r1,r1,r2,lsr#4
 	cmp r1,r0
 	movpl r0,#0x0C
 	bpl interrupt
 intDontCheck0x0C:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x10]	;@ Timer0
-	cmp r1,#0
+	ands r1,r1,r2,lsr#24
 	beq intDontCheck0x10
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x3]
-	and r1,r1,r2
 	cmp r1,r0
 	movpl r0,#0x10
 	bpl interrupt
 intDontCheck0x10:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x11]	;@ Timer1
-	cmp r1,#0
+	ands r1,r1,r2,lsr#28
 	beq intDontCheck0x11
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x3]
-	and r1,r1,r2,lsr#4
 	cmp r1,r0
 	movpl r0,#0x11
 	bpl interrupt
 intDontCheck0x11:
 
+	ldr r2,[t9ptr,#tlcsIntPrio+0x4]	;@ Prio for Timer 2/3, T 4/5, T 6/7 & RX0/TX0.
 	ldrb r1,[t9ptr,#tlcsIPending+0x12]	;@ Timer2
-	cmp r1,#0
+	ands r1,r1,r2
 	beq intDontCheck0x12
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x4]
-	and r1,r1,r2
 	cmp r1,r0
 	movpl r0,#0x12
 	bpl interrupt
 intDontCheck0x12:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x13]	;@ Timer3
-	cmp r1,#0
+	ands r1,r1,r2,lsr#4
 	beq intDontCheck0x13
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x4]
-	and r1,r1,r2,lsr#4
 	cmp r1,r0
 	movpl r0,#0x13
 	bpl interrupt
 intDontCheck0x13:
 
-	ldrb r1,[t9ptr,#tlcsIPending+0x18]	;@ Serial TX 0
-	cmp r1,#0
+	ldrb r1,[t9ptr,#tlcsIPending+0x18]	;@ Serial RX 0
+	ands r1,r1,r2,lsr#24
 	beq intDontCheck0x18
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x7]
-	and r1,r1,r2
 	cmp r1,r0
 	movpl r0,#0x18
 	bpl interrupt
 intDontCheck0x18:
 
-	ldrb r1,[t9ptr,#tlcsIPending+0x19]	;@ Serial RX 0
-	cmp r1,#0
+	ldrb r1,[t9ptr,#tlcsIPending+0x19]	;@ Serial TX 0
+	ands r1,r1,r2,lsr#28
 	beq intDontCheck0x19
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x7]
-	and r1,r1,r2,lsr#4
 	cmp r1,r0
 	movpl r0,#0x19
 	bpl interrupt
 intDontCheck0x19:
 
-	ldrb r1,[t9ptr,#tlcsIPending+0x1C]	;@ D/A conversion finnished
-	cmp r1,#0
-	beq intDontCheck0x1C
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x0]
-	and r1,r1,r2,lsr#4
-	cmp r1,r0
-	movpl r0,#0x1C
-	bpl interrupt
-intDontCheck0x1C:
-
+	ldr r2,[t9ptr,#tlcsIntPrio+0x8]	;@ Prio for RX1/TX1, DMAEnd 0/1 & DMAEnd 2/3.
 	ldrb r1,[t9ptr,#tlcsIPending+0x1D]	;@ DMA0 END
-	cmp r1,#0
+	ands r1,r1,r2,lsr#8
 	beq intDontCheck0x1D
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x9]
-	and r1,r1,r2
 	cmp r1,r0
 	movpl r0,#0x1D
 	bpl interrupt
 intDontCheck0x1D:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x1E]	;@ DMA1 END
-	cmp r1,#0
+	ands r1,r1,r2,lsr#12
 	beq intDontCheck0x1E
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x9]
-	and r1,r1,r2,lsr#4
 	cmp r1,r0
 	movpl r0,#0x1E
 	bpl interrupt
 intDontCheck0x1E:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x1F]	;@ DMA2 END
-	cmp r1,#0
+	ands r1,r1,r2,lsr#16
 	beq intDontCheck0x1F
-	ldrb r2,[t9ptr,#tlcsIntPrio+0xA]
-	and r1,r1,r2
 	cmp r1,r0
 	movpl r0,#0x1F
 	bpl interrupt
 intDontCheck0x1F:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x20]	;@ DMA3 END
-	cmp r1,#0
+	ands r1,r1,r2,lsr#20
 	beq intDontCheck0x20
-	ldrb r2,[t9ptr,#tlcsIntPrio+0xA]
-	and r1,r1,r2,lsr#4
 	cmp r1,r0
 	movpl r0,#0x20
 	bpl interrupt
 intDontCheck0x20:
-
-	ldrb r1,[t9ptr,#tlcsIPending+0x0A]	;@ RTC Alarm IRQ
-	cmp r1,#0
-	beq intDontCheck0x0A
-	ldrb r2,[t9ptr,#tlcsIntPrio+0x0]
-	and r1,r1,r2
-	cmp r1,r0
-	movpl r0,#0x0A
-	bpl interrupt
-intDontCheck0x0A:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x08]	;@ Power button, NMI.
 	ands r1,r1,#0x07
@@ -772,10 +732,10 @@ noTimer2:
 	ldrb r2,[t9ptr,#tlcsUpCounter+3]
 	ldrb r1,[t9ptr,#tlcsT23Mod]
 	ands r1,r1,#0x0C
-	bne t3c2
+;@	bne t3c2
 t3c0:							;@ TIMER3 case 0
-		add r2,r2,r5			;@ Timer2 chain
-		b timer3End
+		addeq r2,r2,r5			;@ Timer2 chain
+		beq timer3End
 
 t3c2:
 	cmp r1,#0x08
@@ -836,7 +796,29 @@ setFlipFlop3:				;@ r0 bit 0 = TFF3 state
 	ldr pc,[t9ptr,#tff3Function]
 
 ;@----------------------------------------------------------------------------
-DMA_update:					;@ r0 = channel
+DMATest:					;@ r2=DMAVectors, r3=current int.
+;@----------------------------------------------------------------------------
+	and r3,r2,#0xFF
+	cmp r3,r0
+	moveq r0,#0
+	beq DMAUpdate
+
+	and r3,r2,#0xFF00
+	cmp r3,r0,lsl#8
+	moveq r0,#1
+	beq DMAUpdate
+
+	and r3,r2,#0xFF0000
+	cmp r3,r0,lsl#16
+	moveq r0,#2
+	beq DMAUpdate
+
+	cmp r0,r2,lsr#24
+	bne takeInterrupt
+	mov r0,#3
+
+;@----------------------------------------------------------------------------
+DMAUpdate:					;@ r0 = channel
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r5,r6,lr}
 ;@	mov r11,r11
