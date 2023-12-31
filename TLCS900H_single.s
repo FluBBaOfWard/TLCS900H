@@ -243,16 +243,6 @@ sngPOPF:					;@ 0x19 Pop Flag register
 sngPOPSR:					;@ 0x03 Pop Status Register
 ;@----------------------------------------------------------------------------
 	bl pop16
-
-	and t9f,r0,#HF
-	tst r0,#CF
-	orrne t9f,t9f,#PSR_C
-	and r1,r0,#SF|ZF
-	movs r2,r0,lsl#30
-	adc t9f,t9f,r1,lsr#4		;@ Also sets V/P Flag.
-	orrmi t9f,t9f,#PSR_n
-
-	mov r0,r0,lsr#8
 	bl setStatusReg
 	bl intCheckPending
 
@@ -262,16 +252,6 @@ sngPOPSR:					;@ 0x03 Pop Status Register
 sngRETI:					;@ 0x07 Return from Interrupt
 ;@----------------------------------------------------------------------------
 	bl pop16
-
-	and t9f,r0,#HF
-	tst r0,#CF
-	orrne t9f,t9f,#PSR_C
-	and r1,r0,#SF|ZF
-	movs r2,r0,lsl#30
-	adc t9f,t9f,r1,lsr#4		;@ Also sets V/P Flag.
-	orrmi t9f,t9f,#PSR_n
-
-	mov r0,r0,lsr#8
 	bl setStatusReg
 
 	bl pop32

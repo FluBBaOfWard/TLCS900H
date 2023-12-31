@@ -466,119 +466,78 @@ intCheckPending:
 	bl statusIFF
 	ldmfd sp!,{lr}
 
-	ldr r2,[t9ptr,#tlcsIntPrio+0x0]	;@ Prio for RTC/DA, Vbl/Z80, INT6/INT7 & Timter 0/1.
+	ldr r2,[t9ptr,#tlcsIntPrio+0x0]		;@ Prio for RTC/DA, Vbl/Z80, INT6/INT7 & Timer 0/1.
 	ldrb r1,[t9ptr,#tlcsIPending+0x0A]	;@ RTC Alarm IRQ
 	ands r1,r1,r2
-	beq intDontCheck0x0A
-	cmp r1,r0
-	movpl r0,#0x0A
-	bpl interrupt
+	bne checkInt0x0A
 intDontCheck0x0A:
-
-	ldrb r1,[t9ptr,#tlcsIPending+0x1C]	;@ D/A conversion finnished
-	ands r1,r1,r2,lsr#4
-	beq intDontCheck0x1C
-	cmp r1,r0
-	movpl r0,#0x1C
-	bpl interrupt
-intDontCheck0x1C:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x0B]	;@ VBlank
 	ands r1,r1,r2,lsr#8
-	beq intDontCheck0x0B
-	cmp r1,r0
-	movpl r0,#0x0B
-	bpl interrupt
+	bne checkInt0x0B
 intDontCheck0x0B:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x0C]	;@ Z80
 	ands r1,r1,r2,lsr#12
-	beq intDontCheck0x0C
-	cmp r1,r0
-	movpl r0,#0x0C
-	bpl interrupt
+	bne checkInt0x0C
 intDontCheck0x0C:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x10]	;@ Timer0
 	ands r1,r1,r2,lsr#24
-	beq intDontCheck0x10
-	cmp r1,r0
-	movpl r0,#0x10
-	bpl interrupt
+	bne checkInt0x10
 intDontCheck0x10:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x11]	;@ Timer1
 	ands r1,r1,r2,lsr#28
-	beq intDontCheck0x11
-	cmp r1,r0
-	movpl r0,#0x11
-	bpl interrupt
+	bne checkInt0x11
 intDontCheck0x11:
 
-	ldr r2,[t9ptr,#tlcsIntPrio+0x4]	;@ Prio for Timer 2/3, T 4/5, T 6/7 & RX0/TX0.
+	ldr r2,[t9ptr,#tlcsIntPrio+0x4]		;@ Prio for Timer 2/3, T 4/5, T 6/7 & RX0/TX0.
 	ldrb r1,[t9ptr,#tlcsIPending+0x12]	;@ Timer2
 	ands r1,r1,r2
-	beq intDontCheck0x12
-	cmp r1,r0
-	movpl r0,#0x12
-	bpl interrupt
+	bne checkInt0x12
 intDontCheck0x12:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x13]	;@ Timer3
 	ands r1,r1,r2,lsr#4
-	beq intDontCheck0x13
-	cmp r1,r0
-	movpl r0,#0x13
-	bpl interrupt
+	bne checkInt0x13
 intDontCheck0x13:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x18]	;@ Serial RX 0
 	ands r1,r1,r2,lsr#24
-	beq intDontCheck0x18
-	cmp r1,r0
-	movpl r0,#0x18
-	bpl interrupt
+	bne checkInt0x18
 intDontCheck0x18:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x19]	;@ Serial TX 0
 	ands r1,r1,r2,lsr#28
-	beq intDontCheck0x19
-	cmp r1,r0
-	movpl r0,#0x19
-	bpl interrupt
+	bne checkInt0x19
 intDontCheck0x19:
 
-	ldr r2,[t9ptr,#tlcsIntPrio+0x8]	;@ Prio for RX1/TX1, DMAEnd 0/1 & DMAEnd 2/3.
+	ldrb r2,[t9ptr,#tlcsIntPrio+0x0]	;@ Prio for RTC/DA
+	ldrb r1,[t9ptr,#tlcsIPending+0x1C]	;@ D/A conversion finnished
+	ands r1,r1,r2,lsr#4
+	bne checkInt0x1C
+intDontCheck0x1C:
+
+	ldr r2,[t9ptr,#tlcsIntPrio+0x8]		;@ Prio for RX1/TX1, DMAEnd 0/1 & DMAEnd 2/3.
 	ldrb r1,[t9ptr,#tlcsIPending+0x1D]	;@ DMA0 END
 	ands r1,r1,r2,lsr#8
-	beq intDontCheck0x1D
-	cmp r1,r0
-	movpl r0,#0x1D
-	bpl interrupt
+	bne checkInt0x1D
 intDontCheck0x1D:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x1E]	;@ DMA1 END
 	ands r1,r1,r2,lsr#12
-	beq intDontCheck0x1E
-	cmp r1,r0
-	movpl r0,#0x1E
-	bpl interrupt
+	bne checkInt0x1E
 intDontCheck0x1E:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x1F]	;@ DMA2 END
 	ands r1,r1,r2,lsr#16
-	beq intDontCheck0x1F
-	cmp r1,r0
-	movpl r0,#0x1F
-	bpl interrupt
+	bne checkInt0x1F
 intDontCheck0x1F:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x20]	;@ DMA3 END
 	ands r1,r1,r2,lsr#20
-	beq intDontCheck0x20
-	cmp r1,r0
-	movpl r0,#0x20
-	bpl interrupt
+	bne checkInt0x20
 intDontCheck0x20:
 
 	ldrb r1,[t9ptr,#tlcsIPending+0x08]	;@ Power button, NMI.
@@ -593,6 +552,76 @@ intDontCheck0x20:
 
 	bx lr
 
+checkInt0x0A:
+	cmp r1,r0
+	bmi intDontCheck0x0A
+	mov r0,#0x0A
+	b interrupt
+checkInt0x0B:
+	cmp r1,r0
+	bmi intDontCheck0x0B
+	mov r0,#0x0B
+	b interrupt
+checkInt0x0C:
+	cmp r1,r0
+	bmi intDontCheck0x0C
+	mov r0,#0x0C
+	b interrupt
+checkInt0x10:
+	cmp r1,r0
+	bmi intDontCheck0x10
+	mov r0,#0x10
+	b interrupt
+checkInt0x11:
+	cmp r1,r0
+	bmi intDontCheck0x11
+	mov r0,#0x11
+	b interrupt
+checkInt0x12:
+	cmp r1,r0
+	bmi intDontCheck0x12
+	mov r0,#0x12
+	b interrupt
+checkInt0x13:
+	cmp r1,r0
+	bmi intDontCheck0x13
+	mov r0,#0x13
+	b interrupt
+checkInt0x18:
+	cmp r1,r0
+	bmi intDontCheck0x18
+	mov r0,#0x18
+	b interrupt
+checkInt0x19:
+	cmp r1,r0
+	bmi intDontCheck0x19
+	mov r0,#0x19
+	b interrupt
+checkInt0x1C:
+	cmp r1,r0
+	bmi intDontCheck0x1C
+	mov r0,#0x1C
+	b interrupt
+checkInt0x1D:
+	cmp r1,r0
+	bmi intDontCheck0x1D
+	mov r0,#0x1D
+	b interrupt
+checkInt0x1E:
+	cmp r1,r0
+	bmi intDontCheck0x1E
+	mov r0,#0x1E
+	b interrupt
+checkInt0x1F:
+	cmp r1,r0
+	bmi intDontCheck0x1F
+	mov r0,#0x1F
+	b interrupt
+checkInt0x20:
+	cmp r1,r0
+	bmi intDontCheck0x20
+	mov r0,#0x20
+	b interrupt
 ;@----------------------------------------------------------------------------
 clockTimer0:
 ;@----------------------------------------------------------------------------

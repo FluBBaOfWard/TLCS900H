@@ -838,12 +838,6 @@ statusIFF:					;@ r0 out = current IFF
 	and r0,r0,#0x7
 	bx lr
 ;@----------------------------------------------------------------------------
-setStatusReg:				;@ r0 bit 0,1 = new Register File Pointer, 4-6 = new IFF
-;@----------------------------------------------------------------------------
-	and r0,r0,#0xFB				;@ RFP bit 2 always 0
-	orr r0,r0,#0x88				;@ System and Maximum always set.
-	b setSR
-;@----------------------------------------------------------------------------
 setStatusIFF:				;@ r0 bit 0-2 = new IFF
 ;@----------------------------------------------------------------------------
 	ldrb r1,[t9ptr,#tlcsSrB]
@@ -851,6 +845,21 @@ setStatusIFF:				;@ r0 bit 0-2 = new IFF
 	orr r1,r1,r0,lsl#4
 	strb r1,[t9ptr,#tlcsSrB]
 	bx lr
+;@----------------------------------------------------------------------------
+setStatusReg:				;@ r0 bit 8,9 = new Register File Pointer, 12-14 = new IFF
+;@----------------------------------------------------------------------------
+	and t9f,r0,#HF
+	tst r0,#CF
+	orrne t9f,t9f,#PSR_C
+	and r1,r0,#SF|ZF
+	movs r2,r0,lsl#30
+	adc t9f,t9f,r1,lsr#4		;@ Also sets V/P Flag.
+	orrmi t9f,t9f,#PSR_n
+
+	mov r0,r0,lsr#8
+	and r0,r0,#0xFB				;@ RFP bit 2 always 0
+	orr r0,r0,#0x88				;@ System and Maximum always set.
+	b setSR
 ;@----------------------------------------------------------------------------
 setStatusRFP:				;@ r0 bit 0,1 = new Register File Pointer
 ;@----------------------------------------------------------------------------
