@@ -4,13 +4,12 @@ TLCS900H To do
 	Use one LUT for IO access.
 	Move memory area 0x00-0xFF from io.s to cpu core.
 	Timers; 16bit, PWM and more are not supported.
+	Timers? http://forum.fobby.net/index.php?t=msg&th=796&start=0&
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Better loading/saving of register state
 	Push instructions might write to 32bit address.
 	Optimize dst opcodes, "and r12,r0,#0x07" in fetch.
-	Timers? http://forum.fobby.net/index.php?t=msg&th=796&start=0&
 	Optimise DAA.
 
-	Sort interrupts according to priority before executing them?
 	SLL should insert 1 into bit#0 like on Z80?
 	PUSH and POP are used from BIOS and interrupts!!!

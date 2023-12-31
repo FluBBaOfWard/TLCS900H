@@ -116,6 +116,7 @@ tlcsRunXCycles:							;@ r0 = cycles to add
 	ldrb r1,[t9ptr,#tlcsCycShift]
 	add t9cycles,t9cycles,r0,lsl r1
 	bl updateTimers				;@ updateTimers(int cycles)
+	bl checkInterrupt
 	cmp t9cycles,#0
 
 tlcsLoop:
