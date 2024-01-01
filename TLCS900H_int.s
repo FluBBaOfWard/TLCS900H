@@ -3,7 +3,7 @@
 //  TLCS900H
 //
 //  Created by Fredrik Ahlström on 2008-04-02.
-//  Copyright © 2008-2023 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2008-2024 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -846,17 +846,17 @@ DMATest:					;@ r3=DMAVectors
 	movne r0,#0
 	bne DMAUpdate
 
-	mov r1,r3,lsl#19
-	ldrb r0,[r2,r1,lsr#27]
-	cmp r0,#0
-	strbne r1,[r2,r1,lsr#27]
+	ands r1,r3,#0x00001F00
+	ldrbne r0,[r2,r1,lsr#8]
+	cmpne r0,#0
+	strbne r1,[r2,r1,lsr#8]
 	movne r0,#1
 	bne DMAUpdate
 
-	mov r1,r3,lsl#11
-	ldrb r0,[r2,r1,lsr#27]
-	cmp r0,#0
-	strbne r1,[r2,r1,lsr#27]
+	ands r1,r3,#0x001F0000
+	ldrbne r0,[r2,r1,lsr#16]
+	cmpne r0,#0
+	strbne r1,[r2,r1,lsr#16]
 	movne r0,#2
 	bne DMAUpdate
 
