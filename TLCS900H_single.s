@@ -244,7 +244,7 @@ sngPOPSR:					;@ 0x03 Pop Status Register
 ;@----------------------------------------------------------------------------
 	bl pop16
 	bl setStatusReg
-	bl intCheckPending
+	bl checkInterrupt
 
 	t9fetch 6
 
@@ -257,7 +257,7 @@ sngRETI:					;@ 0x07 Return from Interrupt
 	bl pop32
 	bl encode_r0_pc
 
-	bl intCheckPending
+	bl checkInterrupt
 
 	t9fetch 12
 ;@----------------------------------------------------------------------------
@@ -285,7 +285,7 @@ sngEI:						;@ 0x06 Enable Interrupt
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	bl setStatusIFF
-	bl intCheckPending
+	bl checkInterrupt
 	t9fetch 5
 ;@----------------------------------------------------------------------------
 sngEX:						;@ 0x16 Exchange F & F'

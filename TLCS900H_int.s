@@ -69,8 +69,10 @@ t9LoadB_Low:
 	mov r2,#0
 	cmp r0,#0x50				;@ Serial Data
 	strbeq r2,[t9ptr,#tlcsIPending+0x18]
+	strbeq r0,[t9ptr,#tlcsIrqDirty]
 	cmp r0,#0x60				;@ AD Data
 	strbeq r2,[t9ptr,#tlcsIPending+0x1C]
+	strbeq r0,[t9ptr,#tlcsIrqDirty]
 
 	cmp r1,#0x70
 	beq intRead8
@@ -262,25 +264,25 @@ intWr70:
 	strbeq r1,[t9ptr,#tlcsIPending+0x0A]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x1C]
-	b intCheckPending
+	b markIrqDirty
 intWr71:
 	tst r0,#0x08
 	strbeq r1,[t9ptr,#tlcsIPending+0x0B]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x0C]
-	b intCheckPending
+	b markIrqDirty
 intWr72:
 	tst r0,#0x08
 	strbeq r1,[t9ptr,#tlcsIPending+0x0D]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x0E]
-	b intCheckPending
+	b markIrqDirty
 intWr73:
 	tst r0,#0x08
 	strbeq r1,[t9ptr,#tlcsIPending+0x10]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x11]
-	b intCheckPending
+	b markIrqDirty
 intWr74:
 	tst r0,#0x08
 	strbeq r1,[t9ptr,#tlcsIPending+0x12]
@@ -288,27 +290,29 @@ intWr74:
 	strbeq r1,[t9ptr,#tlcsIPending+0x13]
 intWr75:
 intWr76:
-	b intCheckPending
+	b markIrqDirty
 intWr77:
 ;@	tst r0,#0x08
 ;@	strbeq r1,[t9ptr,#tlcsIPending+0x18]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x19]
 intWr78:
-	b intCheckPending
+	b markIrqDirty
 intWr79:
 	tst r0,#0x08
 	strbeq r1,[t9ptr,#tlcsIPending+0x1D]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x1E]
-	b intCheckPending
+	b markIrqDirty
 intWr7A:
 	tst r0,#0x08
 	strbeq r1,[t9ptr,#tlcsIPending+0x1F]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x20]
-intWr7B:
-	b intCheckPending
+markIrqDirty:
+	mov r0,#1
+	strb r0,[t9ptr,#tlcsIrqDirty]
+	bx lr
 
 intWr7C:
 intWr7D:
@@ -318,6 +322,7 @@ intWr7F:
 	and r1,r1,#0x30000000
 	add r2,t9ptr,#tlcsDMAStartVector
 	strb r0,[r2,r1,lsr#28]
+intWr7B:
 	bx lr
 ;@----------------------------------------------------------------------------
 intRd70:
@@ -416,6 +421,11 @@ checkInterrupt:
 	cmp r3,#0
 	bne DMATest
 testInterrupt:
+	ldrb r1,[t9ptr,#tlcsIrqDirty]
+	cmp r1,#0
+	stmfd sp!,{lr}
+	blne intCheckPending
+	ldmfd sp!,{lr}
 	ldrb r1,[t9ptr,#tlcsIrqPrio]
 	cmp r1,#0
 	bxeq lr
@@ -428,6 +438,7 @@ testInterrupt:
 	mov r3,#0
 	add r2,t9ptr,#tlcsIPending
 	strb r3,[r2,r0]
+	strb r0,[t9ptr,#tlcsIrqDirty]
 ;@---------------------------------------------------------------------------
 	stmfd sp!,{r0,r1,lr}
 
@@ -455,6 +466,7 @@ testInterrupt:
 	movhi r0,#0x07
 	bl setStatusIFF
 
+	t9eatcycles 28
 	ldmfd sp!,{lr}
 	bx lr
 
@@ -468,12 +480,22 @@ setInterrupt:				;@ r0 = index
 	mov r1,#0x07
 	add r2,t9ptr,#tlcsIPending
 	strb r1,[r2,r0]
+	strb r1,[t9ptr,#tlcsIrqDirty]
 	bx lr
 ;@---------------------------------------------------------------------------
 intCheckPending:
 ;@---------------------------------------------------------------------------
 	mov r0,#0
-	mov r1,#0
+	strb r0,[t9ptr,#tlcsIrqDirty]
+
+	ldrb r1,[t9ptr,#tlcsIPending+0x09]	;@ Watch dog timer, NMI.
+	ands r1,r1,#0x07
+	movne r0,#0x09
+
+	ldrb r3,[t9ptr,#tlcsIPending+0x08]	;@ Power button, NMI.
+	ands r3,r3,#0x07
+	movne r1,#0x07
+	movne r0,#0x08
 
 	ldr r2,[t9ptr,#tlcsIntPrio+0x0]		;@ Prio for RTC/DA, Vbl/Z80, INT6/INT7 & Timer 0/1.
 	ldrb r3,[t9ptr,#tlcsIPending+0x0A]	;@ RTC Alarm IRQ
@@ -548,16 +570,6 @@ intDontCheck0x1F:
 	ands r3,r3,r2,lsr#20
 	bne checkInt0x20
 intDontCheck0x20:
-
-	ldrb r3,[t9ptr,#tlcsIPending+0x08]	;@ Power button, NMI.
-	ands r3,r3,#0x07
-	movne r1,#0x07
-	movne r0,#0x08
-
-	ldrb r3,[t9ptr,#tlcsIPending+0x09]	;@ Watch dog timer, NMI.
-	ands r3,r3,#0x07
-	movne r1,#0x07
-	movne r0,#0x09
 
 	strb r0,[t9ptr,#tlcsIrqVec]
 	strb r1,[t9ptr,#tlcsIrqPrio]
@@ -805,7 +817,6 @@ timer3End:
 
 noTimer3:
 noTimers:
-	bl intCheckPending
 	ldmfd sp!,{r4-r6,lr}
 	bx lr
 
@@ -1080,7 +1091,6 @@ DMA_Finnish:
 	bl t9StoreB_Low
 	add r0,r5,#0x1D
 	bl setInterrupt
-	bl intCheckPending
 dmaEnd:
 	ldmfd sp!,{r5,r6,lr}
 	b checkInterrupt			;@ Check for more Micro DMA & normal IRQ.
