@@ -62,7 +62,6 @@ tlcsCycShift:		.byte 0
 tlcsIrqPrio:		.byte 0
 tlcsIrqVec:			.byte 0
 tlcsIrqDirty:		.byte 0
-;@tlcsTimerHInt_:		.byte 0
 tlcsPadding0:		.space 1
 tlcsStateEnd:
 

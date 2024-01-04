@@ -49,7 +49,6 @@ typedef struct {
 	u8 irqPrio;
 	u8 irqVec;
 	u8 irqDirty;
-//	u8 timerHInt_;
 	u8 padding0[1];
 	void *tff3Function;
 	void *romBaseLo;

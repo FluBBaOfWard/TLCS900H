@@ -191,9 +191,9 @@ regRCB:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldr r1,[t9ptr,#tlcsCurrentMapBank]
+	t9eatcycles 1
 	ldrsb t9Reg,[r1,r0]
 	mov t9Reg,t9Reg,ror#2
-	t9eatcycles 1
 	ldrb r0,[t9pc],#1
 	add r1,t9ptr,#tlcsRegOpCodesB
 	ldr pc,[r1,r0,lsl#2]
@@ -301,10 +301,10 @@ regRCL:
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	ldr r1,[t9ptr,#tlcsCurrentMapBank]
-	ldrsb t9Reg,[r1,r0]
-	mov t9Reg,t9Reg,asr#2
 	t9eatcycles 1
+	ldrsb t9Reg,[r1,r0]
 	ldrb r0,[t9pc],#1
+	mov t9Reg,t9Reg,asr#2
 	adr r1,regOpCodesL
 	ldr pc,[r1,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -707,6 +707,8 @@ regMULA:					;@ Multiply and Add
 	sub r1,r0,#2
 	str r1,[t9gprBank,#RXHL]
 	bl t9LoadW
+	mov r0,r0,lsl#16
+	mov r0,r0,asr#16
 	mul r1,t9Reg2,r0
 	ldr r0,[t9gprBank,t9Reg]
 	bic t9f,t9f,#PSR_S+PSR_Z+PSR_V
@@ -1280,8 +1282,8 @@ regDIVSW:					;@ Division Signed
 regINCB:					;@ Increment
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
-	moveq r1,#0x08
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
+	moveq r1,#0x08
 	bl generic_INC_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
@@ -1289,8 +1291,8 @@ regINCB:					;@ Increment
 regINCW:					;@ Increment
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
-	moveq r1,#0x08
 	ldrh r0,[t9gprBank,t9Reg]
+	moveq r1,#0x08
 	add r0,r0,r1
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
@@ -1298,8 +1300,8 @@ regINCW:					;@ Increment
 regINCL:					;@ Increment
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
-	moveq r1,#0x08
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	moveq r1,#0x08
 	add r0,r0,r1
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 5
@@ -1308,8 +1310,8 @@ regINCL:					;@ Increment
 regDECB:					;@ Decrement
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
-	moveq r1,#0x08
 	ldrb r0,[t9gprBank,t9Reg,ror#30]
+	moveq r1,#0x08
 	bl generic_DEC_B
 	strb r0,[t9gprBank,t9Reg,ror#30]
 	t9fetch 4
@@ -1317,8 +1319,8 @@ regDECB:					;@ Decrement
 regDECW:					;@ Decrement
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
-	moveq r1,#0x08
 	ldrh r0,[t9gprBank,t9Reg]
+	moveq r1,#0x08
 	sub r0,r0,r1
 	strh r0,[t9gprBank,t9Reg]
 	t9fetch 4
@@ -1326,8 +1328,8 @@ regDECW:					;@ Decrement
 regDECL:					;@ Decrement
 ;@----------------------------------------------------------------------------
 	ands r1,r0,#0x07			;@ From Second
-	moveq r1,#0x08
 	ldr r0,[t9gprBank,t9Reg,lsl#2]
+	moveq r1,#0x08
 	sub r0,r0,r1
 	str r0,[t9gprBank,t9Reg,lsl#2]
 	t9fetch 5

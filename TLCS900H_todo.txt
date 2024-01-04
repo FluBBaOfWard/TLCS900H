@@ -8,9 +8,7 @@ TLCS900H To do
 	Timers? http://forum.fobby.net/index.php?t=msg&th=796&start=0&
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Better loading/saving of register state
-	Push instructions might write to 32bit address.
 	Optimize dst opcodes, "and r12,r0,#0x07" in fetch.
 	Optimise DAA.
 
-	SLL should insert 1 into bit#0 like on Z80?
 	PUSH and POP are used from BIOS and interrupts!!!

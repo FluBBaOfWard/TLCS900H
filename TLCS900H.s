@@ -269,7 +269,7 @@ ExDec:
 	ldr t9Mem,[t9gprBank,t9Reg]
 	ands r0,r0,#3
 	addeq r0,r0,#0x80000000
-;@	cmp r0,#6
+;@	cmp r0,#3
 ;@	beq UnknownOpCode
 	sub t9Mem,t9Mem,r0,ror#31
 	str t9Mem,[t9gprBank,t9Reg]
@@ -286,7 +286,7 @@ ExInc:
 	ldr t9Mem,[t9gprBank,t9Reg]
 	ands r0,r0,#3
 	addeq r0,r0,#0x80000000
-;@	cmp r0,#6
+;@	cmp r0,#3
 ;@	beq UnknownOpCode
 	add r0,t9Mem,r0,ror#31
 	str r0,[t9gprBank,t9Reg]

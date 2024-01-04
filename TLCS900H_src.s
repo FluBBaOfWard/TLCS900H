@@ -404,9 +404,9 @@ srcRRD:
 ;@----------------------------------------------------------------------------
 LDI_LDDret:
 	ldrh r0,[t9gprBank,#RBC]
-	subs r0,r0,#0x0001
-	strh r0,[t9gprBank,#RBC]
 	bic t9f,t9f,#PSR_H+PSR_P+PSR_n
+	subs r0,r0,#1
+	strh r0,[t9gprBank,#RBC]
 	orrne t9f,t9f,#PSR_P
 	t9fetch 10
 ;@----------------------------------------------------------------------------
@@ -417,7 +417,6 @@ srcLDDB:
 ;@----------------------------------------------------------------------------
 srcLDI_LDDdoB:
 ;@----------------------------------------------------------------------------
-//	and t9opCode,t9opCode,#0x07
 	and t9Reg,t9Reg,#0x02		;@ Increase/Decrease
 	rsb t9Reg,t9Reg,#0x01
 ;@----------------------------------------------------------------------------
@@ -438,7 +437,6 @@ srcLDDW:
 ;@----------------------------------------------------------------------------
 srcLDI_LDDdoW:
 ;@----------------------------------------------------------------------------
-//	and t9opCode,t9opCode,#0x07
 	and t9Reg,t9Reg,#0x02		;@ Increase/Decrease
 	rsb t9Reg,t9Reg,#0x01
 ;@----------------------------------------------------------------------------
@@ -464,9 +462,9 @@ srcLDDRW:
 	bl srcLDI_LDDdoW
 LDIR_LDDRret:
 	ldrh r0,[t9gprBank,#RBC]
-	subs r0,r0,#0x0001
-	strh r0,[t9gprBank,#RBC]
 	bic t9f,t9f,#PSR_H+PSR_P+PSR_n
+	subs r0,r0,#1
+	strh r0,[t9gprBank,#RBC]
 	orrne t9f,t9f,#PSR_P
 	subne t9pc,t9pc,#2
 	subne t9cycles,t9cycles,#4*T9CYCLE
@@ -475,10 +473,10 @@ LDIR_LDDRret:
 ;@----------------------------------------------------------------------------
 CPI_CPDret:
 	ldrh r0,[t9gprBank,#RBC]
-	subs r0,r0,#0x0001
+	bic t9f,t9f,#PSR_P
+	subs r0,r0,#1
 	strh r0,[t9gprBank,#RBC]
-	orr t9f,t9f,#PSR_P+PSR_n
-	biceq t9f,t9f,#PSR_P
+	orrne t9f,t9f,#PSR_P
 	t9fetch 8
 ;@----------------------------------------------------------------------------
 srcCPIB:
@@ -488,7 +486,6 @@ srcCPDB:
 ;@----------------------------------------------------------------------------
 srcCPI_CPDdoB:
 ;@----------------------------------------------------------------------------
-//	and t9opCode,t9opCode,#0x07
 	and t9Reg,t9Reg,#0x02				;@ Increase/Decrease
 	rsb t9Reg,t9Reg,#0x01
 ;@----------------------------------------------------------------------------
@@ -507,7 +504,6 @@ srcCPDW:
 ;@----------------------------------------------------------------------------
 srcCPI_CPDdoW:
 ;@----------------------------------------------------------------------------
-//	and t9opCode,t9opCode,#0x07
 	and t9Reg,t9Reg,#0x02				;@ Increase/Decrease
 	rsb t9Reg,t9Reg,#0x01
 ;@----------------------------------------------------------------------------
@@ -531,10 +527,10 @@ srcCPDRW:
 	bl srcCPI_CPDdoW
 CPIR_CPDRret:
 	ldrh r0,[t9gprBank,#RBC]
-	subs r0,r0,#0x0001
+	bic t9f,t9f,#PSR_P
+	subs r0,r0,#1
 	strh r0,[t9gprBank,#RBC]
-	orr t9f,t9f,#PSR_P+PSR_n
-	biceq t9f,t9f,#PSR_P
+	orrne t9f,t9f,#PSR_P
 	eor r0,t9f,#PSR_Z
 	tstne r0,#PSR_Z
 	subne t9pc,t9pc,#2
