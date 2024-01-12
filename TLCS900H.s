@@ -93,9 +93,15 @@
 	.syntax unified
 	.arm
 
-	.section .bss
+#ifdef COUNT_OP_CODES
+#if GBA
+	.section .sbss				;@ For the GBA
+#else
+	.section .bss				;@ For anything else
+#endif
 opcodeCounter:
 	.space 256*4
+#endif
 
 #ifdef NDS
 	.section .itcm						;@ For the NDS ARM9
@@ -947,6 +953,7 @@ dstError:
 	t9fetch 0
 
 
+#ifdef COUNT_OP_CODES
 ;@----------------------------------------------------------------------------
 dumpOpCodes:
 ;@----------------------------------------------------------------------------
@@ -967,6 +974,7 @@ die:
 	b die
 
 	.pool
+#endif
 ;@----------------------------------------------------------------------------
 tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 ;@----------------------------------------------------------------------------
@@ -982,9 +990,11 @@ tlcs900HReset:				;@ r0=t9ptr, r1=tff3Function
 	add r0,t9ptr,#tlcsGprBanks
 	mov r1,#8*4
 	bl memclr_
+#ifdef COUNT_OP_CODES
 	ldr r0,=opcodeCounter
 	mov r1,#256
 	bl memclr_
+#endif
 
 	add t9gprBank,t9ptr,#tlcsGprBanks
 	str t9gprBank,[t9ptr,#tlcsCurrentGprBank]
