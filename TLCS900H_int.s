@@ -339,7 +339,57 @@ t9LoadB_Low:
 	.long lowMemRead
 	.long lowMemRead
 	.long lowMemRead
-
+;@----------------------------------------------------------------------------
+timerRunR:					;@ 0x20
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTRun]
+	bx lr
+;@----------------------------------------------------------------------------
+timer0R:					;@ 0x22
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTimerCompare]
+	bx lr
+;@----------------------------------------------------------------------------
+timer1R:					;@ 0x23
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTimerCompare+1]
+	bx lr
+;@----------------------------------------------------------------------------
+timerT01ModR:				;@ 0x24
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsT01Mod]
+	bx lr
+;@----------------------------------------------------------------------------
+timerTffcrR:				;@ 0x25
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTFFCR]
+	orr r0,r0,#0xCC
+	bx lr
+;@----------------------------------------------------------------------------
+timer2R:					;@ 0x26
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTimerCompare+2]
+	bx lr
+;@----------------------------------------------------------------------------
+timer3R:					;@ 0x27
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTimerCompare+3]
+	bx lr
+;@----------------------------------------------------------------------------
+timerT23ModR:				;@ 0x28
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsT23Mod]
+	bx lr
+;@----------------------------------------------------------------------------
+timerTrdcR:					;@ 0x29
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTrdc]
+	bx lr
+;@----------------------------------------------------------------------------
+timerBadR:					;@ 0x2X
+;@----------------------------------------------------------------------------
+	mov r0,#0
+	bx lr
 ;@----------------------------------------------------------------------------
 serialDataR:				;@ 0x50
 ;@----------------------------------------------------------------------------
@@ -354,11 +404,92 @@ adcR:						;@ 0x60
 	strb r2,[t9ptr,#tlcsIPending+0x1C]
 	strb r0,[t9ptr,#tlcsIrqDirty]
 ;@----------------------------------------------------------------------------
+intRd70:
+	ldrb r0,[t9ptr,#tlcsIPending+0x0A]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x1C]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd71:
+	ldrb r0,[t9ptr,#tlcsIPending+0x0B]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x0C]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd72:
+	ldrb r0,[t9ptr,#tlcsIPending+0x0D]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x0E]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd73:
+	ldrb r0,[t9ptr,#tlcsIPending+0x10]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x11]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd74:
+	ldrb r0,[t9ptr,#tlcsIPending+0x12]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x13]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd77:
+	ldrb r0,[t9ptr,#tlcsIPending+0x18]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x19]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd79:
+	ldrb r0,[t9ptr,#tlcsIPending+0x1D]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x1E]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd7A:
+	ldrb r0,[t9ptr,#tlcsIPending+0x1F]
+	cmp r0,#0
+	movne r0,#0x08
+	ldrb r1,[t9ptr,#tlcsIPending+0x20]
+	cmp r1,#0
+	orrne r0,r0,#0x80
+	bx lr
+intRd75:
+intRd76:
+intRd78:
+intRd7B:
+	mov r0,#0
+	bx lr
+intRd7C:
+intRd7D:
+intRd7E:
+intRd7F:
+	and r1,r1,#0x03
+	add r0,t9ptr,#tlcsDMAStartVector
+	ldrb r0,[r0,r1]
+	bx lr
+
+;@----------------------------------------------------------------------------
 lowMemRead:
 ;@----------------------------------------------------------------------------
 	ldr r2,=systemMemory
 	ldrb r0,[r2,r0]
 	bx lr
+
 ;@----------------------------------------------------------------------------
 t9StoreB_Low:
 ;@----------------------------------------------------------------------------
@@ -368,78 +499,43 @@ t9StoreB_Low:
 	ldrb r3,[r2,r1]
 	strb r0,[r2,r1]
 
-	cmp r1,#0xB2				;@ COMMStatus
-	beq setCommStatus
-
-	cmp r1,#0xB8				;@ Soundchip enable/disable, 0x55 On 0xAA Off.
-	beq setMuteT6W28
-
-	cmp r1,#0xB9				;@ Z80 enable/disable, 0x55 On 0xAA Off.
-	beq Z80_SetEnable
-
-	cmp r1,#0xBA				;@ Z80 NMI
-	beq Z80_nmi_do
-
-	cmp r1,#0xA0				;@ T6W28, Right
-	beq T6W28_R_W
-	cmp r1,#0xA1				;@ T6W28, Left
-	beq T6W28_L_W
-	cmp r1,#0xA2				;@ T6W28 DAC, Left
-	beq T6W28_DAC_L_W
-	cmp r1,#0xA3				;@ T6W28 DAC, Right
-	beq T6W28_DAC_R_W
-
-	cmp r1,#0x6F				;@ Watchdog
-	beq watchDogW
-
-	cmp r1,#0x6D				;@ Battery A/D start
-	beq ADStart
-
-	cmp r1,#0x80				;@ CpuSpeed
-	beq cpuSpeedW
-
-	and r2,r1,#0xF0
-	cmp r2,#0x20
-	beq timerWrite8
-
-	cmp r2,#0x70
-	beq intWrite8
-
-//	cmp r1,#0xB3				;@ Power button NMI on/off.
-	bx lr
-
-;@----------------------------------------------------------------------------
-watchDogW:					;@ 0x6F
-;@----------------------------------------------------------------------------
-	bx lr
-;@----------------------------------------------------------------------------
-cpuSpeedW:					;@ 0x80
-;@----------------------------------------------------------------------------
-	and r0,r0,#0x07
-	cmp r0,#4
-	movpl r0,#4
-	subs r1,r0,r3
-	bxeq lr
-//	mov t9cycles,t9cycles,ror r1	;@ melonDS doesn't like this.
-	movpl t9cycles,t9cycles,asr r1
-	movmi t9cycles,t9cycles,lsl#1
-	strb r0,[r2,#0x80]
-	rsb r0,r0,#T9CYC_SHIFT
-	strb r0,[t9ptr,#tlcsCycShift]
-	bx lr
-
-;@----------------------------------------------------------------------------
-setCommStatus:				;@ 0xB2
-;@----------------------------------------------------------------------------
-	and r0,r0,#1
-	strb r0,[r2,r1]				;@ r2 = systemMemory
-	bx lr
-;@----------------------------------------------------------------------------
-timerWrite8:				;@ 0x20-0x2F, r0 = value, r1 = address
-;@----------------------------------------------------------------------------
-	and r2,r1,#0x0F
-	ldr pc,[pc,r2,lsl#2]
+	ldr pc,[pc,r1,lsl#2]
 	.long 0
+;@ 0x00
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0x10
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0x20
 	.long timerRunW				;@ 0x20
 	.long timerBadW				;@ 0x21
 	.long timer0W				;@ 0x22
@@ -456,7 +552,235 @@ timerWrite8:				;@ 0x20-0x2F, r0 = value, r1 = address
 	.long timerBadW				;@ 0x2D
 	.long timerBadW				;@ 0x2E
 	.long timerBadW				;@ 0x2F
+;@ 0x30
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0x40
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0x50
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0x60
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long ADStart		;@ 0x6D, Battery A/D start
+	.long lowWriteEnd
+	.long watchDogW		;@ 0x6F, Watchdog
+;@ 0x70
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+	.long intWrite8
+;@ 0x80
+	.long cpuSpeedW		;@ 0x80, CpuSpeed
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0x90
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0xA0
+	.long T6W28_R_W		;@ 0xA0, T6W28, Right
+	.long T6W28_L_W		;@ 0xA1, T6W28, Left
+	.long T6W28_DAC_L_W	;@ 0xA2, T6W28 DAC, Left
+	.long T6W28_DAC_R_W	;@ 0xA3, T6W28 DAC, Right
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0xB0
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long setCommStatus	;@ 0xB2, COMMStatus
+	.long lowWriteEnd	;@ 0xB3, Power button NMI on/off.
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long setMuteT6W28	;@ 0xB8, Soundchip enable/disable, 0x55 On 0xAA Off.
+	.long Z80_SetEnable	;@ 0xB9, Z80 enable/disable, 0x55 On 0xAA Off.
+	.long Z80_nmi_do	;@ 0xBA, Z80 NMI
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0xC0
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0xD0
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0xE0
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+;@ 0xF0
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
+	.long lowWriteEnd
 
+lowWriteEnd:
+	bx lr
+
+;@----------------------------------------------------------------------------
+watchDogW:					;@ 0x6F
+;@----------------------------------------------------------------------------
+	bx lr
 ;@---------------------------------------------------------------------------
 intWrite8:					;@ 0x70-0x7F, r0 = value, r1 = address
 ;@---------------------------------------------------------------------------
@@ -553,85 +877,27 @@ intWr7F:
 	strb r0,[r2,r1,lsr#28]
 	bx lr
 ;@----------------------------------------------------------------------------
-intRd70:
-	ldrb r0,[t9ptr,#tlcsIPending+0x0A]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x1C]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd71:
-	ldrb r0,[t9ptr,#tlcsIPending+0x0B]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x0C]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd72:
-	ldrb r0,[t9ptr,#tlcsIPending+0x0D]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x0E]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd73:
-	ldrb r0,[t9ptr,#tlcsIPending+0x10]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x11]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd74:
-	ldrb r0,[t9ptr,#tlcsIPending+0x12]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x13]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd77:
-	ldrb r0,[t9ptr,#tlcsIPending+0x18]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x19]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd79:
-	ldrb r0,[t9ptr,#tlcsIPending+0x1D]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x1E]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd7A:
-	ldrb r0,[t9ptr,#tlcsIPending+0x1F]
-	cmp r0,#0
-	movne r0,#0x08
-	ldrb r1,[t9ptr,#tlcsIPending+0x20]
-	cmp r1,#0
-	orrne r0,r0,#0x80
-	bx lr
-intRd75:
-intRd76:
-intRd78:
-intRd7B:
-	mov r0,#0
-	bx lr
-intRd7C:
-intRd7D:
-intRd7E:
-intRd7F:
-	and r1,r1,#0x03
-	add r0,t9ptr,#tlcsDMAStartVector
-	ldrb r0,[r0,r1]
+cpuSpeedW:					;@ 0x80
+;@----------------------------------------------------------------------------
+	and r0,r0,#0x07
+	cmp r0,#4
+	movpl r0,#4
+	subs r1,r0,r3
+	bxeq lr
+//	mov t9cycles,t9cycles,ror r1	;@ melonDS doesn't like this.
+	movpl t9cycles,t9cycles,asr r1
+	movmi t9cycles,t9cycles,lsl#1
+	strb r0,[r2,#0x80]
+	rsb r0,r0,#T9CYC_SHIFT
+	strb r0,[t9ptr,#tlcsCycShift]
 	bx lr
 
+;@----------------------------------------------------------------------------
+setCommStatus:				;@ 0xB2
+;@----------------------------------------------------------------------------
+	and r0,r0,#1
+	strb r0,[r2,r1]				;@ r2 = systemMemory
+	bx lr
 ;@---------------------------------------------------------------------------
 #ifdef NDS
 	.section .itcm						;@ For the NDS ARM9
@@ -1320,57 +1586,6 @@ dmaEnd:
 	ldmfd sp!,{r5,r6,lr}
 	b checkInterrupt			;@ Check for more Micro DMA & normal IRQ.
 
-;@----------------------------------------------------------------------------
-timerRunR:					;@ 0x20
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTRun]
-	bx lr
-;@----------------------------------------------------------------------------
-timer0R:					;@ 0x22
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTimerCompare]
-	bx lr
-;@----------------------------------------------------------------------------
-timer1R:					;@ 0x23
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTimerCompare+1]
-	bx lr
-;@----------------------------------------------------------------------------
-timerT01ModR:				;@ 0x24
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsT01Mod]
-	bx lr
-;@----------------------------------------------------------------------------
-timerTffcrR:				;@ 0x25
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTFFCR]
-	orr r0,r0,#0xCC
-	bx lr
-;@----------------------------------------------------------------------------
-timer2R:					;@ 0x26
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTimerCompare+2]
-	bx lr
-;@----------------------------------------------------------------------------
-timer3R:					;@ 0x27
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTimerCompare+3]
-	bx lr
-;@----------------------------------------------------------------------------
-timerT23ModR:				;@ 0x28
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsT23Mod]
-	bx lr
-;@----------------------------------------------------------------------------
-timerTrdcR:					;@ 0x29
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTrdc]
-	bx lr
-;@----------------------------------------------------------------------------
-timerBadR:					;@ 0x2X
-;@----------------------------------------------------------------------------
-	mov r0,#0
-	bx lr
 ;@----------------------------------------------------------------------------
 timerRunW:					;@ 0x20
 ;@----------------------------------------------------------------------------
