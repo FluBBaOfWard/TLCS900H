@@ -1,6 +1,7 @@
 TLCS900H To do
 --------------
 
+	Turn off DMA when CPU is STOPed.
 	Optimize interrupt handling.
 	Use one LUT for IO access.
 	Move memory area 0x00-0xFF from io.s to cpu core.
@@ -9,6 +10,6 @@ TLCS900H To do
 	Implement division in ARM asm instead of relying on GBA/NDS SWI functions.
 	Better loading/saving of register state
 	Optimize dst opcodes, "and r12,r0,#0x07" in fetch.
-	Optimise DAA.
+	Optimize DAA.
 
 	PUSH and POP are used from BIOS and interrupts!!!

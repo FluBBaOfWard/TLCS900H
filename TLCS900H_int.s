@@ -64,32 +64,44 @@ resetInterrupts:
 ;@----------------------------------------------------------------------------
 t9LoadB_Low:
 ;@----------------------------------------------------------------------------
-	and r1,r0,#0xF0
-
-	mov r2,#0
-	cmp r0,#0x50				;@ Serial Data
-	strbeq r2,[t9ptr,#tlcsIPending+0x18]
-	strbeq r0,[t9ptr,#tlcsIrqDirty]
-	cmp r0,#0x60				;@ AD Data
-	strbeq r2,[t9ptr,#tlcsIPending+0x1C]
-	strbeq r0,[t9ptr,#tlcsIrqDirty]
-
-	cmp r1,#0x70
-	beq intRead8
-
-	cmp r1,#0x20
-	beq timerRead8
-
-	ldr r2,=systemMemory
-	ldrb r0,[r2,r0]
-	bx lr
-;@----------------------------------------------------------------------------
-timerRead8:					;@ 0x20-0x2F, r0 = address
-;@----------------------------------------------------------------------------
-	and r0,r0,#0x0F
+	and r0,r0,#0xFF
 	ldr pc,[pc,r0,lsl#2]
 	.long 0
-timerReadLUT:
+;@ 0x00
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x10
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x20
 	.long timerRunR				;@ 0x20
 	.long timerBadR				;@ 0x21
 	.long timer0R				;@ 0x22
@@ -106,14 +118,75 @@ timerReadLUT:
 	.long timerBadR				;@ 0x2D
 	.long timerBadR				;@ 0x2E
 	.long timerBadR				;@ 0x2F
-;@---------------------------------------------------------------------------
-intRead8:					;@ 0x70-0x7F, r0 = address
-;@---------------------------------------------------------------------------
-	and r1,r0,#0x0F
-	mov r0,#0
-	ldr pc,[pc,r1,lsl#2]
-	.long 0
-intReadLUT:
+;@ 0x30
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x40
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x50
+	.long serialDataR
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x60
+	.long adcR
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x70
 	.long intRd70
 	.long intRd71
 	.long intRd72
@@ -130,11 +203,167 @@ intReadLUT:
 	.long intRd7D
 	.long intRd7E
 	.long intRd7F
+;@ 0x80
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0x90
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0xA0
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0xB0
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0xC0
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0xD0
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0xE0
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+;@ 0xF0
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
+	.long lowMemRead
 
+;@----------------------------------------------------------------------------
+serialDataR:				;@ 0x50
+;@----------------------------------------------------------------------------
+	mov r2,#0
+	strb r2,[t9ptr,#tlcsIPending+0x18]
+	strb r0,[t9ptr,#tlcsIrqDirty]
+	b lowMemRead
+;@----------------------------------------------------------------------------
+adcR:						;@ 0x60
+;@----------------------------------------------------------------------------
+	mov r2,#0
+	strb r2,[t9ptr,#tlcsIPending+0x1C]
+	strb r0,[t9ptr,#tlcsIrqDirty]
+;@----------------------------------------------------------------------------
+lowMemRead:
+;@----------------------------------------------------------------------------
+	ldr r2,=systemMemory
+	ldrb r0,[r2,r0]
+	bx lr
 ;@----------------------------------------------------------------------------
 t9StoreB_Low:
 ;@----------------------------------------------------------------------------
-	and r1,t9Mem,#0xff
+	and r0,r0,#0xFF
+	and r1,t9Mem,#0xFF
 	ldr r2,=systemMemory
 	ldrb r3,[r2,r1]
 	strb r0,[r2,r1]
@@ -173,7 +402,6 @@ t9StoreB_Low:
 	cmp r2,#0x20
 	beq timerWrite8
 
-	and r0,r0,#0xFF
 	cmp r2,#0x70
 	beq intWrite8
 
@@ -185,7 +413,7 @@ watchDogW:					;@ 0x6F
 ;@----------------------------------------------------------------------------
 	bx lr
 ;@----------------------------------------------------------------------------
-cpuSpeedW:
+cpuSpeedW:					;@ 0x80
 ;@----------------------------------------------------------------------------
 	and r0,r0,#0x07
 	cmp r0,#4
@@ -288,15 +516,12 @@ intWr74:
 	strbeq r1,[t9ptr,#tlcsIPending+0x12]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x13]
-intWr75:
-intWr76:
 	b markIrqDirty
 intWr77:
 ;@	tst r0,#0x08
 ;@	strbeq r1,[t9ptr,#tlcsIPending+0x18]
 	tst r0,#0x80
 	strbeq r1,[t9ptr,#tlcsIPending+0x19]
-intWr78:
 	b markIrqDirty
 intWr79:
 	tst r0,#0x08
@@ -312,6 +537,10 @@ intWr7A:
 markIrqDirty:
 	mov r0,#1
 	strb r0,[t9ptr,#tlcsIrqDirty]
+intWr75:
+intWr76:
+intWr78:
+intWr7B:
 	bx lr
 
 intWr7C:
@@ -322,76 +551,77 @@ intWr7F:
 	and r1,r1,#0x30000000
 	add r2,t9ptr,#tlcsDMAStartVector
 	strb r0,[r2,r1,lsr#28]
-intWr7B:
 	bx lr
 ;@----------------------------------------------------------------------------
 intRd70:
-	ldrb r1,[t9ptr,#tlcsIPending+0x0A]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x0A]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x1C]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
 intRd71:
-	ldrb r1,[t9ptr,#tlcsIPending+0x0B]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x0B]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x0C]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
 intRd72:
-	ldrb r1,[t9ptr,#tlcsIPending+0x0D]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x0D]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x0E]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
 intRd73:
-	ldrb r1,[t9ptr,#tlcsIPending+0x10]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x10]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x11]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
 intRd74:
-	ldrb r1,[t9ptr,#tlcsIPending+0x12]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x12]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x13]
 	cmp r1,#0
 	orrne r0,r0,#0x80
-intRd75:
-intRd76:
 	bx lr
 intRd77:
-	ldrb r1,[t9ptr,#tlcsIPending+0x18]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x18]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x19]
 	cmp r1,#0
 	orrne r0,r0,#0x80
-intRd78:
 	bx lr
 intRd79:
-	ldrb r1,[t9ptr,#tlcsIPending+0x1D]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x1D]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x1E]
 	cmp r1,#0
 	orrne r0,r0,#0x80
 	bx lr
 intRd7A:
-	ldrb r1,[t9ptr,#tlcsIPending+0x1F]
-	cmp r1,#0
-	orrne r0,r0,#0x08
+	ldrb r0,[t9ptr,#tlcsIPending+0x1F]
+	cmp r0,#0
+	movne r0,#0x08
 	ldrb r1,[t9ptr,#tlcsIPending+0x20]
 	cmp r1,#0
 	orrne r0,r0,#0x80
+	bx lr
+intRd75:
+intRd76:
+intRd78:
 intRd7B:
+	mov r0,#0
 	bx lr
 intRd7C:
 intRd7D:
@@ -461,9 +691,8 @@ testInterrupt:
 	bl encode_r0_pc
 
 	ldmfd sp!,{r0}				;@ Int level
-	add r0,r0,#0x01
 	cmp r0,#0x07
-	movhi r0,#0x07
+	addmi r0,r0,#0x01
 	bl setStatusIFF
 
 	t9eatcycles 28
@@ -771,7 +1000,13 @@ timer2End:
 	subpl r2,r2,r0
 	strb r2,[t9ptr,#tlcsUpCounter+2]
 	bmi noTimer2
-	bl clockFlipFlop3ByT2
+;@----------------------------------------------------------------------------
+;@ clockFlipFlop3ByT2
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTFFCR]
+	and r0,r0,#0x30
+	cmp r0,#0x20
+	bleq changeFlipFlop3
 	mov r5,#1					;@ Timer2 = TRUE
 	mov r0,#0x12
 	bl setInterrupt
@@ -811,7 +1046,13 @@ timer3End:
 	subpl r2,r2,r0
 	strb r2,[t9ptr,#tlcsUpCounter+3]
 	bmi noTimer3
-	bl clockFlipFlop3ByT3
+;@----------------------------------------------------------------------------
+;@ clockFlipFlop3ByT3
+;@----------------------------------------------------------------------------
+	ldrb r0,[t9ptr,#tlcsTFFCR]
+	and r0,r0,#0x30
+	cmp r0,#0x30
+	bleq changeFlipFlop3
 	mov r0,#0x13
 	bl setInterrupt
 
@@ -820,21 +1061,6 @@ noTimers:
 	ldmfd sp!,{r4-r6,lr}
 	bx lr
 
-;@----------------------------------------------------------------------------
-clockFlipFlop3ByT2:
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTFFCR]
-	and r0,r0,#0x30
-	cmp r0,#0x20
-	bxne lr
-	b changeFlipFlop3
-;@----------------------------------------------------------------------------
-clockFlipFlop3ByT3:
-;@----------------------------------------------------------------------------
-	ldrb r0,[t9ptr,#tlcsTFFCR]
-	and r0,r0,#0x30
-	cmp r0,#0x30
-	bxne lr
 ;@----------------------------------------------------------------------------
 changeFlipFlop3:
 ;@----------------------------------------------------------------------------
@@ -882,7 +1108,6 @@ DMATest:					;@ r3=DMAVectors
 DMAUpdate:					;@ r0 = channel
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r5,r6,lr}
-;@	mov r11,r11
 	and r5,r0,#0x03
 	add r6,t9ptr,#tlcsDmaS
 	ldr t9Mem,[r6,r5,lsl#2]!	;@ Source Adress
@@ -922,7 +1147,7 @@ DMAUpdate:					;@ r0 = channel
 	.long DMA_Bad
 	.long DMA_Bad
 	.long DMA_Bad
-								;@ Missing SRC+DST_INC/DEC (copy mode)?
+
 ;@----------------------------------------------------------------------------
 DMA_DSTInc_B:
 ;@----------------------------------------------------------------------------
@@ -1189,11 +1414,10 @@ timerT01ModW:				;@ 0x24
 timerTffcrW:				;@ 0x25
 ;@----------------------------------------------------------------------------
 	strb r0,[t9ptr,#tlcsTFFCR]
-	ands r0,r0,#0xC0
+	movs r0,r0,lsr#6
 	beq changeFlipFlop3
-	cmp r0,#0xC0
+	cmp r0,#0x03
 	bxeq lr
-	mov r0,r0,lsr#6
 	and r0,r0,#1
 	b setFlipFlop3
 
