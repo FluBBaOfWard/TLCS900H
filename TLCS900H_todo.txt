@@ -3,7 +3,6 @@ TLCS900H To do
 
 	Turn off DMA when CPU is STOPed.
 	Optimize interrupt handling.
-	Use one LUT for IO access.
 	Move memory area 0x00-0xFF from io.s to cpu core.
 	Timers; 16bit, PWM and more are not supported.
 	Timers? http://forum.fobby.net/index.php?t=msg&th=796&start=0&

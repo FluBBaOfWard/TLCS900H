@@ -1350,15 +1350,15 @@ tlcsOpz:
 	.byte 0			;@ tlcsStatusRFP
 	.long 0			;@ tlcsCycles
 	.long 0			;@ tlcsPcAsm
-	.long 0			;@ tlcsDMAStartVector
 	.long 0			;@ tlcsCurrentGprBank
 	.long 0			;@ tlcsCurrentMapBank
-	.long 0			;@ tlcsPadding1
+	.long 0,0		;@ tlcsPadding1
 	.space 4*4		;@ tlcsDmaS
 	.space 4*4		;@ tlcsDmaD
 	.space 4*4		;@ tlcsDmaC/DmaM
-	.space 64		;@ tlcsIPending
-	.space 16		;@ tlcsIntPrio
+	.space 48		;@ tlcsIPending
+	.space 12		;@ tlcsIntPrio
+	.long 0			;@ tlcsDMAStartVector
 	.space 4*4		;@ tlcsTimerClock
 	.space 4		;@ tlcsUpCounter
 	.space 4		;@ tlcsTimerCompare

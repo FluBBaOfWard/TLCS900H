@@ -198,7 +198,7 @@ t9LoadB_Low:
 	.long intRd78
 	.long intRd79
 	.long intRd7A
-	.long intRd7B
+	.long lowMemRead
 	.long intRd7C
 	.long intRd7D
 	.long intRd7E
@@ -403,6 +403,7 @@ adcR:						;@ 0x60
 	mov r2,#0
 	strb r2,[t9ptr,#tlcsIPending+0x1C]
 	strb r0,[t9ptr,#tlcsIrqDirty]
+	b lowMemRead
 ;@----------------------------------------------------------------------------
 intRd70:
 	ldrb r0,[t9ptr,#tlcsIPending+0x0A]
@@ -471,16 +472,15 @@ intRd7A:
 intRd75:
 intRd76:
 intRd78:
-intRd7B:
 	mov r0,#0
 	bx lr
 intRd7C:
 intRd7D:
 intRd7E:
 intRd7F:
-	and r1,r1,#0x03
-	add r0,t9ptr,#tlcsDMAStartVector
-	ldrb r0,[r0,r1]
+	and r0,r0,#0x0f
+	add r1,t9ptr,#tlcsIntPrio		;@ tlcsDMAStartVector
+	ldrb r0,[r1,r0]
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -632,7 +632,7 @@ t9StoreB_Low:
 	.long intWr78
 	.long intWr79
 	.long intWr7A
-	.long intWr7B
+	.long lowWriteEnd
 	.long intWr7C
 	.long intWr7D
 	.long intWr7E
@@ -853,7 +853,6 @@ markIrqDirty:
 intWr75:
 intWr76:
 intWr78:
-intWr7B:
 	bx lr
 
 intWr7C:
@@ -861,8 +860,8 @@ intWr7D:
 intWr7E:
 intWr7F:
 	and r0,r0,#0x1F
-	and r1,r1,#3
-	add r2,t9ptr,#tlcsDMAStartVector
+	and r1,r1,#0xF
+	add r2,t9ptr,#tlcsIntPrio		;@ tlcsDMAStartVector
 	strb r0,[r2,r1]
 	bx lr
 ;@----------------------------------------------------------------------------

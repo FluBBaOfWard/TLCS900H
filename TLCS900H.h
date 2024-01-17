@@ -25,16 +25,16 @@ typedef struct {
 	u8 statusRFP;		// Register File Pointer
 	u32 cycles;
 	u32 pcAsm;
-	u32 dmaStartVector;
 	u32 currentGprBank;
 	u32 currentMapBank;
-	u32 padding1;
+	u32 padding1[2];
 	u32 dmaS[4];
 	u32 dmaD[4];
 	u16 dmaC;
 	u8 dmaM[4*3+2];
-	u8 iPending[64];
-	u8 intPrio[16];
+	u8 iPending[48];
+	u8 intPrio[12];
+	u32 dmaStartVector;
 	u32 timerClock[4];
 	u8 upCounter[4];
 	u8 timerCompare[4];
