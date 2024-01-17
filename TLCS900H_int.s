@@ -621,22 +621,22 @@ t9StoreB_Low:
 	.long lowWriteEnd
 	.long watchDogW		;@ 0x6F, Watchdog
 ;@ 0x70
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
-	.long intWrite8
+	.long intWr70
+	.long intWr71
+	.long intWr72
+	.long intWr73
+	.long intWr74
+	.long intWr75
+	.long intWr76
+	.long intWr77
+	.long intWr78
+	.long intWr79
+	.long intWr7A
+	.long intWr7B
+	.long intWr7C
+	.long intWr7D
+	.long intWr7E
+	.long intWr7F
 ;@ 0x80
 	.long cpuSpeedW		;@ 0x80, CpuSpeed
 	.long lowWriteEnd
@@ -782,9 +782,66 @@ watchDogW:					;@ 0x6F
 ;@----------------------------------------------------------------------------
 	bx lr
 ;@---------------------------------------------------------------------------
-intWrite8:					;@ 0x70-0x7F, r0 = value, r1 = address
+;@ intWrite:				;@ 0x70-0x7F, r0 = value, r1 = address
 ;@---------------------------------------------------------------------------
+intWr70:
 	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x0A]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x1C]
+	b markIrqDirty
+intWr71:
+	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x0B]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x0C]
+	b markIrqDirty
+intWr72:
+	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x0D]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x0E]
+	b markIrqDirty
+intWr73:
+	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x10]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x11]
+	b markIrqDirty
+intWr74:
+	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x12]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x13]
+	b markIrqDirty
+intWr77:
+	mov r1,r1,lsl#28
+;@	tst r0,#0x08
+;@	strbeq r1,[t9ptr,#tlcsIPending+0x18]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x19]
+	b markIrqDirty
+intWr79:
+	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x1D]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x1E]
+	b markIrqDirty
+intWr7A:
+	mov r1,r1,lsl#28
+	tst r0,#0x08
+	strbeq r1,[t9ptr,#tlcsIPending+0x1F]
+	tst r0,#0x80
+	strbeq r1,[t9ptr,#tlcsIPending+0x20]
+markIrqDirty:
+	mov r2,#1
+	strb r2,[t9ptr,#tlcsIrqDirty]
 	and r2,r0,#0x70
 	cmp r2,#0x70
 	biceq r0,r0,#0x70
@@ -793,74 +850,6 @@ intWrite8:					;@ 0x70-0x7F, r0 = value, r1 = address
 	biceq r0,r0,#0x07
 	add r2,t9ptr,#tlcsIntPrio
 	strb r0,[r2,r1,lsr#28]
-	ldr pc,[pc,r1,lsr#26]
-	.long 0
-	.long intWr70
-	.long intWr71
-	.long intWr72
-	.long intWr73
-	.long intWr74
-	.long intWr75
-	.long intWr76
-	.long intWr77
-	.long intWr78
-	.long intWr79
-	.long intWr7A
-	.long intWr7B
-	.long intWr7C
-	.long intWr7D
-	.long intWr7E
-	.long intWr7F
-intWr70:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x0A]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x1C]
-	b markIrqDirty
-intWr71:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x0B]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x0C]
-	b markIrqDirty
-intWr72:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x0D]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x0E]
-	b markIrqDirty
-intWr73:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x10]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x11]
-	b markIrqDirty
-intWr74:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x12]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x13]
-	b markIrqDirty
-intWr77:
-;@	tst r0,#0x08
-;@	strbeq r1,[t9ptr,#tlcsIPending+0x18]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x19]
-	b markIrqDirty
-intWr79:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x1D]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x1E]
-	b markIrqDirty
-intWr7A:
-	tst r0,#0x08
-	strbeq r1,[t9ptr,#tlcsIPending+0x1F]
-	tst r0,#0x80
-	strbeq r1,[t9ptr,#tlcsIPending+0x20]
-markIrqDirty:
-	mov r0,#1
-	strb r0,[t9ptr,#tlcsIrqDirty]
 intWr75:
 intWr76:
 intWr78:
@@ -872,9 +861,9 @@ intWr7D:
 intWr7E:
 intWr7F:
 	and r0,r0,#0x1F
-	and r1,r1,#0x30000000
+	and r1,r1,#3
 	add r2,t9ptr,#tlcsDMAStartVector
-	strb r0,[r2,r1,lsr#28]
+	strb r0,[r2,r1]
 	bx lr
 ;@----------------------------------------------------------------------------
 cpuSpeedW:					;@ 0x80
