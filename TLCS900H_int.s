@@ -42,19 +42,20 @@ resetDMA:
 ;@---------------------------------------------------------------------------
 resetTimers:
 ;@---------------------------------------------------------------------------
-	add r0,t9ptr,#tlcsTimerClock
-	mov r1,#0
-	mov r2,#6					;@ 6*4
-	b memset_					;@ Clear Timer regs
-;@---------------------------------------------------------------------------
-resetInterrupts:
-;@---------------------------------------------------------------------------
 	mov r1,#0
 	strb r1,[t9ptr,#tlcsTRun]
 	strb r1,[t9ptr,#tlcsT01Mod]
 	strb r1,[t9ptr,#tlcsT23Mod]
 	strb r1,[t9ptr,#tlcsTrdc]
 	strb r1,[t9ptr,#tlcsTFFCR]
+
+	add r0,t9ptr,#tlcsTimerClock
+	mov r2,#6					;@ 6*4
+	b memset_					;@ Clear Timer regs
+;@---------------------------------------------------------------------------
+resetInterrupts:
+;@---------------------------------------------------------------------------
+	mov r1,#0
 	str r1,[t9ptr,#tlcsDMAStartVector]
 
 	add r0,t9ptr,#tlcsIPending
@@ -65,40 +66,41 @@ resetInterrupts:
 t9LoadB_Low:
 ;@----------------------------------------------------------------------------
 	and r0,r0,#0xFF
-	ldr pc,[pc,r0,lsl#2]
-	.long 0
+	cmp r0,#0xC0
+	ldrmi pc,[pc,r0,lsl#2]
+	b lowMemBadR
 ;@ 0x00
+	.long lowMemBadR
 	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0x10
+	.long lowMemBadR
+	.long lowMemBadR
 	.long lowMemRead
 	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 	.long lowMemRead
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 	.long lowMemRead
 	.long lowMemRead
 ;@ 0x20
@@ -119,73 +121,73 @@ t9LoadB_Low:
 	.long timerBadR				;@ 0x2E
 	.long timerBadR				;@ 0x2F
 ;@ 0x30
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0x40
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0x50
 	.long serialDataR
 	.long lowMemRead
 	.long lowMemRead
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0x60
 	.long adcR
 	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
 ;@ 0x70
 	.long intRd70
 	.long intRd71
@@ -205,21 +207,21 @@ t9LoadB_Low:
 	.long intRd7F
 ;@ 0x80
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0x90
 	.long lowMemRead
 	.long lowMemRead
@@ -233,27 +235,27 @@ t9LoadB_Low:
 	.long lowMemRead
 	.long lowMemRead
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0xA0
 	.long lowMemRead
 	.long lowMemRead
 	.long lowMemRead
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
 ;@ 0xB0
 	.long lowMemRead
 	.long lowMemRead
@@ -265,80 +267,29 @@ t9LoadB_Low:
 	.long lowMemRead
 	.long lowMemRead
 	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-;@ 0xC0
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-;@ 0xD0
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-;@ 0xE0
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-;@ 0xF0
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
-	.long lowMemRead
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemRead		;@ 0xBC Z80 com latch
+	.long lowMemBadR
+	.long lowMemBadR
+	.long lowMemBadR
+
+;@----------------------------------------------------------------------------
+lowMemBadR:
+;@----------------------------------------------------------------------------
+	ldr r2,=systemMemory
+	ldrb r1,[r2,r0]
+	stmfd sp!,{r1,lr}
+	bl debugIOUnimplR
+	ldmfd sp!,{r0,lr}
+	bx lr
+;@----------------------------------------------------------------------------
+lowMemRead:
+;@----------------------------------------------------------------------------
+	ldr r2,=systemMemory
+	ldrb r0,[r2,r0]
+	bx lr
+
 ;@----------------------------------------------------------------------------
 timerRunR:					;@ 0x20
 ;@----------------------------------------------------------------------------
@@ -479,15 +430,8 @@ intRd7D:
 intRd7E:
 intRd7F:
 	and r0,r0,#0x0f
-	add r1,t9ptr,#tlcsIntPrio		;@ tlcsDMAStartVector
+	add r1,t9ptr,#tlcsIntPrio	;@ tlcsDMAStartVector
 	ldrb r0,[r1,r0]
-	bx lr
-
-;@----------------------------------------------------------------------------
-lowMemRead:
-;@----------------------------------------------------------------------------
-	ldr r2,=systemMemory
-	ldrb r0,[r2,r0]
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -498,46 +442,46 @@ t9StoreB_Low:
 	ldr r2,=systemMemory
 	ldrb r3,[r2,r1]
 	strb r0,[r2,r1]
-
-	ldr pc,[pc,r1,lsl#2]
-	.long 0
+	cmp r1,#0xC0
+	ldrmi pc,[pc,r1,lsl#2]
+	b lowMemBadW
 ;@ 0x00
+	.long lowMemBadW
 	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
+	.long lowMemBadW
 	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
 ;@ 0x10
 	.long lowWriteEnd
 	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowWriteEnd
+	.long lowMemBadW
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
+	.long lowMemBadW
 	.long lowWriteEnd
 	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
 	.long lowWriteEnd
 ;@ 0x20
 	.long timerRunW				;@ 0x20
-	.long timerBadW				;@ 0x21
+	.long lowMemBadW			;@ 0x21
 	.long timer0W				;@ 0x22
 	.long timer1W				;@ 0x23
 	.long timerT01ModW			;@ 0x24
@@ -546,59 +490,59 @@ t9StoreB_Low:
 	.long timer3W				;@ 0x27
 	.long timerT23ModW			;@ 0x28
 	.long timerTrdcW			;@ 0x29
-	.long timerBadW				;@ 0x2A
-	.long timerBadW				;@ 0x2B
-	.long timerBadW				;@ 0x2C
-	.long timerBadW				;@ 0x2D
-	.long timerBadW				;@ 0x2E
-	.long timerBadW				;@ 0x2F
+	.long lowMemBadW			;@ 0x2A
+	.long lowMemBadW			;@ 0x2B
+	.long lowWriteEnd			;@ 0x2C
+	.long lowWriteEnd			;@ 0x2D
+	.long lowWriteEnd			;@ 0x2E
+	.long lowWriteEnd			;@ 0x2F
 ;@ 0x30
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowWriteEnd			;@ 0x38 T4MOD? 0x30 written by BIOS
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
 ;@ 0x40
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 ;@ 0x50
+	.long lowWriteEnd			;@ 0x50 Serial Buffer Data
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
@@ -606,20 +550,20 @@ t9StoreB_Low:
 ;@ 0x60
 	.long lowWriteEnd
 	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
+	.long ADStart			;@ 0x6D, Battery A/D start
 	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long ADStart		;@ 0x6D, Battery A/D start
-	.long lowWriteEnd
-	.long watchDogW		;@ 0x6F, Watchdog
+	.long watchDogW			;@ 0x6F, Watchdog
 ;@ 0x70
 	.long intWr70
 	.long intWr71
@@ -638,23 +582,24 @@ t9StoreB_Low:
 	.long intWr7E
 	.long intWr7F
 ;@ 0x80
-	.long cpuSpeedW		;@ 0x80, CpuSpeed
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long cpuSpeedW			;@ 0x80, CpuSpeed
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 ;@ 0x90
+	.long lowWriteEnd		;@ RTC registers
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
@@ -666,28 +611,27 @@ t9StoreB_Low:
 	.long lowWriteEnd
 	.long lowWriteEnd
 	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 ;@ 0xA0
-	.long T6W28_R_W		;@ 0xA0, T6W28, Right
-	.long T6W28_L_W		;@ 0xA1, T6W28, Left
-	.long T6W28_DAC_L_W	;@ 0xA2, T6W28 DAC, Left
-	.long T6W28_DAC_R_W	;@ 0xA3, T6W28 DAC, Right
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long T6W28_R_W			;@ 0xA0, T6W28, Right
+	.long T6W28_L_W			;@ 0xA1, T6W28, Left
+	.long T6W28_DAC_L_W		;@ 0xA2, T6W28 DAC, Left
+	.long T6W28_DAC_R_W		;@ 0xA3, T6W28 DAC, Right
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 ;@ 0xB0
 	.long lowWriteEnd
 	.long lowWriteEnd
@@ -700,82 +644,19 @@ t9StoreB_Low:
 	.long setMuteT6W28	;@ 0xB8, Soundchip enable/disable, 0x55 On 0xAA Off.
 	.long Z80_SetEnable	;@ 0xB9, Z80 enable/disable, 0x55 On 0xAA Off.
 	.long Z80_nmi_do	;@ 0xBA, Z80 NMI
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-;@ 0xC0
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-;@ 0xD0
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-;@ 0xE0
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-;@ 0xF0
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
-	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowWriteEnd
+	.long lowMemBadW
+	.long lowMemBadW
+	.long lowMemBadW
 
 lowWriteEnd:
 	bx lr
+;@----------------------------------------------------------------------------
+lowMemBadW:					;@ 0xXX
+;@----------------------------------------------------------------------------
+	mov r11,r11					;@ No$GBA breakpoint
+	b debugIOUnimplW
 
 ;@----------------------------------------------------------------------------
 watchDogW:					;@ 0x6F
@@ -872,9 +753,9 @@ cpuSpeedW:					;@ 0x80
 	movpl r0,#4
 	subs r1,r0,r3
 	bxeq lr
-//	mov t9cycles,t9cycles,ror r1	;@ melonDS doesn't like this.
+	rsbmi r1,r1,#0
 	movpl t9cycles,t9cycles,asr r1
-	movmi t9cycles,t9cycles,lsl#1
+	movmi t9cycles,t9cycles,lsl r1
 	strb r0,[r2,#0x80]
 	rsb r0,r0,#T9CYC_SHIFT
 	strb r0,[t9ptr,#tlcsCycShift]
@@ -1650,12 +1531,6 @@ timerT23ModW:				;@ 0x28
 timerTrdcW:					;@ 0x29
 ;@----------------------------------------------------------------------------
 	strb r0,[t9ptr,#tlcsTrdc]
-	bx lr
-;@----------------------------------------------------------------------------
-timerBadW:					;@ 0x2X
-;@----------------------------------------------------------------------------
-	mov r11,r11					;@ No$GBA breakpoint
-	ldr r2,=debugIOUnimplW
 	bx lr
 
 ;@----------------------------------------------------------------------------
