@@ -120,6 +120,9 @@ sngHALT:					;@ 0x05, Halt CPU
 	sub t9pc,t9pc,#1
 	movs r0,t9cycles,asr#T9CYC_SHIFT+2			;@
 	bicpl t9cycles,t9cycles,r0,lsl#T9CYC_SHIFT+2	;@ Consume all cycles in steps of 4.
+	ldrb r0,[t9ptr,#tlcsWdMode]
+	and r0,r0,#0x0C				;@ Halt Mode
+	strb r0,[t9ptr,#tlcsHaltMode]
 	t9fetch 8
 ;@----------------------------------------------------------------------------
 sngLD8_8:					;@ 0x08, Store immediate byte in low memory.

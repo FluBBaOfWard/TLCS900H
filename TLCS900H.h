@@ -36,20 +36,25 @@ typedef struct {
 	u8 intPrio[12];
 	u32 dmaStartVector;
 	u32 timerClock[4];
-	u8 upCounter[4];
-	u8 timerCompare[4];
-	u8 tRun;
-	u8 t01Mod;
-	u8 t23Mod;
-	u8 trdc;
-	u8 tFFCR;
+	u8 tRun;			// 0x20
+	u8 timerCmp0;		// 0x22
+	u8 timerCmp1;		// 0x23
+	u8 t01Mod;			// 0x24
+	u8 tFFCR;			// 0x25
+	u8 timerCmp2;		// 0x26
+	u8 timerCmp3;		// 0x27
+	u8 t23Mod;			// 0x28
+	u8 trdc;			// 0x29
+	u8 wdMode;			// 0x6E
 	u8 tFF1;
 	u8 tFF3;
+	u8 upCounter[4];
 	u8 cycShift;
 	u8 irqPrio;
 	u8 irqVec;
 	u8 irqDirty;
-	u8 padding0[1];
+	u8 haltMode;
+	u8 padding2[3];
 	void *tff3Function;
 	void *romBaseLo;
 	void *romBaseHi;

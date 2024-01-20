@@ -46,23 +46,28 @@ tlcsDmaD:			.space 4*4
 tlcsDmaC:			.short 0
 tlcsDmaM:			.space 4*3+2
 tlcsIPending:		.space 48
-tlcsIntPrio:		.space 12
-tlcsDMAStartVector:	.long 0
+tlcsIntPrio:		.space 12	;@ 0x70-0x7B
+tlcsDMAStartVector:	.long 0		;@ 0x7C-0x7F
 tlcsTimerClock:		.space 4*4
-tlcsUpCounter:		.long 0
-tlcsTimerCompare:	.long 0
-tlcsTRun:			.byte 0
-tlcsT01Mod:			.byte 0
-tlcsT23Mod:			.byte 0
-tlcsTrdc:			.byte 0		;@ Timer Register Double Buffer Control
-tlcsTFFCR:			.byte 0		;@ Timer Flip Flop Control Register
+tlcsTRun:			.byte 0		;@ 0x20 TRUN
+tlcsTimerCmp0:		.byte 0		;@ 0x22 TREG0
+tlcsTimerCmp1:		.byte 0		;@ 0x23 TREG1
+tlcsT01Mod:			.byte 0		;@ 0x24 T01MOD
+tlcsTFFCR:			.byte 0		;@ 0x25 Timer Flip Flop Control Register
+tlcsTimerCmp2:		.byte 0		;@ 0x26 TREG2
+tlcsTimerCmp3:		.byte 0		;@ 0x27 TREG3
+tlcsT23Mod:			.byte 0		;@ 0x28 T23MOD
+tlcsTrdc:			.byte 0		;@ 0x29 Timer Register Double Buffer Control
+tlcsWdMode:			.byte 0		;@ 0x6E Watchdog Mode
 tlcsTFF1:			.byte 0		;@ Timer Flip Flop 1 output
 tlcsTFF3:			.byte 0		;@ Timer Flip Flop 3 output
+tlcsUpCounter:		.long 0
 tlcsCycShift:		.byte 0
 tlcsIrqPrio:		.byte 0
 tlcsIrqVec:			.byte 0
 tlcsIrqDirty:		.byte 0
-tlcsPadding0:		.space 1
+tlcsHaltMode:		.byte 0
+tlcsPadding2:		.space 3
 tlcsStateEnd:
 
 tff3Function:		.long 0
@@ -105,7 +110,7 @@ tlcsSize:
 	.equ RXIX, 0x10
 	.equ RIY,  0x14
 	.equ RXIY, 0x14
-	.equ RIZ, 0x18
+	.equ RIZ,  0x18
 	.equ RXIZ, 0x18
-	.equ RSP, 0x1C
+	.equ RSP,  0x1C
 	.equ RXSP, 0x1C

@@ -1360,18 +1360,24 @@ tlcsOpz:
 	.space 12		;@ tlcsIntPrio
 	.long 0			;@ tlcsDMAStartVector
 	.space 4*4		;@ tlcsTimerClock
-	.space 4		;@ tlcsUpCounter
-	.space 4		;@ tlcsTimerCompare
 	.byte 0			;@ tlcsTRun
+	.byte 0			;@ tlcsTimerCmp0
+	.byte 0			;@ tlcsTimerCmp1
 	.byte 0			;@ tlcsT01Mod
+	.byte 0			;@ tlcsTFFCR
+	.byte 0			;@ tlcsTimerCmp2
+	.byte 0			;@ tlcsTimerCmp3
 	.byte 0			;@ tlcsT23Mod
 	.byte 0			;@ tlcsTrdc
-	.byte 0			;@ tlcsTFFCR
 	.byte 0			;@ tlcsTFF1
 	.byte 0			;@ tlcsTFF3
+	.long 0			;@ tlcsUpCounter
 	.byte 0			;@ tlcsCycShift
-	.byte 0			;@ tlcsTimerHInt_
-	.space 3		;@ tlcsPadding0
+	.byte 0			;@ tlcsIrqPrio
+	.byte 0			;@ tlcsIrqVec
+	.byte 0			;@ tlcsIrqDirty
+	.byte 0			;@ HaltMode
+	.space 3		;@ tlcsPadding2
 
 	.long 0			;@ tff3Function
 	.long 0			;@ romBaseLo

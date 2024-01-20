@@ -1,7 +1,6 @@
 TLCS900H To do
 --------------
 
-	Turn off DMA when CPU is STOPed.
 	Optimize interrupt handling.
 	Move memory area 0x00-0xFF from io.s to cpu core.
 	Timers; 16bit, PWM and more are not supported.
