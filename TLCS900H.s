@@ -1369,6 +1369,7 @@ tlcsOpz:
 	.byte 0			;@ tlcsTimerCmp3
 	.byte 0			;@ tlcsT23Mod
 	.byte 0			;@ tlcsTrdc
+	.byte 0			;@ tlcsWdMode
 	.byte 0			;@ tlcsTFF1
 	.byte 0			;@ tlcsTFF3
 	.long 0			;@ tlcsUpCounter

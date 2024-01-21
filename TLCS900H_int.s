@@ -110,8 +110,8 @@ t9LoadB_Low:
 	.long timer1R				;@ 0x23 TREG1, write only.
 	.long timerT01ModR			;@ 0x24 T01MOD
 	.long timerTffcrR			;@ 0x25 TFFCR
-	.long timer2R				;@ 0x26 TREG2
-	.long timer3R				;@ 0x27 TREG3
+	.long timer2R				;@ 0x26 TREG2, write only.
+	.long timer3R				;@ 0x27 TREG3, write only.
 	.long timerT23ModR			;@ 0x28 T23MOD
 	.long timerTrdcR			;@ 0x29 TRDC
 	.long timerBadR				;@ 0x2A
@@ -224,17 +224,17 @@ t9LoadB_Low:
 	.long lowMemBadR			;@ 0x8F
 ;@ 0x90
 	.long lowMemRead			;@ 0x90 RTC Control
-	.long lowMemRead			;@ 0x91 RTC: Years
-	.long lowMemRead			;@ 0x92 RTC: Months
-	.long lowMemRead			;@ 0x93 RTC: Days
-	.long lowMemRead			;@ 0x94 RTC: Hours
-	.long lowMemRead			;@ 0x95 RTC: Minutes
-	.long lowMemRead			;@ 0x96 RTC: Seconds
-	.long lowMemRead			;@ 0x97 RTC: Weekday
-	.long lowMemRead			;@ 0x98 ALARM: Day
-	.long lowMemRead			;@ 0x99 ALARM: Hour
-	.long lowMemRead			;@ 0x9A ALARM: Minute
-	.long lowMemRead			;@ 0x9B ALARM: Weekday
+	.long lowMemRead			;@ 0x91 RTC Years
+	.long lowMemRead			;@ 0x92 RTC Months
+	.long lowMemRead			;@ 0x93 RTC Days
+	.long lowMemRead			;@ 0x94 RTC Hours
+	.long lowMemRead			;@ 0x95 RTC Minutes
+	.long lowMemRead			;@ 0x96 RTC Seconds
+	.long lowMemRead			;@ 0x97 RTC Weekday
+	.long lowMemRead			;@ 0x98 RTC ALARM Day
+	.long lowMemRead			;@ 0x99 RTC ALARM Hour
+	.long lowMemRead			;@ 0x9A RTC ALARM Minute
+	.long lowMemRead			;@ 0x9B RTC ALARM Weekday
 	.long lowMemBadR			;@ 0x9C
 	.long lowMemBadR			;@ 0x9D
 	.long lowMemBadR			;@ 0x9E
@@ -349,7 +349,7 @@ serialDataR:				;@ 0x50
 	strb r0,[t9ptr,#tlcsIrqDirty]
 	b lowMemRead
 ;@----------------------------------------------------------------------------
-adcR:						;@ 0x60
+adcR:						;@ 0x60 AD conversion result
 ;@----------------------------------------------------------------------------
 	mov r2,#0
 	strb r2,[t9ptr,#tlcsIPending+0x1C]
@@ -605,17 +605,17 @@ t9StoreB_Low:
 	.long lowMemBadW			;@ 0x8F
 ;@ 0x90
 	.long lowWriteEnd			;@ 0x90 RTC Control
-	.long lowWriteEnd			;@ 0x91 RTC: Years
-	.long lowWriteEnd			;@ 0x92 RTC: Months
-	.long lowWriteEnd			;@ 0x93 RTC: Days
-	.long lowWriteEnd			;@ 0x94 RTC: Hours
-	.long lowWriteEnd			;@ 0x95 RTC: Minutes
-	.long lowWriteEnd			;@ 0x96 RTC: Seconds
-	.long lowWriteEnd			;@ 0x97 RTC: Weekday
-	.long lowWriteEnd			;@ 0x98 ALARM: Day
-	.long lowWriteEnd			;@ 0x99 ALARM: Hour
-	.long lowWriteEnd			;@ 0x9A ALARM: Minute
-	.long lowWriteEnd			;@ 0x9B ALARM: Weekday
+	.long lowWriteEnd			;@ 0x91 RTC Years
+	.long lowWriteEnd			;@ 0x92 RTC Months
+	.long lowWriteEnd			;@ 0x93 RTC Days
+	.long lowWriteEnd			;@ 0x94 RTC Hours
+	.long lowWriteEnd			;@ 0x95 RTC Minutes
+	.long lowWriteEnd			;@ 0x96 RTC Seconds
+	.long lowWriteEnd			;@ 0x97 RTC Weekday
+	.long lowWriteEnd			;@ 0x98 RTC ALARM Day
+	.long lowWriteEnd			;@ 0x99 RTC ALARM Hour
+	.long lowWriteEnd			;@ 0x9A RTC ALARM Minute
+	.long lowWriteEnd			;@ 0x9B RTC ALARM Weekday
 	.long lowMemBadW			;@ 0x9C
 	.long lowMemBadW			;@ 0x9D
 	.long lowMemBadW			;@ 0x9E
@@ -678,8 +678,8 @@ watchDogW:					;@ 0x6F
 intWr70:
 	ands r2,r0,#0x08
 	strbeq r2,[t9ptr,#tlcsIPending+0x0A]
-	ands r2,r0,#0x80
-	strbeq r2,[t9ptr,#tlcsIPending+0x1C]
+;@	ands r2,r0,#0x80
+;@	strbeq r2,[t9ptr,#tlcsIPending+0x1C]	;@ INTAD can only be cleared by reading result
 	b markIrqDirty
 intWr71:
 	ands r2,r0,#0x08
@@ -707,7 +707,7 @@ intWr74:
 	b markIrqDirty
 intWr77:
 ;@	ands r2,r0,#0x08
-;@	strbeq r2,[t9ptr,#tlcsIPending+0x18]
+;@	strbeq r2,[t9ptr,#tlcsIPending+0x18]	;@ INTRX can only be cleared by reading result
 	ands r2,r0,#0x80
 	strbeq r2,[t9ptr,#tlcsIPending+0x19]
 	b markIrqDirty
