@@ -32,10 +32,7 @@ typedef struct {
 	u32 dmaD[4];
 	u16 dmaC;
 	u8 dmaM[4*3+2];
-	u8 iPending[48];
-	u8 intPrio[12];
-	u32 dmaStartVector;
-	u32 timerClock[4];
+	u8 iPending[36];
 	u8 tRun;			// 0x20
 	u8 timerCmp0;		// 0x22
 	u8 timerCmp1;		// 0x23
@@ -48,6 +45,9 @@ typedef struct {
 	u8 wdMode;			// 0x6E
 	u8 tFF1;
 	u8 tFF3;
+	u8 intPrio[12];
+	u32 dmaStartVector;
+	u32 timerClock[4];
 	u8 upCounter[4];
 	u8 cycShift;
 	u8 irqPrio;

@@ -45,10 +45,7 @@ tlcsDmaS:			.space 4*4
 tlcsDmaD:			.space 4*4
 tlcsDmaC:			.short 0
 tlcsDmaM:			.space 4*3+2
-tlcsIPending:		.space 48
-tlcsIntPrio:		.space 12	;@ 0x70-0x7B
-tlcsDMAStartVector:	.long 0		;@ 0x7C-0x7F
-tlcsTimerClock:		.space 4*4
+tlcsIPending:		.space 36
 tlcsTRun:			.byte 0		;@ 0x20 TRUN
 tlcsTimerCmp0:		.byte 0		;@ 0x22 TREG0
 tlcsTimerCmp1:		.byte 0		;@ 0x23 TREG1
@@ -61,6 +58,9 @@ tlcsTrdc:			.byte 0		;@ 0x29 Timer Register Double Buffer Control
 tlcsWdMode:			.byte 0		;@ 0x6E Watchdog Mode
 tlcsTFF1:			.byte 0		;@ Timer Flip Flop 1 output
 tlcsTFF3:			.byte 0		;@ Timer Flip Flop 3 output
+tlcsIntPrio:		.space 12	;@ 0x70-0x7B
+tlcsDMAStartVector:	.long 0		;@ 0x7C-0x7F
+tlcsTimerClock:		.space 4*4
 tlcsUpCounter:		.long 0
 tlcsCycShift:		.byte 0
 tlcsIrqPrio:		.byte 0

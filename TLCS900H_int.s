@@ -491,8 +491,8 @@ t9StoreB_Low:
 	.long timer1W				;@ 0x23 TREG1, write only.
 	.long timerT01ModW			;@ 0x24 T01MOD
 	.long timerTffcrW			;@ 0x25 TFFCR
-	.long timer2W				;@ 0x26 TREG2
-	.long timer3W				;@ 0x27 TREG3
+	.long timer2W				;@ 0x26 TREG2, write only.
+	.long timer3W				;@ 0x27 TREG3, write only.
 	.long timerT23ModW			;@ 0x28 T23MOD
 	.long timerTrdcW			;@ 0x29 TRDC
 	.long lowMemBadW			;@ 0x2A

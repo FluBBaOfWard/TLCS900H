@@ -1356,10 +1356,7 @@ tlcsOpz:
 	.space 4*4		;@ tlcsDmaS
 	.space 4*4		;@ tlcsDmaD
 	.space 4*4		;@ tlcsDmaC/DmaM
-	.space 48		;@ tlcsIPending
-	.space 12		;@ tlcsIntPrio
-	.long 0			;@ tlcsDMAStartVector
-	.space 4*4		;@ tlcsTimerClock
+	.space 36		;@ tlcsIPending
 	.byte 0			;@ tlcsTRun
 	.byte 0			;@ tlcsTimerCmp0
 	.byte 0			;@ tlcsTimerCmp1
@@ -1372,6 +1369,9 @@ tlcsOpz:
 	.byte 0			;@ tlcsWdMode
 	.byte 0			;@ tlcsTFF1
 	.byte 0			;@ tlcsTFF3
+	.space 12		;@ tlcsIntPrio
+	.long 0			;@ tlcsDMAStartVector
+	.space 4*4		;@ tlcsTimerClock
 	.long 0			;@ tlcsUpCounter
 	.byte 0			;@ tlcsCycShift
 	.byte 0			;@ tlcsIrqPrio
