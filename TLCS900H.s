@@ -1023,8 +1023,9 @@ tlcs900HSaveState:			;@ In r0=destination, r1=t9ptr. Out r0=size.
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,t9ptr,lr}
 
-	mov r4,r0
+	sub r4,r0,#tlcsStateStart
 	mov t9ptr,r1
+	add r1,r1,#tlcsStateStart
 
 	mov r2,#tlcsStateEnd-tlcsStateStart	;@ Right now ?
 	bl memcpy
@@ -1045,6 +1046,7 @@ tlcs900HLoadState:			;@ In r0=t9ptr, r1=source. Out r0=size.
 	stmfd sp!,{t9pc,t9ptr,lr}
 
 	mov t9ptr,r0
+	add r0,r0,#tlcsStateStart
 	mov r2,#tlcsStateEnd-tlcsStateStart	;@ Right now ?
 	bl memcpy
 

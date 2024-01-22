@@ -2,9 +2,10 @@ TLCS900H revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.7 - 2024-01-21 (FluBBa)
+V0.4.7 - 2024-01-22 (FluBBa)
 	Added debugging of IO registers.
 	Fixed IRQ & Micro DMA handling.
+	Fixed save states.
 	Changed all write operations to use t9Mem instead of r1.
 	Optimized timer handling.
 	Optimized interrupt handling.
