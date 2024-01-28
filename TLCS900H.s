@@ -94,7 +94,7 @@
 	.arm
 
 #ifdef COUNT_OP_CODES
-#if GBA
+#ifdef GBA
 	.section .sbss				;@ For the GBA
 #else
 	.section .bss				;@ For anything else
@@ -203,14 +203,14 @@ pop32:
 	b t9LoadL
 
 ;@----------------------------------------------------------------------------
-ExR32:
+ExR32:					;@ See CPU manual p43
 ;@----------------------------------------------------------------------------
 	ldrb r0,[t9pc],#1
 	cmp r0,#0x03
 	beq exr32_03
 	cmp r0,#0x07
 	beq exr32_07
-	cmp r0,#0x13			;@ Undocumented. See CPU manual p43
+	cmp r0,#0x13			;@ Used for LDAR. See CPU manual p90
 	beq exr32_13
 
 	ldr r2,[t9ptr,#tlcsCurrentMapBank]
@@ -319,52 +319,52 @@ conditionCode:				;@ (int cc)
 	add pc,pc,r2,lsl#3
 	mov r11,r11
 
-cc_false:
+cc_false:						;@ Never
 	mov r0,#0
 	bx lr
-cc_lt:
+cc_lt:							;@ Less Than (signed)
 	movlt r0,#1
 	bx lr
-cc_le:
+cc_le:							;@ Less than or Equal
 	movle r0,#1
 	bx lr
-cc_ls:
+cc_ule:							;@ Unsigned Less than or Equal
 	movls r0,#1
 	bx lr
-cc_vs:
+cc_ov:							;@ OVerflow / Parity Even
 	movvs r0,#1
 	bx lr
-cc_mi:
+cc_mi:							;@ MInus
 	movmi r0,#1
 	bx lr
-cc_eq:
+cc_eq:							;@ EQual / Zero
 	moveq r0,#1
 	bx lr
-cc_cs:
+cc_cs:							;@ Carry / Unsigned Less Than
 	movcc r0,#1
 	bx lr
-cc_al:
+cc_al:							;@ Always
 	mov r0,#1
 	bx lr
-cc_ge:
+cc_ge:							;@ Greater than or Equal (signed)
 	movge r0,#1
 	bx lr
-cc_gt:
+cc_gt:							;@ Greater Than (signed)
 	movgt r0,#1
 	bx lr
-cc_hi:
+cc_ugt:							;@ Unsigned Greater Than
 	movhi r0,#1
 	bx lr
-cc_vc:
+cc_nov:							;@ No OVerflow / Parity Odd
 	movvc r0,#1
 	bx lr
-cc_pl:
+cc_pl:							;@ PLus
 	movpl r0,#1
 	bx lr
-cc_ne:
+cc_ne:							;@ Not Equal / Not Zero
 	movne r0,#1
 	bx lr
-cc_cc:
+cc_nc:							;@ Not Carry / Unsigned Greater than or Equal
 	movcs r0,#1
 	bx lr
 
@@ -832,7 +832,7 @@ generic_SBC_L:				;@ r0=dst, r1=src
 
 	bx lr
 ;@----------------------------------------------------------------------------
-#if GBA
+#ifdef GBA
 	.section .ewram, "ax", %progbits	;@ For the GBA
 	.align 2
 #endif
@@ -917,7 +917,7 @@ reencode_pc:
 	bx lr
 
 ;@----------------------------------------------------------------------------
-#if GBA
+#ifdef GBA
 	.section .ewram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text						;@ For anything else

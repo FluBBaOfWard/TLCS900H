@@ -6,4 +6,4 @@
 //  Copyright © 2008-2024 Fredrik Ahlström. All rights reserved.
 //
 
-#define TLCS900VERSION "V0.4.7"
+#define TLCS900VERSION "V0.4.8"
