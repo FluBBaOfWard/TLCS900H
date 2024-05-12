@@ -55,7 +55,7 @@ typedef struct {
 	u8 irqDirty;
 	u8 haltMode;
 	u8 padding2[3];
-	void *tff3Function;
+	void (*tff3Function)(bool);
 	void *romBaseLo;
 	void *romBaseHi;
 	void *biosBase;
@@ -69,7 +69,7 @@ extern TLCS900HCore tlcs900HState;
  * @param  *cpu: The TLCS900HCore cpu to reset.
  * @param  *ff3Func: Pointer to new FlipFlop 3 function .
  */
-void tlcs900HReset(TLCS900HCore *cpu, void *ff3Func);
+void tlcs900HReset(TLCS900HCore *cpu, void (*ff3Func)(bool));
 
 /**
  * Saves the state of the cpu to the destination.
@@ -98,7 +98,7 @@ int tlcs900HGetStateSize(void);
  * @param  opcode: Which opcode to redirect.
  * @param  *function: Pointer to new function .
  */
-void tlcs900HRedirectOpcode(int opcode, void *function);
+void tlcs900HRedirectOpcode(int opcode, void (*function)(void));
 
 void tlcs900HRestoreAndRunXCycles(int cycles);
 void tlcs900HRunXCycles(int cycles);

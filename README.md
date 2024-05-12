@@ -8,8 +8,8 @@ You can use defines to alter the behaviour of the emulator.
 
 ## Projects that use this cpu core
 
-* https://github.com/FluBBaOfWard/NGPDS
-* https://github.com/FluBBaOfWard/NGPGBA
+* <https://github.com/FluBBaOfWard/NGPDS>
+* <https://github.com/FluBBaOfWard/NGPGBA>
 
 ## Credits:
 
@@ -20,4 +20,4 @@ Fredrik Ahlström
 
 X/Twitter @TheRealFluBBa
 
-https://www.github.com/FluBBaOfWard
+<https://www.github.com/FluBBaOfWard>

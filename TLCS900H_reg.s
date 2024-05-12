@@ -588,16 +588,13 @@ regBS1B:					;@ Bit Search 1 Backward
 ;@----------------------------------------------------------------------------
 	ldrh r0,[t9gprBank,t9Reg]
 	bic t9f,t9f,#PSR_V
-	mov r0,r0,lsl#16
-	mov r1,#15
-bs1bLoop:
-	movs r0,r0,lsl#1
-	bcs bs1bEnd
-	sub r1,r1,#1
-	bne bs1bLoop
-	orr t9f,t9f,#PSR_V			;@ Bit not found
-bs1bEnd:
-	strb r1,[t9gprBank,#RegA]
+;@ Lookup the bit index using a 16-bit Debruijn sequence.
+	mov r1,#0x09<<24
+	orr r1,#0xAF<<16
+	muls r0,r1,r0
+	orreq t9f,t9f,#PSR_V
+	mov r0,r0,lsr#28
+	strb r0,[t9gprBank,#RegA]
 	t9fetch 4
 
 ;@----------------------------------------------------------------------------
